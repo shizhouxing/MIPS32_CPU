@@ -7,8 +7,9 @@ module fsm(
     output reg[15:0] disp
 );
 
-reg[31:0] op, A, B, res;
-reg flag;
+reg[31:0] op, A, B;
+wire[31:0] res;
+wire flag;
 
 parameter STATE_INPUT_A = 2'b00;
 parameter STATE_INPUT_B = 2'b01;
@@ -16,7 +17,6 @@ parameter STATE_INPUT_OP = 2'b10;
 parameter STATE_OUTPUT_FLAG = 2'b11;
 
 reg[1:0] state = STATE_INPUT_A;
-reg[1:0] next_state = STATE_INPUT_B;
 
 always @(posedge clk or posedge rst)
 begin
@@ -26,22 +26,22 @@ begin
     end
     else case (state)
         STATE_INPUT_A: begin
-            next_state <= STATE_INPUT_B;
+            state <= STATE_INPUT_B;
             A <= inp;
-            disp <= A[15:0];
+            disp <= inp[15:0];
         end
         STATE_INPUT_B: begin
-            next_state <= STATE_INPUT_OP;
+            state <= STATE_INPUT_OP;
             B <= inp;
-            disp <= B[15:0];
+            disp <= inp[15:0];
         end
         STATE_INPUT_OP: begin
-            next_state <= STATE_OUTPUT_FLAG;
+            state <= STATE_OUTPUT_FLAG;
             op <= inp;
             disp <= res[15:0];
         end
         STATE_OUTPUT_FLAG: begin
-            next_state <= STATE_INPUT_A;
+            state <= STATE_INPUT_A;
             disp <= {12'h000, 3'b000, flag};
         end
     endcase

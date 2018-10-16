@@ -8,54 +8,30 @@ module alu(
     output reg flag
 );
 
-parameter OP_ADD = 4'b0000;
-parameter OP_SUB = 4'b0001;
-parameter OP_AND = 4'b0010;
-parameter OP_OR  = 4'b0011;
-parameter OP_XOR = 4'b0100;
-parameter OP_NOT = 4'b0101;
-parameter OP_SLL = 4'b0110;
-parameter OP_SRL = 4'b0111;
-parameter OP_SRA = 4'b1000;
-parameter OP_ROL = 4'b1001;
+parameter OP_ADD = 4'h0;
+parameter OP_SUB = 4'h1;
+parameter OP_AND = 4'h2;
+parameter OP_OR  = 4'h3;
+parameter OP_XOR = 4'h4;
+parameter OP_NOT = 4'h5;
+parameter OP_SLL = 4'h6;
+parameter OP_SRL = 4'h7;
+parameter OP_SRA = 4'h8;
+parameter OP_ROL = 4'h9;
 
-always (op or A or B)
+always @(op or A or B)
 begin
     case (op)
-        OP_ADD: begin
-            {flag, res} <= A + B;
-        end
-        OP_SUB: begin
-            {flag, res} <= A - B;
-        end
-        OP_AND: begin   
-            {flag, res} <= {1'b0, A & B};
-        end
-        OP_OR: begin
-            {flag, res} <= {1'b0, A | B};
-        end
-        OP_XOR: begin
-            {flag, res} <= {1'b0, A ^ B};
-        end
-        OP_NOT: begin
-            {flag, res} <= {1'b0, ~A};
-        end
-        OP_SLL: begin
-            {flag, res} <= {1'b0, A << B};
-        end
-        OP_SRL: begin
-            {flag, res} <= {1'b0, A >> B};
-        end
-        OP_SRA: begin
-            {flag res} <= {1'b0, ($signed(A)) >>> B};
-        end
-        OP_ROL: begin
-            {flag, res} <= {
-                1'b0, 
-                ({32'H00000000, A} << B)[31:0] 
-                | ({32'H00000000, A} << B)[63:32]
-            };
-        end
+        OP_ADD: {flag, res} <= A + B;
+        OP_SUB: {flag, res} <= A - B;
+        OP_AND: {flag, res} <= {1'b0, A & B};
+        OP_OR:  {flag, res} <= {1'b0, A | B};
+        OP_XOR: {flag, res} <= {1'b0, A ^ B};
+        OP_NOT: {flag, res} <= {1'b0, ~A};
+        OP_SLL: {flag, res} <= {1'b0, A << B};
+        OP_SRL: {flag, res} <= {1'b0, A >> B};
+        OP_SRA: {flag, res} <= {1'b0, ($signed(A)) >>> B};
+        OP_ROL: {flag, res} <= {1'b0, (A << B) | (A >> (32'h00100000 - B))};
     endcase
 end
 
