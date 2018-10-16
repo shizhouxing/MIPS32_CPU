@@ -31,7 +31,7 @@ begin
         OP_SLL: {flag, res} <= {1'b0, A << B};
         OP_SRL: {flag, res} <= {1'b0, A >> B};
         OP_SRA: {flag, res} <= {1'b0, ($signed(A)) >>> B};
-        OP_ROL: {flag, res} <= {1'b0, (A << B) | (A >> (32'h00100000 - B))};
+        OP_ROL: {flag, res} <= {1'b0, (A << B) | (A >> (32'h00000020 - B))};
     endcase
 end
 
