@@ -1,11 +1,14 @@
+`timescale 1ns / 1ps
+
 module fsm(
     input wire clk,
     input wire rst,
     input wire[31:0] inp,
-    output wire[15:0] disp
+    output reg[15:0] disp
 );
 
-reg[31:0] A, B, op;
+reg[31:0] op, A, B, res;
+reg flag;
 
 parameter STATE_INPUT_A = 2'b00;
 parameter STATE_INPUT_B = 2'b01;
@@ -15,11 +18,11 @@ parameter STATE_OUTPUT_FLAG = 2'b11;
 reg[1:0] state = STATE_INPUT_A;
 reg[1:0] next_state = STATE_INPUT_B;
 
-always @(posedge clk or posedge clr)
+always @(posedge clk or posedge rst)
 begin
-    if (clr) begin
+    if (rst) begin
         state <= STATE_INPUT_A;
-        disp <= 16'h00000000;
+        disp <= 16'h0000;
     end
     else case (state)
         STATE_INPUT_A: begin
@@ -35,12 +38,15 @@ begin
         STATE_INPUT_OP: begin
             next_state <= STATE_OUTPUT_FLAG;
             op <= inp;
-            disp <= op[15:0];
+            disp <= res[15:0];
         end
         STATE_OUTPUT_FLAG: begin
             next_state <= STATE_INPUT_A;
+            disp <= {12'h000, 3'b000, flag};
         end
     endcase
 end
+
+alu _alu(op[3:0], A, B, res, flag);
 
 endmodule

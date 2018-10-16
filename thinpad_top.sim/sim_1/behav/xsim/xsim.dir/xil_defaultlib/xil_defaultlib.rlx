@@ -1,0 +1,17 @@
+0.6
+2018.2
+Jun 14 2018
+20:41:02
+Z:/code/thinpad_top/thinpad_top.sim/sim_1/behav/xsim/glbl.v,1529022455,verilog,,,,glbl,,,,,,,,
+Z:/code/thinpad_top/thinpad_top.srcs/sim_1/new/28F640P30.v,1539316783,verilog,,Z:/code/thinpad_top/thinpad_top.srcs/sim_1/new/clock.v,Z:/code/thinpad_top/thinpad_top.srcs/sim_1/new/include/def.h;Z:/code/thinpad_top/thinpad_top.srcs/sim_1/new/include/CUIcommandData.h;Z:/code/thinpad_top/thinpad_top.srcs/sim_1/new/include/data.h;Z:/code/thinpad_top/thinpad_top.srcs/sim_1/new/include/UserData.h;Z:/code/thinpad_top/thinpad_top.srcs/sim_1/new/include/BankLib.h;Z:/code/thinpad_top/thinpad_top.srcs/sim_1/new/include/TimingData.h,BlankCheckModule;BlockLockModule;BuffEnhancedFactProgramModule;BurstModule;CFIqueryModule;CUIdecoder1;CUIdecoder2;CUIdecoder_Busy1;ConfigRegModule;DataErrorModule;DebugModule;EraseModule;KernelModule;MemoryModule;OutputBufferModule;ProgramBufferModule;ProgramModule;ProtectRegModule;ReadModule;SignatureModule;StatusRegModule;TimingLibModule;x28fxxxp30,,,../../../../thinpad_top.srcs/sim_1/new/include,,,,,
+Z:/code/thinpad_top/thinpad_top.srcs/sim_1/new/clock.v,1539316783,verilog,,Z:/code/thinpad_top/thinpad_top.srcs/sources_1/new/fsm.v,,clock,,,../../../../thinpad_top.srcs/sim_1/new/include,,,,,
+Z:/code/thinpad_top/thinpad_top.srcs/sim_1/new/include/BankLib.h,1539316783,verilog,,,Z:/code/thinpad_top/thinpad_top.srcs/sim_1/new/include/def.h;Z:/code/thinpad_top/thinpad_top.srcs/sim_1/new/include/data.h;Z:/code/thinpad_top/thinpad_top.srcs/sim_1/new/include/UserData.h,BankLib,,,,,,,,
+Z:/code/thinpad_top/thinpad_top.srcs/sim_1/new/include/CUIcommandData.h,1539316783,verilog,,,,,,,,,,,,
+Z:/code/thinpad_top/thinpad_top.srcs/sim_1/new/include/TimingData.h,1539316783,verilog,,,Z:/code/thinpad_top/thinpad_top.srcs/sim_1/new/include/data.h;Z:/code/thinpad_top/thinpad_top.srcs/sim_1/new/include/UserData.h,TimingDataModule,,,,,,,,
+Z:/code/thinpad_top/thinpad_top.srcs/sim_1/new/include/UserData.h,1539316783,verilog,,,,,,,,,,,,
+Z:/code/thinpad_top/thinpad_top.srcs/sim_1/new/include/data.h,1539316783,verilog,,,Z:/code/thinpad_top/thinpad_top.srcs/sim_1/new/include/UserData.h,,,,,,,,,
+Z:/code/thinpad_top/thinpad_top.srcs/sim_1/new/include/def.h,1539316783,verilog,,,,,,,,,,,,
+Z:/code/thinpad_top/thinpad_top.srcs/sim_1/new/sram_model.v,1539316783,verilog,,Z:/code/thinpad_top/thinpad_top.srcs/sources_1/new/thinpad_top.v,,sram_model,,,../../../../thinpad_top.srcs/sim_1/new/include,,,,,
+Z:/code/thinpad_top/thinpad_top.srcs/sim_1/new/tb.sv,1539316783,systemVerilog,,,,tb,,,../../../../thinpad_top.srcs/sim_1/new/include,,,,,
+Z:/code/thinpad_top/thinpad_top.srcs/sources_1/new/fsm.v,1539609300,verilog,,Z:/code/thinpad_top/thinpad_top.srcs/sim_1/new/sram_model.v,,fsm,,,../../../../thinpad_top.srcs/sim_1/new/include,,,,,
+Z:/code/thinpad_top/thinpad_top.srcs/sources_1/new/thinpad_top.v,1539605560,verilog,,,,thinpad_top,,,../../../../thinpad_top.srcs/sim_1/new/include,,,,,
