@@ -9,7 +9,7 @@ module fsm(
 
 reg[31:0] op, A, B;
 wire[31:0] res;
-wire flag;
+wire C, S, Z, V;
 
 parameter STATE_INPUT_A = 2'b00;
 parameter STATE_INPUT_B = 2'b01;
@@ -42,11 +42,11 @@ begin
         end
         STATE_OUTPUT_FLAG: begin
             state <= STATE_INPUT_A;
-            disp <= {12'h000, 3'b000, flag};
+            disp <= {12'h000, C, S, Z, V};
         end
     endcase
 end
 
-alu _alu(op[3:0], A, B, res, flag);
+alu _alu(op[3:0], A, B, res, C, S, Z, V);
 
 endmodule
