@@ -35,7 +35,12 @@ begin
     else begin    
         if (~state_write_or_read) begin // write
             oe <= 1'b1;
-            if (index == 4'h0) begin
+            if (index == 4'ha) begin
+                state_write_or_read <= 1'b1;
+                we <= 1'b1;
+                index <= 4'h0;
+            end
+            else if (index == 4'h0) begin
                 if (~state_addr_or_data) begin
                     addr_first <= inp;
                     address <= inp;
@@ -51,23 +56,20 @@ begin
                 data <= data + 4'h1;
                 address <= address + 1;
                 index <= index + 4'h1;
-                if (index == 4'h9) begin
-                    state_write_or_read <= 1'b1;
-                    we <= 1'b1;
-                    index <= 4'h0;
-                end
             end
         end
-        else begin // TODO
-
-
-
-            // if (index == 4'ha) begin
-            
-            // end
-            // else begin
-            //     index <= index + 4'h1;
-            // end
+        else begin
+            oe <= 1'b0;
+            if (index == 4'ha) // finished reading
+            begin
+            end
+            else begin
+                if (index == 4'h0)
+                    address <= addr_first;
+                else
+                    address <= address + 4'h1;
+                index <= index + 4'h1;
+            end
         end
     end 
 end

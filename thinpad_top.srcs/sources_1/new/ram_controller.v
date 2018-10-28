@@ -84,8 +84,11 @@ always @(posedge clk or posedge rst) begin
                     state <= STATE_IDLE;
                     { base_ram_oe_n, ext_ram_oe_n } = 2'b11;
                 end
-                else
+                else begin
                     data_out <= ce ? ext_ram_data_wire : base_ram_data_wire;
+                    base_ram_addr <= address;
+                    ext_ram_addr <= address;
+                end
             end
             STATE_WRITE_0: begin
                 state <= STATE_WRITE_1;
