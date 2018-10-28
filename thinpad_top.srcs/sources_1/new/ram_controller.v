@@ -11,9 +11,6 @@ module ram_controller(
     
     output reg[31:0] data_out,
 
-    //output reg write_ack,
-    //output reg ram_busy,
-
     inout wire[31:0] base_ram_data_wire,
     output reg[19:0] base_ram_addr,
     output wire[3:0] base_ram_be_n,
@@ -31,7 +28,6 @@ module ram_controller(
 
 assign base_ram_be_n = 4'h0;
 assign ext_ram_be_n = 4'h0;
-//assign ram_busy <= 1'b1; // TODO: add enable for the ram controller
 assign { base_ram_ce_n, ext_ram_ce_n } = ce ? 2'b10 : 2'b01;
 
 reg data_z;

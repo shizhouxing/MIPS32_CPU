@@ -84,8 +84,10 @@ wire ce, oe, we;
 wire[19:0] address;
 wire[31:0] data_mem_in, data_mem_out;
 wire[3:0] index;
+wire[1:0] state;
 
-assign { uart_rdn, uart_wrn} = 2'b11; // disable uart
+assign uart_rdn = ~(oe & we);
+assign uart_wrn = ~(oe & we);
 
 fsm_ram _fsm_ram(
     .clk(clock_btn),
@@ -98,7 +100,8 @@ fsm_ram _fsm_ram(
     .we(we),
     .address(address),
     .data(data_mem_in),
-    .index(index)
+    .index(index),
+    .state(state)
 );
 
 ram_controller _ram_controller(
@@ -125,7 +128,8 @@ ram_controller _ram_controller(
     .ext_ram_we_n(ext_ram_we_n)
 );
 
-SEG7_LUT _SEG7_LUT_1(dpy1, index);
+SEG7_LUT _SEG7_LUT_1(dpy1, state);
+SEG7_LUT _SEG7_LUT_0(dpy0, index);
 
 //fsm_alu main(clock_btn, reset_btn, dip_sw, leds);
 
