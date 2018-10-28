@@ -80,6 +80,53 @@ module thinpad_top(
     output wire video_de           //行数据有效信号，用于区分消隐区
 );
 
-fsm main(clock_btn, reset_btn, dip_sw, leds);
+wire ce, oe, we;
+wire[19:0] address;
+wire[31:0] data_mem_in, data_mem_out;
+wire[3:0] index;
+
+assign { uart_rdn, uart_wrn} = 2'b11; // disable uart
+
+fsm_ram _fsm_ram(
+    .clk(clock_btn),
+    .rst(reset_btn),
+    .inp(dip_sw),
+    .disp(leds),
+    .data_res(data_mem_out),
+    .ce(ce),
+    .oe(oe),
+    .we(we),
+    .address(address),
+    .data(data_mem_in),
+    .index(index)
+);
+
+ram_controller _ram_controller(
+    .clk(clk_50M),
+    .rst(reset_btn),
+    .ce(ce),
+    .oe(oe),
+    .we(we),
+    .address(address),
+    .data_in(data_mem_in),
+    .data_out(data_mem_out),
+
+    .base_ram_data_wire(base_ram_data),
+    .base_ram_addr(base_ram_addr),
+    .base_ram_be_n(base_ram_be_n),
+    .base_ram_ce_n(base_ram_ce_n),
+    .base_ram_oe_n(base_ram_oe_n),
+    .base_ram_we_n(base_ram_we_n),
+    .ext_ram_data_wire(ext_ram_data),
+    .ext_ram_addr(ext_ram_addr),
+    .ext_ram_be_n(ext_ram_be_n),
+    .ext_ram_ce_n(ext_ram_ce_n),
+    .ext_ram_oe_n(ext_ram_oe_n),
+    .ext_ram_we_n(ext_ram_we_n)
+);
+
+SEG7_LUT _SEG7_LUT_1(dpy1, index);
+
+//fsm_alu main(clock_btn, reset_btn, dip_sw, leds);
 
 endmodule

@@ -19,8 +19,7 @@ parameter OP_SRL = 4'h7;
 parameter OP_SRA = 4'h8;
 parameter OP_ROL = 4'h9;
 
-always @(op or A or B)
-begin
+always @(op or A or B) begin
     case (op)
         OP_ADD: {C, res} = {1'b0, A} + {1'b0, B};
         OP_SUB: {C, res} = {1'b0, A} - {1'b1, B};
