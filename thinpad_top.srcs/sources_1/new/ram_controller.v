@@ -51,7 +51,7 @@ always @(posedge clk or posedge rst) begin
         base_ram_addr <= 20'h00000;
         ext_ram_addr <= 20'h00000;
         data_out <= 32'h00000000;
-        data_z <= 1'b0;
+        data_z <= 1'b1;
     end
     else begin
         case (state)
@@ -59,6 +59,7 @@ always @(posedge clk or posedge rst) begin
                 if (~we || ~oe) begin
                     base_ram_addr <= address;
                     ext_ram_addr <= address;
+                    data_z <= 1'b1;
                 end
                 if (~we) begin 
                     state <= STATE_WRITE_0;

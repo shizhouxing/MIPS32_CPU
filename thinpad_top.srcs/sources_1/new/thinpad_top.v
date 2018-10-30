@@ -80,15 +80,16 @@ module thinpad_top(
     output wire video_de           //行数据有效信号，用于区分消隐区
 );
 
+
+
 reg[15:0] disp;
 reg ce_ram, oe_ram, we_ram;
 reg oe_uart, we_uart;
 reg[7:0] data_uart_in;
 wire[7:0] data_uart_out;
-
-wire[2:0] state_debug;
-
-assign base_ram_ce_n = 1'b1;
+reg[31:0] data_mem_in;
+wire[31:0] data_mem_out;
+reg[19:0] address;
 
 uart_io _uart_io(
     .clk(clk_50M),
@@ -104,48 +105,78 @@ uart_io _uart_io(
     .uart_wrn(uart_wrn), 
     .uart_dataready(uart_dataready),
     .uart_tbre(uart_tbre), 
-    .uart_tsre(uart_tsre),
+    .uart_tsre(uart_tsre)
+);
 
-    .state_debug(state_debug)   
+ram_controller _ram_controller(
+    .clk(clk_50M),
+    .rst(reset_btn),
+    .ce(ce_ram),
+    .oe(oe_ram),
+    .we(we_ram),
+    .address(address),
+    .data_in(data_mem_in),
+    .data_out(data_mem_out),
+
+    .base_ram_data_wire(base_ram_data),
+    .base_ram_addr(base_ram_addr),
+    .base_ram_be_n(base_ram_be_n),
+    .base_ram_ce_n(base_ram_ce_n),
+    .base_ram_oe_n(base_ram_oe_n),
+    .base_ram_we_n(base_ram_we_n),
+    .ext_ram_data_wire(ext_ram_data),
+    .ext_ram_addr(ext_ram_addr),
+    .ext_ram_be_n(ext_ram_be_n),
+    .ext_ram_ce_n(ext_ram_ce_n),
+    .ext_ram_oe_n(ext_ram_oe_n),
+    .ext_ram_we_n(ext_ram_we_n)
 );
 
 localparam s0 = 3'b000;
 localparam s1 = 3'b001;
+localparam s2 = 3'b010;
+localparam s3 = 3'b011;
+localparam s4 = 3'b100;
 reg[2:0] state;
 
 SEG7_LUT _SEG7_LUT_1(dpy1, {1'b0, state});
-SEG7_LUT _SEG7_LUT_0(dpy0, {1'b0, state_debug});
-assign leds = {uart_dataready, disp[14:0]};
+assign leds = disp;
 
 always @(posedge clock_btn or posedge reset_btn) begin
     if (reset_btn) begin
-        { oe_ram, we_ram } <= 2'b11;
+        { ce_ram, oe_ram, we_ram } <= 3'b1011;
         { oe_uart, we_uart } <= 2'b11;
         state <= s0;
         disp <= 16'h0000;
     end
     else begin
         case (state) 
-            s0: begin
-                //data_uart_in = 8'hff;
-                data_uart_in = 8'b01100001;
-                we_uart <= 1'b0;
+            s0: begin // input data from uart
+                oe_uart <= 1'b0;
                 state <= s1;
             end
-            s1: begin
-                disp <= { 8'h00, data_uart_out};
+            s1: begin // write data into memory
+                oe_uart <= 1'b1;
+                we_ram <= 1'b0;
+                disp <= { dip_sw[7:0], data_uart_out};
+                address <= dip_sw;
+                data_mem_in <= { 24'h000000, data_uart_out};
+                state <= s2;
+            end
+            s2: begin // read data from memory
+                we_ram <= 1'b1;
+                oe_ram <= 1'b0;
+                disp <= 16'h0000;
+                state <= s3;
+            end
+            s3: begin // display data received from memory and send it via uart
+                disp <= { dip_sw[7:0], data_mem_out[7:0]};
+                oe_ram <= 1'b1;
+                we_uart <= 1'b0;
+                data_uart_in <= data_mem_out[7:0];
+                state <= s4;
             end
         endcase
-
-        // case (state)
-        //     s0: begin
-        //         oe_uart <= 1'b0;
-        //         state <= s1;
-        //     end
-        //     s1: begin
-        //         disp <= { 8'h00, data_uart_out};
-        //     end
-        // endcase
     end
 end
 

@@ -14,9 +14,7 @@ module uart_io(
     output reg uart_wrn, 
     input wire uart_dataready,
     input wire uart_tbre, 
-    input wire uart_tsre,
-
-    output wire[2:0] state_debug
+    input wire uart_tsre
 );
 
 reg[7:0] ram_data;
@@ -32,7 +30,6 @@ localparam STATE_WRITE_2 = 3'b101;
 localparam STATE_WRITE_3 = 3'b110;
 localparam STATE_DONE = 3'b111;
 reg[2:0] state;
-assign state_debug = state;
 
 always @(posedge clk or posedge rst) begin
     if (rst) begin
