@@ -80,56 +80,120 @@ module thinpad_top(
     output wire video_de           //行数据有效信号，用于区分消隐区
 );
 
-wire ce, oe, we;
-wire[19:0] address;
-wire[31:0] data_mem_in, data_mem_out;
-wire[3:0] index;
-wire[1:0] state;
+reg[15:0] disp;
+reg ce_ram, oe_ram, we_ram;
+reg oe_uart, we_uart;
+reg[7:0] data_uart_in;
+wire data_uart_out;
 
-assign uart_rdn = ~(oe & we);
-assign uart_wrn = ~(oe & we);
+wire[2:0] state_debug;
 
-fsm_ram _fsm_ram(
-    .clk(clock_btn),
-    .rst(reset_btn),
-    .inp(dip_sw),
-    .disp(leds),
-    .data_res(data_mem_out),
-    .ce(ce),
-    .oe(oe),
-    .we(we),
-    .address(address),
-    .data(data_mem_in),
-    .index(index),
-    .state(state)
-);
+assign base_ram_ce_n = 1'b1;
 
-ram_controller _ram_controller(
+uart_io _uart_io(
     .clk(clk_50M),
     .rst(reset_btn),
-    .ce(ce),
-    .oe(oe),
-    .we(we),
-    .address(address),
-    .data_in(data_mem_in),
-    .data_out(data_mem_out),
+    .oe(oe_uart),
+    .we(we_uart),
+    .data_in(data_uart_in),
+    .data_out(data_uart_out),
 
     .base_ram_data_wire(base_ram_data),
-    .base_ram_addr(base_ram_addr),
-    .base_ram_be_n(base_ram_be_n),
-    .base_ram_ce_n(base_ram_ce_n),
-    .base_ram_oe_n(base_ram_oe_n),
-    .base_ram_we_n(base_ram_we_n),
-    .ext_ram_data_wire(ext_ram_data),
-    .ext_ram_addr(ext_ram_addr),
-    .ext_ram_be_n(ext_ram_be_n),
-    .ext_ram_ce_n(ext_ram_ce_n),
-    .ext_ram_oe_n(ext_ram_oe_n),
-    .ext_ram_we_n(ext_ram_we_n)
+
+    .uart_rdn(uart_rdn), 
+    .uart_wrn(uart_wrn), 
+    .uart_dataready(uart_dataready),
+    .uart_tbre(uart_tbre), 
+    .uart_tsre(uart_tsre),
+
+    .state_debug(state_debug)   
 );
 
+localparam s0 = 3'b000;
+localparam s1 = 3'b001;
+reg[2:0] state;
+
 SEG7_LUT _SEG7_LUT_1(dpy1, state);
-SEG7_LUT _SEG7_LUT_0(dpy0, index);
+SEG7_LUT _SEG7_LUT_0(dpy0, state_debug);
+assign leds = { uart_dataready, disp[6:0] }; // debug
+
+always @(posedge clock_btn or posedge reset_btn) begin
+    if (reset_btn) begin
+        { oe_ram, we_ram } <= 2'b11;
+        { oe_uart, we_uart } <= 2'b11;
+        state <= s0;
+        disp <= 16'h0000;
+    end
+    else begin
+        case (state)
+            s0: begin
+                oe_uart <= 1'b0;
+                state <= s1;
+            end
+            s1: begin
+                disp <= { 8'h00, data_uart_in};
+            end
+        endcase
+    end
+end
+
+
+// ********************************************************
+// Project III before the requirement was changed
+
+// wire ce, oe, we;
+// wire[19:0] address;
+// wire[31:0] data_mem_in, data_mem_out;
+// wire[3:0] index;
+// wire[1:0] state;
+
+// assign uart_rdn = ~(oe & we);
+// assign uart_wrn = ~(oe & we);
+
+// fsm_ram _fsm_ram(
+//     .clk(clock_btn),
+//     .rst(reset_btn),
+//     .inp(dip_sw),
+//     .disp(leds),
+//     .data_res(data_mem_out),
+//     .ce(ce),
+//     .oe(oe),
+//     .we(we),
+//     .address(address),
+//     .data(data_mem_in),
+//     .index(index),
+//     .state(state)
+// );
+
+// ram_controller _ram_controller(
+//     .clk(clk_50M),
+//     .rst(reset_btn),
+//     .ce(ce),
+//     .oe(oe),
+//     .we(we),
+//     .address(address),
+//     .data_in(data_mem_in),
+//     .data_out(data_mem_out),
+
+//     .base_ram_data_wire(base_ram_data),
+//     .base_ram_addr(base_ram_addr),
+//     .base_ram_be_n(base_ram_be_n),
+//     .base_ram_ce_n(base_ram_ce_n),
+//     .base_ram_oe_n(base_ram_oe_n),
+//     .base_ram_we_n(base_ram_we_n),
+//     .ext_ram_data_wire(ext_ram_data),
+//     .ext_ram_addr(ext_ram_addr),
+//     .ext_ram_be_n(ext_ram_be_n),
+//     .ext_ram_ce_n(ext_ram_ce_n),
+//     .ext_ram_oe_n(ext_ram_oe_n),
+//     .ext_ram_we_n(ext_ram_we_n)
+// );
+
+// SEG7_LUT _SEG7_LUT_1(dpy1, state);
+// SEG7_LUT _SEG7_LUT_0(dpy0, index);
+
+// ********************************************************
+// Project II
 
 //fsm_alu main(clock_btn, reset_btn, dip_sw, leds);
 
