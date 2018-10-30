@@ -84,7 +84,7 @@ reg[15:0] disp;
 reg ce_ram, oe_ram, we_ram;
 reg oe_uart, we_uart;
 reg[7:0] data_uart_in;
-wire data_uart_out;
+wire[7:0] data_uart_out;
 
 wire[2:0] state_debug;
 
@@ -113,9 +113,9 @@ localparam s0 = 3'b000;
 localparam s1 = 3'b001;
 reg[2:0] state;
 
-SEG7_LUT _SEG7_LUT_1(dpy1, state);
-SEG7_LUT _SEG7_LUT_0(dpy0, state_debug);
-assign leds = { uart_dataready, disp[6:0] }; // debug
+SEG7_LUT _SEG7_LUT_1(dpy1, {1'b0, state});
+SEG7_LUT _SEG7_LUT_0(dpy0, {1'b0, state_debug});
+assign leds = {uart_dataready, disp[14:0]};
 
 always @(posedge clock_btn or posedge reset_btn) begin
     if (reset_btn) begin
@@ -125,15 +125,27 @@ always @(posedge clock_btn or posedge reset_btn) begin
         disp <= 16'h0000;
     end
     else begin
-        case (state)
+        case (state) 
             s0: begin
-                oe_uart <= 1'b0;
+                //data_uart_in = 8'hff;
+                data_uart_in = 8'b01100001;
+                we_uart <= 1'b0;
                 state <= s1;
             end
             s1: begin
-                disp <= { 8'h00, data_uart_in};
+                disp <= { 8'h00, data_uart_out};
             end
         endcase
+
+        // case (state)
+        //     s0: begin
+        //         oe_uart <= 1'b0;
+        //         state <= s1;
+        //     end
+        //     s1: begin
+        //         disp <= { 8'h00, data_uart_out};
+        //     end
+        // endcase
     end
 end
 

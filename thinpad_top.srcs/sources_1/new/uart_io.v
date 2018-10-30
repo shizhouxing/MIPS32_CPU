@@ -16,7 +16,7 @@ module uart_io(
     input wire uart_tbre, 
     input wire uart_tsre,
 
-    output wire state_debug
+    output wire[2:0] state_debug
 );
 
 reg[7:0] ram_data;
@@ -29,6 +29,8 @@ localparam STATE_READ_1 = 3'b010;
 localparam STATE_WRITE_0 = 3'b011;
 localparam STATE_WRITE_1 = 3'b100;
 localparam STATE_WRITE_2 = 3'b101;
+localparam STATE_WRITE_3 = 3'b110;
+localparam STATE_DONE = 3'b111;
 reg[2:0] state;
 assign state_debug = state;
 
@@ -42,42 +44,52 @@ always @(posedge clk or posedge rst) begin
         case (state) 
             STATE_IDLE: begin
                 if (~oe) begin
-                    { uart_rdn, uart_wrn } <= 2'b11;
                     data_z <= 1'b1;
                     state <= STATE_READ_0;
                 end
                 else if (~we) begin
-                    { uart_rdn, uart_wrn } = 2'b10;
                     data_z <= 1'b0;
                     ram_data <= data_in;
                     state <= STATE_WRITE_0;
                 end
                 else begin
-                    { uart_rdn, uart_wrn } <= 2'b11;
                     data_z <= 1'b1;
                 end
             end
             STATE_READ_0: begin
-                if (uart_dataready) begin
+                if (oe) 
+                    state <= STATE_IDLE;
+                else if (uart_dataready) begin
                     uart_rdn <= 1'b0;
                     state <= STATE_READ_1;
                 end
             end
             STATE_READ_1: begin
                 data_out <= base_ram_data_wire[7:0];
-                //state <= STATE_IDLE;
+                uart_rdn <= 1'b1;
+                state <= STATE_DONE;
             end
             STATE_WRITE_0: begin
-                uart_wrn <= 1'b1;
+                uart_wrn <= 1'b0;
                 state <= STATE_WRITE_1;
             end
             STATE_WRITE_1: begin
-                if (uart_tbre)
-                    state <= STATE_WRITE_2;
+                uart_wrn <= 1'b1;            
+                state <= STATE_WRITE_2;
             end
             STATE_WRITE_2: begin
+                if (uart_tbre)
+                    state <= STATE_WRITE_3;
+            end
+            STATE_WRITE_3: begin
                 if (uart_tsre) 
+                    state <= STATE_DONE;
+            end
+            STATE_DONE: begin
+                if (oe & we) begin
                     state <= STATE_IDLE;
+                    { uart_rdn, uart_wrn } <= 2'b11;
+                end
             end
         endcase
     end
