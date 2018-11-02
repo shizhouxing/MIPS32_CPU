@@ -59,7 +59,6 @@ always @(posedge clk or posedge rst) begin
                 if (~we || ~oe) begin
                     base_ram_addr <= address;
                     ext_ram_addr <= address;
-                    data_z <= 1'b1;
                 end
                 if (~we) begin 
                     state <= STATE_WRITE_0;
