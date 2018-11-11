@@ -80,17 +80,56 @@ module thinpad_top(
     output wire video_de           //行数据有效信号，用于区分消隐区
 );
 
-data_mem_test _data_mem_test(
-    .clk(clock_btn),
-    .dip_sw(dip_sw),
-    .leds(leds),
-    .base_ram_data(base_ram_data),  
-    .base_ram_addr(base_ram_addr), 
-    .base_ram_be_n(base_ram_be_n),  
-    .base_ram_ce_n(base_ram_ce_n),       
-    .base_ram_oe_n(base_ram_oe_n),       
-    .base_ram_we_n(base_ram_we_n)         
+// main clock
+wire clock_main;
+assign clock_main = clock_btn;
+// reset
+wire reset;
+assign reset = reset_btn;
+
+
+wire stall, pc_src;
+wire[31:0] pc_next, pc_address;
+
+pc _pc(
+    .clk(clock_main),
+    .rst(reset),
+    .stall(stall),
+    .pc_src(pc_src),
+    .pc_in(pc_next),
+    .pc_out(pc_address)
 );
+
+wire[31:0] inst_if;
+
+inst_mem _inst_mem(
+    .address(pc_address),
+    .data(inst_if),
+    .ram_data(ext_ram_data),
+    .ram_addr(ext_ram_addr),
+    .ram_be_n(ext_ram_be_n),
+    .ram_ce_n(ext_ram_ce_n),
+    .ram_oe_n(ext_ram_oe_n),
+    .ram_we_n(ext_ram_we_n)
+);
+
+
+
+// ********************************************************
+// test 
+
+
+// data_mem_test _data_mem_test(
+//     .clk(clock_btn),
+//     .dip_sw(dip_sw),
+//     .leds(leds),
+//     .base_ram_data(base_ram_data),  
+//     .base_ram_addr(base_ram_addr), 
+//     .base_ram_be_n(base_ram_be_n),  
+//     .base_ram_ce_n(base_ram_ce_n),       
+//     .base_ram_oe_n(base_ram_oe_n),       
+//     .base_ram_we_n(base_ram_we_n)         
+// );
 
 // inst_mem_test _inst_mem_test(
 //     .dip_sw(dip_sw),

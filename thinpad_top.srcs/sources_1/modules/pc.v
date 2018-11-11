@@ -6,18 +6,18 @@ module pc(
     input wire stall,
     input wire pc_src,
     input wire[31:0] pc_in,
-    output reg[31:0] value
+    output reg[31:0] pc_out
 );
 
 always @(posedge clk or posedge rst) begin
     if (rst)
-        value <= 32'h80000000; // default entry
+        pc_out <= 32'h80000000; // default entry
     else begin
         if (~stall) begin
             if (~pc_src) 
-                value <= value + 4'h4;
+                pc_out <= pc_out + 4'h4;
             else
-                value <= pc_in;
+                pc_out <= pc_in;
         end
     end
 end

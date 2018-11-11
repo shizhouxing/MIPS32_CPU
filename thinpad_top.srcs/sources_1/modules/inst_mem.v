@@ -2,7 +2,6 @@
 
 // instruction memory
 module inst_mem(
-    input wire en,
     input wire[31:0] address,
     output wire[31:0] data,
 
@@ -14,7 +13,7 @@ module inst_mem(
     output wire ram_we_n      
 );
 
-assign ram_ce_n = en;
+assign ram_ce_n = 1'b0;
 assign ram_oe_n = 1'b0;
 assign ram_we_n = 1'b1;
 assign ram_be_n = 4'h0;
