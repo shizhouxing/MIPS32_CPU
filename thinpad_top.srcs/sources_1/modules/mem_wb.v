@@ -6,7 +6,7 @@ module mem_wb(
     input wire[4:0] reg_write_address_in,
     input wire[4:0] reg_write_address_ext_in,
     input wire[31:0] reg_write_data_in,
-    input wire[31:0] mem_data,
+    input wire[31:0] mem_read_data,
 
     // control signals
     input wire con_wb_memory,
@@ -22,7 +22,7 @@ module mem_wb(
 always @(posedge clk) begin
     reg_write_address <= reg_write_address_in;
     reg_write_address_ext <= reg_write_address_ext_in;
-    reg_write_data <=  con_wb_memory ? mem_data : reg_write_data_in;
+    reg_write_data <=  con_wb_memory ? mem_read_data : reg_write_data_in;
     reg_write <= con_reg_write & (~con_mov_cond | alu_z);
 end
 

@@ -2,8 +2,7 @@
 
 module data_mem(
     input wire clk,
-    input wire en,
-    input wire[31:0] mask,
+    input wire[3:0] mask,
     input wire write,
     input wire[31:0] address,
     input wire[31:0] data_in,
@@ -17,7 +16,9 @@ module data_mem(
     output wire ram_we_n 
 );
 
-assign ram_ce_n = en;
+// TODO: integrate uart
+
+assign ram_ce_n = 1'b0;
 assign ram_we_n = write ? ~clk : 1'b1;
 assign ram_oe_n = ~write ? 1'b0 : 1'b1;
 assign ram_be_n = mask;

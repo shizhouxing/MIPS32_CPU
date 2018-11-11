@@ -89,13 +89,13 @@ assign reset = reset_btn;
 
 
 wire stall, pc_src;
-wire[31:0] pc_next, pc_address;
+wire[31:0] pc_jump, pc_address;
 pc _pc(
     .clk(clock_main),
     .rst(reset),
     .stall(stall),
     .pc_src(pc_src),
-    .pc_in(pc_next),
+    .pc_in(pc_jump),
     .pc_out(pc_address)
 );
 
@@ -121,6 +121,88 @@ if_id _if_id(
     .inst_out(inst_id),
     .pc_plus_4_out(pc_plus_4_id)
 );
+
+// ******
+
+// MEM
+
+wire[31:0] alu_a;
+
+wire[31:0] inst_exe;
+wire[31:0] alu_res;
+wire alu_s, alu_z;
+wire[4:0] reg_write_address_exe;
+wire[31:0] mem_write_data_exe;
+wire[31:0] pc_plus_4;
+wire[31:0] pc_jump_exe;
+
+wire[1:0] con_reg_data;
+wire con_branch, con_branch_rev, con_branch_s, con_jump;
+
+wire[4:0] reg_write_address_mem;
+wire[4:0] reg_write_address_ext_mem;
+wire[31:0] reg_write_data_mem;
+
+// connected 
+wire[31:0] mem_address;
+wire[31:0] mem_write_data;
+// **
+
+wire[31:0] inst_mem;
+wire alu_z_mem;
+
+exe_mem _exe_mem(
+    .clk(clock_main),
+    .alu_res(alu_res),
+    .alu_s(alu_s),
+    .alu_z(alu_z),
+    .inst_in(inst_exe),
+    .reg_write_address_in(reg_write_address_exe),
+    .mem_write_data_in(mem_write_data_exe),
+    .pc_plus_4(pc_plus_4),
+    .data_A(alu_a),
+    .pc_jump_in(pc_jump_exe),
+
+    .con_reg_data(con_reg_data),
+    .con_branch(con_branch),
+    .con_branch_rev(con_branch_rev),
+    .con_branch_s(con_branch_s),
+    .con_jump(con_jump),
+
+    .inst_out(inst_mem),
+    .mem_address(mem_address),
+    .mem_write_data(mem_write_data),
+
+    .alu_z_out(alu_z_mem),
+    .pc_jump(pc_jump),
+    .pc_src(pc_src),
+    .reg_write_address(reg_write_address_mem),
+    .reg_write_address_ext(reg_write_address_ext_mem),
+    .reg_write_data(reg_write_data_mem)
+);
+
+// unconnected signals
+wire[31:0] mem_read_data;
+wire[3:0] con_mem_mask;
+wire con_mem_write;
+// 
+
+data_mem _data_mem(
+    .clk(clock_main),
+    .mask(con_mem_mask),
+    .write(con_mem_write),
+    .address(mem_address),
+    .data_in(mem_write_data),
+    .data_out(mem_read_data),
+    
+    .ram_data(base_ram_data),
+    .ram_addr(base_ram_addr),
+    .ram_be_n(base_ram_be_n),
+    .ram_ce_n(base_ram_ce_n),
+    .ram_oe_n(base_ram_oe_n),
+    .ram_we_n(base_ram_we_n)
+);
+
 
 
 
