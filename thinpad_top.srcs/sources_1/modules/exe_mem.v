@@ -23,8 +23,9 @@ module exe_mem(
     output reg[31:0] mem_address,
     output reg[31:0] mem_write_data,
     output reg[4:0] reg_write_address,
+    output reg[4:0] reg_write_address_ext,
     output reg[31:0] reg_write_data,
-    output reg[31:0] alu_z_out,
+    output reg alu_z_out,
     output reg[31:0] pc_jump,
     output reg pc_src
 );
@@ -38,6 +39,7 @@ always @(posedge clk) begin
     mem_address <= alu_res;
     mem_write_data <= mem_write_data_in;
     reg_write_address <= reg_write_address_in;
+    reg_write_address_ext <= inst_in[15:11];
     alu_z_out <= alu_z;
     pc_jump <= pc_jump_in;
 
