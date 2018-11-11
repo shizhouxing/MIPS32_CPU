@@ -80,6 +80,18 @@ module thinpad_top(
     output wire video_de           //行数据有效信号，用于区分消隐区
 );
 
+data_mem_test _data_mem_test(
+    .clk(clock_btn),
+    .dip_sw(dip_sw),
+    .leds(leds),
+    .base_ram_data(base_ram_data),  
+    .base_ram_addr(base_ram_addr), 
+    .base_ram_be_n(base_ram_be_n),  
+    .base_ram_ce_n(base_ram_ce_n),       
+    .base_ram_oe_n(base_ram_oe_n),       
+    .base_ram_we_n(base_ram_we_n)         
+);
+
 // inst_mem_test _inst_mem_test(
 //     .dip_sw(dip_sw),
 //     .leds(leds),
@@ -91,7 +103,7 @@ module thinpad_top(
 //     .base_ram_we_n(base_ram_we_n)      
 // );
 
-pc _pc();
+//pc _pc();
 
 // ********************************************************
 // Project III
