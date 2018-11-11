@@ -1,7 +1,5 @@
 `default_nettype none
 
-`include "../test/inst_mem.test.v"
-
 module thinpad_top(
     input wire clk_50M,           //50MHz 时钟输入
     input wire clk_11M0592,       //11.0592MHz 时钟输入

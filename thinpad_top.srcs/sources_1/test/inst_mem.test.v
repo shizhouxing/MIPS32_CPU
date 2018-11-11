@@ -1,5 +1,4 @@
 `timescale 1ns / 1ps
-`include "../modules/inst_mem.v"
 
 module inst_mem_test(
     input  wire[31:0] dip_sw,
