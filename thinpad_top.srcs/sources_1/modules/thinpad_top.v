@@ -90,7 +90,6 @@ assign reset = reset_btn;
 
 wire stall, pc_src;
 wire[31:0] pc_next, pc_address;
-
 pc _pc(
     .clk(clock_main),
     .rst(reset),
@@ -101,7 +100,6 @@ pc _pc(
 );
 
 wire[31:0] inst_if;
-
 inst_mem _inst_mem(
     .address(pc_address),
     .data(inst_if),
@@ -111,6 +109,17 @@ inst_mem _inst_mem(
     .ram_ce_n(ext_ram_ce_n),
     .ram_oe_n(ext_ram_oe_n),
     .ram_we_n(ext_ram_we_n)
+);
+
+wire[31:0] inst_id;
+wire pc_plus_4_id;
+if_id _if_id(
+    .clk(clock_main),
+    .stall(stall),
+    .inst_in(inst_if),
+    .pc_plus_4_in(pc_address + 4'h4),
+    .inst_out(inst_id),
+    .pc_plus_4_out(pc_plus_4_id)
 );
 
 
