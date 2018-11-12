@@ -203,7 +203,28 @@ data_mem _data_mem(
     .ram_we_n(base_ram_we_n)
 );
 
+wire con_wb_memory, con_reg_write, con_mov_cond;
+wire[4:0] reg_write_address, reg_write_address_ext;
+wire[31:0] reg_write_data;
+wire reg_write;
 
+mem_wb _mem_wb(
+    .clk(clock_main),
+    .alu_z(alu_z_mem),
+    .reg_write_address_in(reg_write_address_mem),
+    .reg_write_address_ext_in(reg_write_address_ext_mem),
+    .reg_write_data_in(reg_write_data_mem),
+    .mem_read_data(mem_read_data),
+
+    .con_wb_memory(con_wb_memory),
+    .con_reg_write(con_reg_write),
+    .con_mov_cond(con_mov_cond),
+
+    .reg_write_address(reg_write_address),
+    .reg_write_address_ext(reg_write_address_ext),
+    .reg_write_data(reg_write_data),
+    .reg_write(reg_write);
+);
 
 
 // ********************************************************
