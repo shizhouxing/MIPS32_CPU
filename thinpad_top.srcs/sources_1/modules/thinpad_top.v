@@ -126,9 +126,8 @@ if_id _if_id(
 
 // registers
 
-wire reg_write, reg_write_ext;
+wire reg_write;
 wire[4:0] reg_write_address;
-wire[4:0] reg_write_address_ext;
 wire[31:0] reg_write_data;
 wire[31:0] reg_read_data_1, reg_read_data_2;
 
@@ -141,10 +140,8 @@ registers _registers(
     .read_address_1(inst_id[25:21]),
     .read_address_2(inst_id[20:16]),
     .write_address(reg_write_address),
-    .write_address_ext(reg_write_address_ext),
     .write_data(reg_write_data),
     .reg_write(reg_write),
-    .reg_write_ext(reg_write_ext),
     .read_data_1(reg_read_data_1),
     .read_data_2(reg_read_data_2)
 );
@@ -199,7 +196,6 @@ wire[31:0] mem_address;
 wire[31:0] mem_write_data;
 wire alu_z_mem;
 wire[4:0] reg_write_address_mem;
-wire[4:0] reg_write_address_ext_mem;
 wire[31:0] reg_write_data_mem;
 // 
 
@@ -228,7 +224,6 @@ exe_mem _exe_mem(
     .pc_jump(pc_jump),
     .pc_src(pc_src),
     .reg_write_address(reg_write_address_mem),
-    .reg_write_address_ext(reg_write_address_ext_mem),
     .reg_write_data(reg_write_data_mem)
 );
 
@@ -256,27 +251,23 @@ data_mem _data_mem(
 );
 
 // unconnected
-wire con_wb_memory, con_reg_write, con_reg_write_ext, con_mov_cond;
+wire con_wb_memory, con_reg_write, con_mov_cond;
 //
 
 mem_wb _mem_wb(
     .clk(clock_main),
     .alu_z(alu_z_mem),
     .reg_write_address_in(reg_write_address_mem),
-    .reg_write_address_ext_in(reg_write_address_ext_mem),
     .reg_write_data_in(reg_write_data_mem),
     .mem_read_data(mem_read_data),
 
     .con_wb_memory(con_wb_memory),
     .con_reg_write(con_reg_write),
-    .con_reg_write_ext(con_reg_write_ext),
     .con_mov_cond(con_mov_cond),
 
     .reg_write_address(reg_write_address),
-    .reg_write_address_ext(reg_write_address_ext),
     .reg_write_data(reg_write_data),
-    .reg_write(reg_write),
-    .reg_write_ext(reg_write_ext)
+    .reg_write(reg_write)
 );
 
 
