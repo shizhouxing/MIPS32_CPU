@@ -29,8 +29,8 @@ always @(op or A or B) begin
         ALU_OP_OR:  res = A | B;
         ALU_OP_XOR: res = A ^ B;
         ALU_OP_NOT: res = ~A;
-        ALU_OP_SLL: res = A << B;
-        ALU_OP_SRL: res = A >> B;
+        ALU_OP_SLL: res = B << A;
+        ALU_OP_SRL: res = B >> A;
         ALU_OP_SRA: res = ($signed(A)) >>> B;
         ALU_OP_ROL: res = (A << B) | (A >> (32'h00000020 - B));
         ALU_OP_LUI: res = B << 16;

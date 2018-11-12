@@ -25,7 +25,8 @@ wire[31:0] immediate_sign_extend;
 assign immediate_16 = inst_in[15:0];
 assign immediate_sign_extend = { immediate_16[15] ? 16'hffff : 16'h0, immediate_16 };
 
-// TODO: data_B maybe a 5-bit immediate number
+// TODO: data_A can be a 5-bit number
+
 
 always @(posedge clk) begin
     inst_out <= inst_in;
