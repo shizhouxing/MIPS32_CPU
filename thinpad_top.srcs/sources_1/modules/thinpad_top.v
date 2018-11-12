@@ -174,12 +174,20 @@ id_exe _id_exe(
     .mem_write_data(mem_write_data_exe)
 );
 
-// ******
-
 // unconnected
+wire[3:0] con_alu_op;
+//
+
 wire[31:0] alu_res;
 wire alu_s, alu_z;
-//
+alu _alu(
+    .op(con_alu_op),
+    .A(alu_a),
+    .B(alu_b),
+    .res(alu_res),
+    .S(alu_s),
+    .Z(alu_z)
+);
 
 // unconnected
 wire[1:0] con_reg_data;
