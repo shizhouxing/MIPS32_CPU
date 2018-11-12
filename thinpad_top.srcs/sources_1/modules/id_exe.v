@@ -20,7 +20,8 @@ module id_exe(
     output reg[31:0] mem_write_data
 ); 
 
-wire immediate_16, immediate_sign_extend;
+wire[15:0] immediate_16;
+wire[31:0] immediate_sign_extend;
 assign immediate_16 = inst_in[15:0];
 assign immediate_sign_extend = { immediate_16[15] ? 16'hffff : 16'h0, immediate_16 };
 
