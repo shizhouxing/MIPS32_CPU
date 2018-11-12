@@ -87,7 +87,7 @@ assign clock_main = clock_btn;
 wire reset;
 assign reset = reset_btn;
 
-
+// stall is unconnected
 wire stall, pc_src;
 wire[31:0] pc_jump, pc_address;
 pc _pc(
@@ -124,10 +124,31 @@ if_id _if_id(
 
 // ******
 
-// MEM
+// registers
 
+wire reg_write, reg_write_ext;
+wire[4:0] reg_write_address;
+wire[4:0] reg_write_address_ext;
+wire[31:0] reg_write_data;
+wire[31:0] reg_read_data_1, reg_read_data_2;
+
+registers _registers(
+    .clk(clock_main),
+    .read_address_1(inst_id[25:21]),
+    .read_address_2(inst_id[20:16]),
+    .write_address(reg_write_address),
+    .write_address_ext(reg_write_address_ext),
+    .write_data(reg_write_data),
+    .reg_write(reg_write),
+    .reg_write_ext(reg_write_ext),
+    .read_data_1(reg_read_data_1),
+    .read_data_2(reg_read_data_2)
+);
+
+// ******
+
+// unconnected
 wire[31:0] alu_a;
-
 wire[31:0] inst_exe;
 wire[31:0] alu_res;
 wire alu_s, alu_z;
@@ -135,21 +156,21 @@ wire[4:0] reg_write_address_exe;
 wire[31:0] mem_write_data_exe;
 wire[31:0] pc_plus_4;
 wire[31:0] pc_jump_exe;
+//
 
+// unconnected
 wire[1:0] con_reg_data;
 wire con_branch, con_branch_rev, con_branch_s, con_jump;
-
-wire[4:0] reg_write_address_mem;
-wire[4:0] reg_write_address_ext_mem;
-wire[31:0] reg_write_data_mem;
+//
 
 // connected 
 wire[31:0] mem_address;
 wire[31:0] mem_write_data;
-// **
-
-wire[31:0] inst_mem;
 wire alu_z_mem;
+wire[4:0] reg_write_address_mem;
+wire[4:0] reg_write_address_ext_mem;
+wire[31:0] reg_write_data_mem;
+// 
 
 exe_mem _exe_mem(
     .clk(clock_main),
@@ -169,7 +190,6 @@ exe_mem _exe_mem(
     .con_branch_s(con_branch_s),
     .con_jump(con_jump),
 
-    .inst_out(inst_mem),
     .mem_address(mem_address),
     .mem_write_data(mem_write_data),
 
@@ -182,10 +202,11 @@ exe_mem _exe_mem(
 );
 
 // unconnected signals
-wire[31:0] mem_read_data;
 wire[3:0] con_mem_mask;
 wire con_mem_write;
 // 
+
+wire[31:0] mem_read_data;
 
 data_mem _data_mem(
     .clk(clock_main),
@@ -203,10 +224,9 @@ data_mem _data_mem(
     .ram_we_n(base_ram_we_n)
 );
 
-wire con_wb_memory, con_reg_write, con_mov_cond;
-wire[4:0] reg_write_address, reg_write_address_ext;
-wire[31:0] reg_write_data;
-wire reg_write;
+// unconnected
+wire con_wb_memory, con_reg_write, con_reg_write_ext, con_mov_cond;
+//
 
 mem_wb _mem_wb(
     .clk(clock_main),
@@ -218,12 +238,14 @@ mem_wb _mem_wb(
 
     .con_wb_memory(con_wb_memory),
     .con_reg_write(con_reg_write),
+    .con_reg_write_ext(con_reg_write_ext),
     .con_mov_cond(con_mov_cond),
 
     .reg_write_address(reg_write_address),
     .reg_write_address_ext(reg_write_address_ext),
     .reg_write_data(reg_write_data),
-    .reg_write(reg_write);
+    .reg_write(reg_write),
+    .reg_write_ext(reg_write_ext)
 );
 
 

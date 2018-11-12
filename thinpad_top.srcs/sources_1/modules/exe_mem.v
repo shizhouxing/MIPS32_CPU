@@ -35,7 +35,6 @@ wire alu_b;
 assign alu_b = con_branch_s ? alu_s : (alu_z ^ con_branch_rev);
 
 always @(posedge clk) begin
-    inst_out <= inst_in;
     mem_address <= alu_res;
     mem_write_data <= mem_write_data_in;
     reg_write_address <= reg_write_address_in;
