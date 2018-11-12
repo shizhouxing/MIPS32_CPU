@@ -13,10 +13,15 @@ module registers(
     output reg[31:0] read_data_2
 );
 
-// TODO
+reg[31:0] r[0:31];
+
 always @(posedge clk) begin
-    read_data_1 <= 32'h0;
-    read_data_2 <= 32'h0;
+    read_data_1 <= (reg_write && (read_address_1 == write_address)) ? 
+        write_data : r[read_address_1];
+    read_data_2 <= (reg_write && (read_address_2 == write_address)) ? 
+        write_data : r[read_address_2];
+    if (reg_write)
+        r[write_address] <= write_data;
 end
 
 endmodule
