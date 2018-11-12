@@ -14,5 +14,9 @@ module registers(
 );
 
 // TODO
+always @(posedge clk) begin
+    read_data_1 <= 32'h0;
+    read_data_2 <= 32'h0;
+end
 
 endmodule
