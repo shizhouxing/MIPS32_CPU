@@ -75,7 +75,7 @@ always @(op or A or B) begin
     else if (op == ALU_OP_SUB) 
         V <= (A[31] & ~B[31] & ~res[31]) | (~A[31] & B[31] & res[31]);
     else begin
-        C <= 32'h00000000;
+        C = 32'h00000000;
         V <= 32'h00000000;
     end
 end

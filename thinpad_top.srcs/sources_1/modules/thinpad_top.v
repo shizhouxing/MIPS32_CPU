@@ -112,7 +112,7 @@ inst_mem _inst_mem(
 );
 
 wire[31:0] inst_id;
-wire pc_plus_4_id;
+wire[31:0] pc_plus_4_id;
 if_id _if_id(
     .clk(clock_main),
     .stall(stall),
@@ -132,7 +132,8 @@ wire[31:0] reg_write_data;
 wire[31:0] reg_read_data_1, reg_read_data_2;
 
 // unconnected
-wire con_alu_immediate, con_reg_dst;
+wire con_alu_immediate, con_alu_signed, con_alu_sa;
+wire[1:0] con_reg_dst;
 // 
 
 registers _registers(
@@ -161,6 +162,8 @@ id_exe _id_exe(
     .pc_plus_4_in(pc_plus_4_id),
 
     .con_alu_immediate(con_alu_immediate),
+    .con_alu_signed(con_alu_signed),
+    .con_alu_sa(con_alu_sa),
     .con_reg_dst(con_reg_dst),
     .inst_out(inst_exe),
     .pc_plus_4_out(pc_plus_4),
@@ -177,13 +180,16 @@ wire[3:0] con_alu_op;
 
 wire[31:0] alu_res;
 wire alu_s, alu_z;
+wire alu_c, alu_v; // unused
 alu _alu(
     .op(con_alu_op),
     .A(alu_a),
     .B(alu_b),
     .res(alu_res),
     .S(alu_s),
-    .Z(alu_z)
+    .Z(alu_z),
+    .C(alu_c),
+    .V(alu_v)
 );
 
 // unconnected

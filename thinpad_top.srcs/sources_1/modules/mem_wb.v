@@ -4,7 +4,6 @@ module mem_wb(
     input wire clk,
     input wire alu_z,
     input wire[4:0] reg_write_address_in,
-    input wire[4:0] reg_write_address_ext_in,
     input wire[31:0] reg_write_data_in,
     input wire[31:0] mem_read_data,
 

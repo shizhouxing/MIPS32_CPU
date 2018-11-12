@@ -9,6 +9,8 @@ module id_exe(
 
     // control signals
     input wire con_alu_immediate,
+    input wire con_alu_signed,
+    input wire con_alu_sa,
     input wire[1:0] con_reg_dst,
 
     output reg[31:0] inst_out,
@@ -21,19 +23,18 @@ module id_exe(
 ); 
 
 wire[15:0] immediate_16;
-wire[31:0] immediate_sign_extend;
+wire[31:0] immediate_sign_extend, immediate_unsigned_extend, immediate;
 assign immediate_16 = inst_in[15:0];
 assign immediate_sign_extend = { immediate_16[15] ? 16'hffff : 16'h0, immediate_16 };
-
-// TODO: data_A can be a 5-bit number
-
+assign immediate_unsigned_extend = { 16'h0, immediate_16};
+assign immediate = con_alu_signed ? immediate_sign_extend : immediate_unsigned_extend;
 
 always @(posedge clk) begin
     inst_out <= inst_in;
     pc_plus_4_out <= pc_plus_4_in;
     pc_jump <= pc_plus_4_in + (immediate_sign_extend << 2'b10);
-    data_A <= data_1;
-    data_B <= con_alu_immediate ? immediate_sign_extend : data_2;
+    data_A <= con_alu_sa ? { 24'h000000, 3'b000, inst_in[10:6] } : data_1;
+    data_B <= con_alu_immediate ? immediate : data_2;
 
     if (con_reg_dst[1])
         reg_write_address <= 5'b10000; // save $31 for jal

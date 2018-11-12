@@ -19,7 +19,6 @@ module exe_mem(
     input wire con_branch_s, // s or z
     input wire con_jump,
 
-    output reg[31:0] inst_out,
     output reg[31:0] mem_address,
     output reg[31:0] mem_write_data,
     output reg[4:0] reg_write_address,
