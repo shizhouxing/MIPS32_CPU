@@ -87,29 +87,22 @@ assign clock = clock_btn;
 wire reset;
 assign reset = reset_btn;
 
-wire[31:0] pc_next, pc_current;
-pc _pc(
-    .clk(clock),
-    .rst(reset),
-    .pc_in(pc_next),
-    .pc_out(pc_current)
-);
-
+wire[31:0] pc_current;
 wire stall_pc; // un
 wire[31:0] pc_plus_4_if;
 wire[31:0] inst_if;
 wire con_pc_jump;
 wire[31:0] pc_jump;
-pc_updater _pc_updater(
+
+pc _pc(
     .clk(clock),
     .rst(reset),
     .stall(stall_pc),
-    .pc_current(pc_current),
-    .inst(inst_if),
+    .inst(inst_if),  
     .pc_jump(pc_jump),
-    .con_pc_jump(con_pc_jump),
+    .con_pc_jump(con_pc_jump),  
     .pc_plus_4(pc_plus_4_if),
-    .pc_next(pc_next)
+    .pc_current(pc_current)
 );
 
 inst_mem _inst_mem(
@@ -122,7 +115,6 @@ inst_mem _inst_mem(
     .ram_oe_n(ext_ram_oe_n),
     .ram_we_n(ext_ram_we_n)
 );
-
 
 wire[31:0] inst_id, pc_plus_4_id;
 if_id _if_id(
@@ -276,39 +268,6 @@ mem_wb _mem_wb(
     .reg_write_address_out(reg_write_address),
     .reg_write_data(reg_write_data)
 );
-
-
-
-/*
-
-
-// unconnected signals
-
-// 
-
-// unconnected
-wire con_wb_memory, con_reg_write, con_mov_cond;
-//
-
-mem_wb _mem_wb(
-    .clk(clock_main),
-    .alu_z(alu_z_mem),
-    .reg_write_address_in(reg_write_address_mem),
-    .reg_write_data_in(reg_write_data_mem),
-    .mem_read_data(mem_read_data),
-
-    .con_wb_memory(con_wb_memory),
-    .con_reg_write(con_reg_write),
-    .con_mov_cond(con_mov_cond),
-
-    .reg_write_address(reg_write_address),
-    .reg_write_data(reg_write_data),
-    .reg_write(reg_write)
-);
-*/
-
-
-
 
 // ********************************************************
 // test 

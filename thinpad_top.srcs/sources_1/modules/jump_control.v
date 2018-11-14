@@ -33,6 +33,8 @@ always @(*) begin
             con_pc_jump <= 1'b1;
         6'b000000:
             con_pc_jump <= inst[5:0] == 6'b001000;  // JR
+        default:
+            con_pc_jump <= 1'b0;
     endcase
 
     // branch
