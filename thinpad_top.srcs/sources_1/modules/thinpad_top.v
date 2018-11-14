@@ -144,6 +144,7 @@ wire[31:0] reg_read_data_1, reg_read_data_2;
 
 registers _registers(
     .clk(clock),
+    .rst(reset),
     .read_address_1(inst_id[25:21]),
     .read_address_2(inst_id[20:16]),
     .write_address(reg_write_address),
@@ -162,44 +163,25 @@ jump_control _jump_control(
     .pc_jump(pc_jump)
 );
 
-
-
-/*
-
-
 // unconnected
 wire con_alu_immediate, con_alu_signed, con_alu_sa;
 wire[1:0] con_reg_dst;
-// 
 
-
-
-// ******
-
-// registers
-
-
-
-wire[31:0] inst_exe;
-wire[31:0] pc_plus_4;
-wire[31:0] pc_jump_exe;
 wire[31:0] alu_a, alu_b;
 wire[4:0] reg_write_address_exe;
 wire[31:0] mem_write_data_exe;
 id_exe _id_exe(
-    .clk(clock_main),
+    .clk(clock),
+    .rst(reset),
     .data_1(reg_read_data_1),
     .data_2(reg_read_data_2),
     .inst_in(inst_id),
-    .pc_plus_4_in(pc_plus_4_id),
 
     .con_alu_immediate(con_alu_immediate),
     .con_alu_signed(con_alu_signed),
     .con_alu_sa(con_alu_sa),
     .con_reg_dst(con_reg_dst),
-    .inst_out(inst_exe),
-    .pc_plus_4_out(pc_plus_4),
-    .pc_jump(pc_jump_exe),
+    
     .data_A(alu_a),
     .data_B(alu_b),
     .reg_write_address(reg_write_address_exe),
@@ -208,7 +190,6 @@ id_exe _id_exe(
 
 // unconnected
 wire[3:0] con_alu_op;
-//
 
 wire[31:0] alu_res;
 wire alu_s, alu_z;
@@ -223,6 +204,10 @@ alu _alu(
     .C(alu_c),
     .V(alu_v)
 );
+
+
+
+/*
 
 // unconnected
 wire[1:0] con_reg_data;
