@@ -1,4 +1,4 @@
-`default_nettype none
+`default_nettype wire
 
 module thinpad_top(
     input wire clk_50M,           //50MHz 时钟输入
@@ -93,6 +93,9 @@ wire[31:0] pc_plus_4_if;
 wire[31:0] inst_if;
 wire con_pc_jump;
 wire[31:0] pc_jump;
+
+// TODO
+assign stall_pc = 1'b0;
 
 pc _pc(
     .clk(clock),

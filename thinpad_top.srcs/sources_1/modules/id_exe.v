@@ -27,8 +27,8 @@ module id_exe(
     input wire con_mem_write_in,
     output reg[3:0] con_mem_mask_out, 
     output reg con_mem_write_out,
-    input wire con_wb_src_in,
-    output reg con_wb_src_out,
+    input wire[1:0] con_wb_src_in,
+    output reg[1:0] con_wb_src_out,
 
     output reg[31:0] data_A, // for alu
     output reg[31:0] data_B, // for alu
@@ -44,7 +44,8 @@ assign immediate = con_alu_signed ? $signed(immediate_16) : immediate_16;
 
 always @(posedge clk or posedge rst) begin
     if (rst) begin
-        // TODO: reset the output control signals
+        con_reg_write_out <= 1'b0;
+        con_mem_write_out <= 1'b0;
     end
     else begin
         con_alu_op_out <= con_alu_op_in;

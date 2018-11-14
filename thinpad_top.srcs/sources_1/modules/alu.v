@@ -12,18 +12,18 @@ module alu(
 
 always @(op or A or B) begin
     case (op)
-        ALU_OP_ADD: {C, res} = {1'b0, A} + {1'b0, B};
-        ALU_OP_SUB: {C, res} = {1'b0, A} - {1'b1, B};
-        ALU_OP_AND: res = A & B;
-        ALU_OP_OR:  res = A | B;
-        ALU_OP_XOR: res = A ^ B;
-        ALU_OP_NOT: res = ~A;
-        ALU_OP_SLL: res = B << A;
-        ALU_OP_SRL: res = B >> A;
-        ALU_OP_SRA: res = ($signed(A)) >>> B;
-        ALU_OP_ROL: res = (A << B) | (A >> (32'h00000020 - B));
-        ALU_OP_LUI: res = B << 16;
-        ALU_OP_CLZ: res = (A[31] & 6'b000000) | 
+         `ALU_OP_ADD: {C, res} = {1'b0, A} + {1'b0, B};
+         `ALU_OP_SUB: {C, res} = {1'b0, A} - {1'b1, B};
+         `ALU_OP_AND: res = A & B;
+         `ALU_OP_OR:  res = A | B;
+         `ALU_OP_XOR: res = A ^ B;
+         `ALU_OP_NOT: res = ~A;
+         `ALU_OP_SLL: res = B << A;
+         `ALU_OP_SRL: res = B >> A;
+         `ALU_OP_SRA: res = ($signed(A)) >>> B;
+         `ALU_OP_ROL: res = (A << B) | (A >> (32'h00000020 - B));
+         `ALU_OP_LUI: res = B << 16;
+         `ALU_OP_CLZ: res = (A[31] & 6'b000000) | 
             (~A[31] & A[30] & 6'b000001) | 
             (~A[31] & ~A[30] & A[29] & 6'b000010) | 
             (~A[31] & ~A[30] & ~A[29] & A[28] & 6'b000011) | 
@@ -59,9 +59,9 @@ always @(op or A or B) begin
     endcase
     S <= res[31];
     Z <= res == 32'h00000000;
-    if (op == ALU_OP_ADD)
+    if (op ==  `ALU_OP_ADD)
         V <= (A[31] & B[31] & ~res[31]) | (~A[31] & ~B[31] & res[31]);
-    else if (op == ALU_OP_SUB) 
+    else if (op ==  `ALU_OP_SUB) 
         V <= (A[31] & ~B[31] & ~res[31]) | (~A[31] & B[31] & res[31]);
     else begin
         C = 32'h00000000;

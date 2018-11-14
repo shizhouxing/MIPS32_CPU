@@ -20,8 +20,8 @@ module exe_mem(
     input wire con_mem_write_in,
     output reg[3:0] con_mem_mask_out, 
     output reg con_mem_write_out,
-    input wire con_wb_src_in,
-    output reg con_wb_src_out,    
+    input wire[1:0] con_wb_src_in,
+    output reg[1:0] con_wb_src_out,    
 
     output reg[31:0] pc_plus_8_out,
     output reg[31:0] mem_address,
@@ -35,6 +35,7 @@ module exe_mem(
 always @(posedge clk or posedge rst) begin
     if (rst) begin
         reg_write <= 1'b0;
+        con_mem_write_out <= 1'b0;
     end
     else begin
         con_mem_mask_out <= con_mem_mask_in;
