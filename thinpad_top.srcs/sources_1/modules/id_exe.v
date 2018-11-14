@@ -13,6 +13,22 @@ module id_exe(
     input wire con_alu_signed,
     input wire con_alu_sa,
     input wire[1:0] con_reg_dst,
+ 
+    // for exe
+    input wire[3:0] con_alu_op_in,
+    input wire con_reg_write_in,    
+    input wire con_mov_cond_in,
+    output reg[3:0] con_alu_op_out,
+    output reg con_reg_write_out,
+    output reg con_mov_cond_out,
+
+    // for mem
+    input wire[3:0] con_mem_mask_in,
+    input wire con_mem_write_in,
+    output reg[3:0] con_mem_mask_out, 
+    output reg con_mem_write_out,
+    input wire con_wb_src_in,
+    output reg con_wb_src_out,
 
     output reg[31:0] data_A, // for alu
     output reg[31:0] data_B, // for alu
@@ -31,6 +47,15 @@ always @(posedge clk or posedge rst) begin
         // TODO: reset the output control signals
     end
     else begin
+        con_alu_op_out <= con_alu_op_in;
+        con_reg_write_out <= con_reg_write_in;
+        con_mov_cond_out <= con_mov_cond_in;
+
+        con_mem_mask_out <= con_mem_mask_in;
+        con_mem_write_out <= con_mem_write_in;
+
+        con_wb_src_out <= con_wb_src_in;
+
         data_A <= con_alu_sa ? inst_in[10:6] : data_1;
         data_B <= con_alu_immediate ? immediate : data_2;
         pc_plus_8 <= pc_plus_4 + 4'h4;

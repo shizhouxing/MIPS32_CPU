@@ -152,9 +152,37 @@ jump_control _jump_control(
     .pc_jump(pc_jump)
 );
 
-// unconnected
+// id
 wire con_alu_immediate, con_alu_signed, con_alu_sa;
 wire[1:0] con_reg_dst;
+
+// exe
+wire[3:0] con_alu_op_id;
+wire[3:0] con_alu_op;
+wire con_reg_write_id, con_mov_cond_id;
+wire con_reg_write_exe, con_mov_cond;
+
+// mem
+wire con_mem_write_id, con_mem_write_exe, con_mem_write;
+wire[3:0] con_mem_mask_id, con_mem_mask_exe, con_mem_mask;
+wire[1:0] con_wb_src, con_wb_src_id, con_wb_src_exe;
+
+control _control(
+    .inst(inst_id),
+
+    .con_alu_immediate(con_alu_immediate),
+    .con_alu_signed(con_alu_signed),
+    .con_alu_sa(con_alu_sa),
+    .con_reg_dst(con_reg_dst),
+
+    .con_alu_op(con_alu_op_id),
+    .con_reg_write(con_reg_write_id),
+    .con_mov_cond(con_mov_cond_id),
+
+    .con_mem_mask(con_mem_mask_id),
+    .con_mem_write(con_mem_write_id),
+    .con_wb_src(con_wb_src_id)
+);
 
 wire[31:0] alu_a, alu_b;
 wire[4:0] reg_write_address_exe;
@@ -173,15 +201,27 @@ id_exe _id_exe(
     .con_alu_sa(con_alu_sa),
     .con_reg_dst(con_reg_dst),
     
+    .con_alu_op_in(con_alu_op_id),
+    .con_reg_write_in(con_reg_write_id),
+    .con_mov_cond_in(con_mov_cond_id),   
+    .con_alu_op_out(con_alu_op),    
+    .con_reg_write_out(con_reg_write_exe),
+    .con_mov_cond_out(con_mov_cond),     
+
+    .con_mem_mask_in(con_mem_mask_id),
+    .con_mem_write_in(con_mem_write_id),
+    .con_mem_mask_out(con_mem_mask_exe),
+    .con_mem_write_out(con_mem_write_exe),
+
+    .con_wb_src_in(con_wb_src_id),
+    .con_wb_src_out(con_wb_src_exe),
+    
     .data_A(alu_a),
     .data_B(alu_b),
     .reg_write_address(reg_write_address_exe),
     .mem_write_data(mem_write_data_exe),
     .pc_plus_8(pc_plus_8_exe)
 );
-
-// unconnected
-wire[3:0] con_alu_op;
 
 wire[31:0] alu_res;
 wire alu_z;
@@ -196,10 +236,6 @@ alu _alu(
     .C(alu_c),
     .V(alu_v)
 );
-
-
-// unconnected
-wire con_reg_write_exe, con_mov_cond;
 
 wire[31:0] pc_plus_8_mem;
 wire[31:0] mem_address;
@@ -219,8 +255,17 @@ exe_mem _exe_mem(
     .reg_write_address_in(reg_write_address_exe),
     .mem_write_data_in(mem_write_data_exe),
     .data_A(alu_a),
+
     .con_reg_write(con_reg_write_exe),
     .con_mov_cond(con_mov_cond),
+
+    .con_mem_mask_in(con_mem_mask_exe),
+    .con_mem_write_in(con_mem_write_exe),
+    .con_mem_mask_out(con_mem_mask),
+    .con_mem_write_out(con_mem_write),
+    .con_wb_src_in(con_wb_src_exe),
+    .con_wb_src_out(con_wb_src),
+
     .pc_plus_8_out(pc_plus_8_mem),
     .mem_address(mem_address),
     .reg_write_address(reg_write_address_mem),
@@ -229,10 +274,6 @@ exe_mem _exe_mem(
     .alu_res_out(alu_res_mem),
     .mov_data(mov_data_mem)
 );
-
-// unconnected
-wire[3:0] con_mem_mask;
-wire con_mem_write;
 
 wire[31:0] mem_read_data;
 data_mem _data_mem(
@@ -250,9 +291,6 @@ data_mem _data_mem(
     .ram_oe_n(base_ram_oe_n),
     .ram_we_n(base_ram_we_n)
 );
-
-// unconnected
-wire[1:0] con_wb_src;
 
 mem_wb _mem_wb(
     .clk(clock),
