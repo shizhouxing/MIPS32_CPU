@@ -7,7 +7,7 @@ module registers(
     input wire[4:0] write_address,
     input wire[31:0] write_data,
 
-    input wire reg_write,
+    input wire con_reg_write,
 
     output reg[31:0] read_data_1,
     output reg[31:0] read_data_2
@@ -15,12 +15,15 @@ module registers(
 
 reg[31:0] r[0:31];
 
+// TODO: reset?
+
 always @(posedge clk) begin
-    read_data_1 <= (reg_write && (read_address_1 == write_address)) ? 
+    r[0] <= 32'h0;
+    read_data_1 <= (con_reg_write && (read_address_1 == write_address)) ? 
         write_data : r[read_address_1];
-    read_data_2 <= (reg_write && (read_address_2 == write_address)) ? 
+    read_data_2 <= (con_reg_write && (read_address_2 == write_address)) ? 
         write_data : r[read_address_2];
-    if (reg_write)
+    if (con_reg_write && write_address != 5'b00000)
         r[write_address] <= write_data;
 end
 

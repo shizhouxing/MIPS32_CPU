@@ -2,6 +2,7 @@
 
 module if_id(
     input wire clk,
+    input wire rst,
     input wire stall,
     input wire[31:0] inst_in,
     input wire[31:0] pc_plus_4_in,
@@ -9,13 +10,21 @@ module if_id(
     output reg[31:0] pc_plus_4_out
 );
 
-// TODO: rst ?
-always @(posedge clk) begin
-    if (stall) 
-        inst_out <= 32'h00000000;
-    else
-        inst_out <= inst_in;
-    pc_plus_4_out <= pc_plus_4_in;
+always @(posedge clk or posedge rst) begin
+    if (rst) begin
+        inst_out <= 32'b0;
+        pc_plus_4_out <= 32'b0;
+    end
+    else begin
+        if (stall) begin // insert NOP
+            inst_out <= 32'b0;
+            pc_plus_4_out <= 32'b0;
+        end
+        else begin
+            inst_out <= inst_in;
+            pc_plus_4_out <= pc_plus_4_in;
+        end
+    end
 end
 
 endmodule

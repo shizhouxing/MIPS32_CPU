@@ -81,27 +81,39 @@ module thinpad_top(
 );
 
 // main clock
-wire clock_main;
-assign clock_main = clock_btn;
+wire clock;
+assign clock = clock_btn;
 // reset
 wire reset;
 assign reset = reset_btn;
 
-// stall is unconnected
-wire stall, pc_src;
-wire[31:0] pc_jump, pc_address;
+wire[31:0] pc_next, pc_current;
 pc _pc(
-    .clk(clock_main),
+    .clk(clock),
     .rst(reset),
-    .stall(stall),
-    .pc_src(pc_src),
-    .pc_in(pc_jump),
-    .pc_out(pc_address)
+    .pc_in(pc_next),
+    .pc_out(pc_current)
 );
 
+wire stall_pc; // un
+wire[31:0] pc_plus_4_if;
 wire[31:0] inst_if;
+wire con_pc_jump;
+wire[31:0] pc_jump;
+pc_updater _pc_updater(
+    .clk(clock),
+    .rst(reset),
+    .stall(stall_pc),
+    .pc_current(pc_current),
+    .inst(inst_if),
+    .pc_jump(pc_jump),
+    .con_pc_jump(con_pc_jump),
+    .pc_plus_4(pc_plus_4_if),
+    .pc_next(pc_next)
+);
+
 inst_mem _inst_mem(
-    .address(pc_address),
+    .address(pc_current),
     .data(inst_if),
     .ram_data(ext_ram_data),
     .ram_addr(ext_ram_addr),
@@ -111,41 +123,61 @@ inst_mem _inst_mem(
     .ram_we_n(ext_ram_we_n)
 );
 
-wire[31:0] inst_id;
-wire[31:0] pc_plus_4_id;
+
+wire[31:0] inst_id, pc_plus_4_id;
 if_id _if_id(
-    .clk(clock_main),
-    .stall(stall),
+    .clk(clock),
+    .rst(reset),
+    .stall(1'b0), // TODO
     .inst_in(inst_if),
-    .pc_plus_4_in(pc_address + 4'h4),
+    .pc_plus_4_in(pc_plus_4_if),
     .inst_out(inst_id),
     .pc_plus_4_out(pc_plus_4_id)
 );
 
-// ******
-
-// registers
-
-wire reg_write;
+// unconnected
+wire con_reg_write;
 wire[4:0] reg_write_address;
 wire[31:0] reg_write_data;
+
 wire[31:0] reg_read_data_1, reg_read_data_2;
+
+registers _registers(
+    .clk(clock),
+    .read_address_1(inst_id[25:21]),
+    .read_address_2(inst_id[20:16]),
+    .write_address(reg_write_address),
+    .write_data(reg_write_data),
+    .con_reg_write(con_reg_write),
+    .read_data_1(reg_read_data_1),
+    .read_data_2(reg_read_data_2)
+);
+
+jump_control _jump_control(
+    .inst(inst_id),
+    .pc_plus_4(pc_plus_4_id),
+    .data_a(reg_read_data_1),
+    .data_b(reg_read_data_2),
+    .con_pc_jump(con_pc_jump),
+    .pc_jump(pc_jump)
+);
+
+
+
+/*
+
 
 // unconnected
 wire con_alu_immediate, con_alu_signed, con_alu_sa;
 wire[1:0] con_reg_dst;
 // 
 
-registers _registers(
-    .clk(clock_main),
-    .read_address_1(inst_id[25:21]),
-    .read_address_2(inst_id[20:16]),
-    .write_address(reg_write_address),
-    .write_data(reg_write_data),
-    .reg_write(reg_write),
-    .read_data_1(reg_read_data_1),
-    .read_data_2(reg_read_data_2)
-);
+
+
+// ******
+
+// registers
+
 
 
 wire[31:0] inst_exe;
@@ -275,6 +307,9 @@ mem_wb _mem_wb(
     .reg_write_data(reg_write_data),
     .reg_write(reg_write)
 );
+*/
+
+
 
 
 // ********************************************************
