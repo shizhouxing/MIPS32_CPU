@@ -170,12 +170,14 @@ wire[1:0] con_reg_dst;
 wire[31:0] alu_a, alu_b;
 wire[4:0] reg_write_address_exe;
 wire[31:0] mem_write_data_exe;
+wire[31:0] pc_plus_8_exe;
 id_exe _id_exe(
     .clk(clock),
     .rst(reset),
     .data_1(reg_read_data_1),
     .data_2(reg_read_data_2),
     .inst_in(inst_id),
+    .pc_plus_4(pc_plus_4_id),
 
     .con_alu_immediate(con_alu_immediate),
     .con_alu_signed(con_alu_signed),
@@ -185,15 +187,16 @@ id_exe _id_exe(
     .data_A(alu_a),
     .data_B(alu_b),
     .reg_write_address(reg_write_address_exe),
-    .mem_write_data(mem_write_data_exe)
+    .mem_write_data(mem_write_data_exe),
+    .pc_plus_8(pc_plus_8_exe)
 );
 
 // unconnected
 wire[3:0] con_alu_op;
 
 wire[31:0] alu_res;
-wire alu_s, alu_z;
-wire alu_c, alu_v; // unused
+wire alu_z;
+wire alu_s, alu_c, alu_v; // unused
 alu _alu(
     .op(con_alu_op),
     .A(alu_a),
@@ -206,53 +209,64 @@ alu _alu(
 );
 
 
+// unconnected
+wire con_reg_write_exe, con_mov_cond;
+
+wire[31:0] pc_plus_8_mem;
+wire[31:0] mem_address;
+wire[31:0] mem_write_data;
+
+wire[4:0] reg_write_address_mem;
+wire[31:0] reg_write_data_mem;
+wire con_reg_write_mem;
+wire[31:0] alu_res_mem, mov_data_mem;
+
+exe_mem _exe_mem(
+    .clk(clock),
+    .rst(reset),
+    .alu_z(alu_z),
+    .alu_res(alu_res),
+    .pc_plus_8_in(pc_plus_8_exe),
+    .reg_write_address_in(reg_write_address_exe),
+    .mem_write_data_in(mem_write_data_exe),
+    .data_A(alu_a),
+    .con_reg_write(con_reg_write_exe),
+    .con_mov_cond(con_mov_cond),
+    .pc_plus_8_out(pc_plus_8_mem),
+    .mem_address(mem_address),
+    .reg_write_address(reg_write_address_mem),
+    .mem_write_data(mem_write_data),
+    .reg_write(con_reg_write_mem),
+    .alu_res_out(alu_res_mem),
+    .mov_data(mov_data_mem)
+);
+
+wire[3:0] con_mem_mask;
+wire con_mem_write;
+wire[31:0] mem_read_data;
+data_mem _data_mem(
+    .clk(clock),
+    .mask(con_mem_mask),
+    .write(con_mem_write),
+    .address(mem_address),
+    .data_in(mem_write_data),
+    .data_out(mem_read_data),
+    
+    .ram_data(base_ram_data),
+    .ram_addr(base_ram_addr),
+    .ram_be_n(base_ram_be_n),
+    .ram_ce_n(base_ram_ce_n),
+    .ram_oe_n(base_ram_oe_n),
+    .ram_we_n(base_ram_we_n)
+);
+
+
 
 /*
 
-// unconnected
-wire[1:0] con_reg_data;
-wire con_branch, con_branch_rev, con_branch_s, con_jump;
-//
-
-// connected 
-wire[31:0] mem_address;
-wire[31:0] mem_write_data;
-wire alu_z_mem;
-wire[4:0] reg_write_address_mem;
-wire[31:0] reg_write_data_mem;
-// 
-
-exe_mem _exe_mem(
-    .clk(clock_main),
-    .alu_res(alu_res),
-    .alu_s(alu_s),
-    .alu_z(alu_z),
-    .inst_in(inst_exe),
-    .reg_write_address_in(reg_write_address_exe),
-    .mem_write_data_in(mem_write_data_exe),
-    .pc_plus_4(pc_plus_4),
-    .data_A(alu_a),
-    .pc_jump_in(pc_jump_exe),
-
-    .con_reg_data(con_reg_data),
-    .con_branch(con_branch),
-    .con_branch_rev(con_branch_rev),
-    .con_branch_s(con_branch_s),
-    .con_jump(con_jump),
-
-    .mem_address(mem_address),
-    .mem_write_data(mem_write_data),
-
-    .alu_z_out(alu_z_mem),
-    .pc_jump(pc_jump),
-    .pc_src(pc_src),
-    .reg_write_address(reg_write_address_mem),
-    .reg_write_data(reg_write_data_mem)
-);
 
 // unconnected signals
-wire[3:0] con_mem_mask;
-wire con_mem_write;
+
 // 
 
 wire[31:0] mem_read_data;

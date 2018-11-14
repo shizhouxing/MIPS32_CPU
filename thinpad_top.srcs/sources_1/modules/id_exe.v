@@ -6,6 +6,7 @@ module id_exe(
     input wire[31:0] data_1,
     input wire[31:0] data_2,
     input wire[31:0] inst_in,
+    input wire[31:0] pc_plus_4,
 
     // control signals
     input wire con_alu_immediate,
@@ -16,7 +17,8 @@ module id_exe(
     output reg[31:0] data_A, // for alu
     output reg[31:0] data_B, // for alu
     output reg[4:0] reg_write_address,
-    output reg[31:0] mem_write_data
+    output reg[31:0] mem_write_data,
+    output reg[31:0] pc_plus_8
 ); 
 
 wire[15:0] immediate_16;
@@ -31,6 +33,7 @@ always @(posedge clk or posedge rst) begin
     else begin
         data_A <= con_alu_sa ? inst_in[10:6] : data_1;
         data_B <= con_alu_immediate ? immediate : data_2;
+        pc_plus_8 <= pc_plus_4 + 4'h4;
 
         if (con_reg_dst[1])
             reg_write_address <= 5'b10000; // save $31 for jal
