@@ -135,13 +135,10 @@ if_id _if_id(
     .pc_plus_4_out(pc_plus_4_id)
 );
 
-// unconnected
 wire con_reg_write;
 wire[4:0] reg_write_address;
 wire[31:0] reg_write_data;
-
 wire[31:0] reg_read_data_1, reg_read_data_2;
-
 registers _registers(
     .clk(clock),
     .rst(reset),
@@ -241,8 +238,10 @@ exe_mem _exe_mem(
     .mov_data(mov_data_mem)
 );
 
+// unconnected
 wire[3:0] con_mem_mask;
 wire con_mem_write;
+
 wire[31:0] mem_read_data;
 data_mem _data_mem(
     .clk(clock),
@@ -260,6 +259,24 @@ data_mem _data_mem(
     .ram_we_n(base_ram_we_n)
 );
 
+// unconnected
+wire[1:0] con_wb_src;
+
+mem_wb _mem_wb(
+    .clk(clock),
+    .rst(reset),
+    .reg_write_in(con_reg_write_mem),
+    .reg_write_address_in(reg_write_address_mem),
+    .pc_plus_8(pc_plus_8_mem),
+    .mov_data(mov_data_mem),
+    .mem_read_data(mem_read_data),
+    .alu_res(alu_res_mem),
+    .con_wb_src(con_wb_src),
+    .reg_write_out(con_reg_write),
+    .reg_write_address_out(reg_write_address),
+    .reg_write_data(reg_write_data)
+);
+
 
 
 /*
@@ -268,24 +285,6 @@ data_mem _data_mem(
 // unconnected signals
 
 // 
-
-wire[31:0] mem_read_data;
-
-data_mem _data_mem(
-    .clk(clock_main),
-    .mask(con_mem_mask),
-    .write(con_mem_write),
-    .address(mem_address),
-    .data_in(mem_write_data),
-    .data_out(mem_read_data),
-    
-    .ram_data(base_ram_data),
-    .ram_addr(base_ram_addr),
-    .ram_be_n(base_ram_be_n),
-    .ram_ce_n(base_ram_ce_n),
-    .ram_oe_n(base_ram_oe_n),
-    .ram_we_n(base_ram_we_n)
-);
 
 // unconnected
 wire con_wb_memory, con_reg_write, con_mov_cond;

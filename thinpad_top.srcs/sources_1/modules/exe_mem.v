@@ -19,13 +19,14 @@ module exe_mem(
     output reg[31:0] mem_address,
     output reg[4:0] reg_write_address,
     output reg[31:0] mem_write_data,
-    output reg reg_write,
-    output reg alu_res_out,
-    output reg mov_data
+    output reg[31:0] alu_res_out,
+    output reg[31:0] mov_data,
+    output reg reg_write
 );
 
 always @(posedge clk or posedge rst) begin
     if (rst) begin
+        reg_write <= 1'b0;
     end
     else begin
         pc_plus_8_out <= pc_plus_8_in;
