@@ -1,5 +1,7 @@
 `timescale 1ns / 1ps
 
+`include "constants.v"
+
 module mem_wb(
     input wire clk,
     input wire rst,
@@ -16,11 +18,6 @@ module mem_wb(
     output reg[4:0] reg_write_address_out,
     output reg[31:0] reg_write_data
 );
-
-parameter WB_SRC_PC_PLUS_8 = 2'b00;
-parameter WB_SRC_MOV = 2'b01;
-parameter WB_SRC_MEM = 2'b10;
-parameter WB_SRC_ALU = 2'b11;
 
 always @(posedge clk or posedge rst) begin
     if (rst) begin

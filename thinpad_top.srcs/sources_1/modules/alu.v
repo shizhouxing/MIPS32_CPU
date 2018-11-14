@@ -1,5 +1,7 @@
 `timescale 1ns / 1ps
 
+`include "constants.v"
+
 module alu( 
     input wire[3:0] op,
     input wire[31:0] A,
@@ -7,19 +9,6 @@ module alu(
     output reg[31:0] res,
     output reg C, S, Z, V
 );
-
-parameter ALU_OP_ADD = 4'h0;
-parameter ALU_OP_SUB = 4'h1;
-parameter ALU_OP_AND = 4'h2;
-parameter ALU_OP_OR  = 4'h3;
-parameter ALU_OP_XOR = 4'h4;
-parameter ALU_OP_NOT = 4'h5;
-parameter ALU_OP_SLL = 4'h6;
-parameter ALU_OP_SRL = 4'h7;
-parameter ALU_OP_SRA = 4'h8;
-parameter ALU_OP_ROL = 4'h9;
-parameter ALU_OP_LUI = 4'ha;
-parameter ALU_OP_CLZ = 4'hb;
 
 always @(op or A or B) begin
     case (op)

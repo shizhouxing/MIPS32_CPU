@@ -1,5 +1,7 @@
 `timescale 1ns / 1ps
 
+`include "constants.v"
+
 // generate control signals
 module control(
     input wire[31:0] inst,
@@ -22,7 +24,7 @@ module control(
 );
 
 always @(*) begin
-    case (inst[31:26]) begin
+    case (inst[31:26])
         6'b001001: begin // ADDIU 001001ssssstttttiiiiiiiiiiiiiiii
             { con_alu_immediate, con_alu_signed, con_alu_sa } <= 3'b110;
             con_reg_dst <= 2'b00;
