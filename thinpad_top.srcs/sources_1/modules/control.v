@@ -127,6 +127,19 @@ always @(*) begin
                 endcase
             end
 
+            3'b101: begin // store
+                { con_alu_immediate, con_alu_signed, con_reg_write, con_mem_write }  <= 4'b1101;
+                con_alu_op <= `ALU_OP_ADD;
+                case (inst[28:26])
+                    3'b000: begin // SB
+                        con_mem_mask <= 4'b1110;
+                    end
+                    3'b011: begin // SW
+                        con_mem_mask <= 4'b0;
+                    end
+                endcase
+            end
+
             3'b011: begin // CLZ
                 { con_alu_immediate, con_reg_write, con_mem_write} = 3'b010;
                 con_wb_src <= `WB_SRC_ALU;
