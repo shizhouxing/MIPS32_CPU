@@ -10,7 +10,7 @@ module alu(
     output reg C, S, Z, V
 );
 
-always @(op or A or B) begin
+always @(*) begin
     case (op)
          `ALU_OP_ADD: {C, res} = {1'b0, A} + {1'b0, B};
          `ALU_OP_SUB: {C, res} = {1'b0, A} - {1'b1, B};

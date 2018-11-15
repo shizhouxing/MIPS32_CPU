@@ -24,16 +24,21 @@ module control(
 );
 
 always @(*) begin
-    case (inst[31:26])
-        6'b001001: begin // ADDIU 001001ssssstttttiiiiiiiiiiiiiiii
-            { con_alu_immediate, con_alu_signed, con_alu_sa, con_jal } <= 4'b1100;
-            con_alu_op <= `ALU_OP_ADD;
-            { con_reg_write, con_mov_cond } <= 2'b10;
-            con_mem_mask <= 4'b0000;
-            con_mem_write <= 1'b0;
-            con_wb_src <= `WB_SRC_ALU;
-        end
-    endcase
+    if (inst == 32'b0) begin // NOP
+        { con_reg_write, con_mem_write } = 2'b00;
+    end
+    else begin
+        case (inst[31:26])
+            6'b001001: begin // ADDIU 001001ssssstttttiiiiiiiiiiiiiiii
+                { con_alu_immediate, con_alu_signed, con_alu_sa, con_jal } <= 4'b1100;
+                con_alu_op <= `ALU_OP_ADD;
+                { con_reg_write, con_mov_cond } <= 2'b10;
+                con_mem_mask <= 4'b0000;
+                con_mem_write <= 1'b0;
+                con_wb_src <= `WB_SRC_ALU;
+            end
+        endcase
+    end
 end
 
 endmodule
