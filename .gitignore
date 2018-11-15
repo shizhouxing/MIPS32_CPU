@@ -2,4 +2,7 @@
 *.cache*
 *.log
 *.bit
+*.bin
+*.o
+*.elf
 
