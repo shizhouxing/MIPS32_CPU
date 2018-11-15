@@ -25,6 +25,6 @@ assign ram_oe_n = ~write ? 1'b0 : 1'b1;
 assign ram_be_n = mask;
 assign ram_addr = address[21:2];
 assign ram_data = write ? data_in : 32'bz;
-assign data_out = ram_data;
+assign data_out = ram_data & ~mask;
 
 endmodule

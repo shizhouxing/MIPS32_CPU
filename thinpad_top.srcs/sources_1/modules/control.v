@@ -20,6 +20,7 @@ module control(
     // mem
     output reg[3:0] con_mem_mask,
     output reg con_mem_write,
+    output reg con_mem_signed_extend,
     output reg[1:0] con_wb_src
 );
 
@@ -29,13 +30,12 @@ always @(*) begin
     end
     else begin
         con_alu_sa <= (inst[5:0] == 6'b000000) || (inst[5:0] == 6'b000010);
+        con_mov_cond <= (inst[31:26] == 6'b000000) && (inst[5:0] == 6'b001010);
+        con_jal <= inst[31:26] == 6'b000011;
 
         case (inst[31:29])
-            3'b001: begin
-                { con_alu_immediate, con_jal } <= 4'b10;
-                { con_reg_write, con_mov_cond } <= 2'b10;
-                con_mem_mask <= 4'b0000;
-                con_mem_write <= 1'b0;
+            3'b001: begin // alu-based operations with an immediate number
+                { con_alu_immediate, con_reg_write, con_mem_write }  <= 3'b110;
                 con_wb_src <= `WB_SRC_ALU;
                 case (inst[28:26])
                     3'b001: begin // ADDIU 001001ssssstttttiiiiiiiiiiiiiiii
@@ -61,12 +61,11 @@ always @(*) begin
                 endcase
             end
 
-            3'b000: begin
+            3'b000: begin // alu-based operations without an immediate number, or branch/jump
                 case (inst[28:26]) 
                     3'b000: begin
-                        { con_alu_immediate, con_alu_signed, con_jal } <= 4'b000;
-                        { con_mov_cond, con_mem_write } <= 2'b00;
-                        con_reg_write <= (inst[5:0] != 6'b001000) ? 1'b1 : 1'b0; // JR
+                        { con_alu_immediate, con_mem_write } <= 2'b00;
+                        con_reg_write <= inst[5:0] != 6'b001000; // JR
                         con_wb_src <= `WB_SRC_ALU;
                         case (inst[5:0])
                             6'b100000: begin // ADDU 000000ssssstttttddddd00000100001
@@ -93,10 +92,12 @@ always @(*) begin
                             6'b000110: begin // SRLV 000000ssssstttttddddd00000000110
                                 con_alu_op <= `ALU_OP_SRL;
                             end
+                            6'b001010: begin // MOVZ 000000ssssstttttddddd00000001010
+                                con_alu_op <= `ALU_OP_B;
+                            end
                         endcase
                     end
                     3'b011: begin // JAL
-                        con_jal <= 1'b1;
                         { con_reg_write, con_mem_write } <= 2'b10;
                         con_wb_src <= `WB_SRC_PC_PLUS_8;
                     end
@@ -106,12 +107,32 @@ always @(*) begin
                 endcase
             end
 
+            3'b100: begin // load
+                { con_alu_immediate, con_alu_signed, con_reg_write, con_mem_write }  <= 4'b1110;
+                con_alu_op <= `ALU_OP_ADD;
+                con_wb_src <= `WB_SRC_MEM;
+                case (inst[28:26])
+                    3'b000: begin // LB
+                        con_mem_mask <= 4'b1110;
+                        con_mem_signed_extend <= 1'b1;
+                    end
+                    3'b011: begin // LW
+                        con_mem_mask <= 4'b0;
+                        con_mem_signed_extend <= 1'b0;
+                    end
+                    3'b100: begin // LBU
+                        con_mem_mask <= 4'b1110;
+                        con_mem_signed_extend <= 1'b0;
+                    end
+                endcase
+            end
+
             3'b011: begin // CLZ
-                { con_jal, con_reg_write, con_mov_cond } = 3'b010;
-                con_mem_write <= 1'b0;
+                { con_alu_immediate, con_reg_write, con_mem_write} = 3'b010;
                 con_wb_src <= `WB_SRC_ALU;
                 con_alu_op <= `ALU_OP_CLZ;
             end
+
         endcase
     end
 end

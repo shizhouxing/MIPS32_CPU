@@ -167,6 +167,7 @@ wire con_reg_write_exe, con_mov_cond;
 
 // mem
 wire con_mem_write_id, con_mem_write_exe, con_mem_write;
+wire con_mem_signed_extend_id, con_mem_signed_extend_exe, con_mem_signed_extend;
 wire[3:0] con_mem_mask_id, con_mem_mask_exe, con_mem_mask;
 wire[1:0] con_wb_src, con_wb_src_id, con_wb_src_exe;
 
@@ -184,6 +185,7 @@ control _control(
 
     .con_mem_mask(con_mem_mask_id),
     .con_mem_write(con_mem_write_id),
+    .con_mem_signed_extend(con_mem_signed_extend_id),
     .con_wb_src(con_wb_src_id)
 );
 
@@ -213,8 +215,10 @@ id_exe _id_exe(
 
     .con_mem_mask_in(con_mem_mask_id),
     .con_mem_write_in(con_mem_write_id),
+    .con_mem_signed_extend_in(con_mem_signed_extend_id),
     .con_mem_mask_out(con_mem_mask_exe),
     .con_mem_write_out(con_mem_write_exe),
+    .con_mem_signed_extend_out(con_mem_signed_extend_exe),
 
     .con_wb_src_in(con_wb_src_id),
     .con_wb_src_out(con_wb_src_exe),
@@ -264,8 +268,10 @@ exe_mem _exe_mem(
 
     .con_mem_mask_in(con_mem_mask_exe),
     .con_mem_write_in(con_mem_write_exe),
+    .con_mem_signed_extend_in(con_mem_signed_extend_exe),
     .con_mem_mask_out(con_mem_mask),
     .con_mem_write_out(con_mem_write),
+    .con_mem_signed_extend_out(con_mem_signed_extend),
     .con_wb_src_in(con_wb_src_exe),
     .con_wb_src_out(con_wb_src),
 
@@ -305,6 +311,7 @@ mem_wb _mem_wb(
     .mem_read_data(mem_read_data),
     .alu_res(alu_res_mem),
     .con_wb_src(con_wb_src),
+    .con_mem_signed_extend(con_mem_signed_extend),
     .reg_write_out(con_reg_write),
     .reg_write_address_out(reg_write_address),
     .reg_write_data(reg_write_data)

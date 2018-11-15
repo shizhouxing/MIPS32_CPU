@@ -13,6 +13,7 @@ module mem_wb(
     input wire[31:0] alu_res,
 
     input wire[1:0] con_wb_src,
+    input wire con_mem_signed_extend,
 
     output reg reg_write_out,
     output reg[4:0] reg_write_address_out,
@@ -31,8 +32,12 @@ always @(posedge clk or posedge rst) begin
                 reg_write_data <= pc_plus_8;
             `WB_SRC_MOV:
                 reg_write_data <= mov_data;
-            `WB_SRC_MEM:
-                reg_write_data <= mem_read_data;
+            `WB_SRC_MEM: begin
+                if (con_mem_signed_extend)
+                    reg_write_data <= $signed(mem_read_data[7:0]);
+                else
+                    reg_write_data <= mem_read_data;
+            end
             `WB_SRC_ALU:
                 reg_write_data <= alu_res;
         endcase

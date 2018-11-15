@@ -18,8 +18,10 @@ module exe_mem(
     // for mem
     input wire[3:0] con_mem_mask_in,
     input wire con_mem_write_in,
+    input wire con_mem_signed_extend_in,
     output reg[3:0] con_mem_mask_out, 
     output reg con_mem_write_out,
+    output reg con_mem_signed_extend_out,
     input wire[1:0] con_wb_src_in,
     output reg[1:0] con_wb_src_out,    
 
@@ -40,6 +42,7 @@ always @(posedge clk or posedge rst) begin
     else begin
         con_mem_mask_out <= con_mem_mask_in;
         con_mem_write_out <= con_mem_write_in;
+        con_mem_signed_extend_out <= con_mem_signed_extend_in;
 
         con_wb_src_out <= con_wb_src_in;
 
