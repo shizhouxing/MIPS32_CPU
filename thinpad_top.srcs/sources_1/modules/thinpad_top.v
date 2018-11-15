@@ -157,7 +157,7 @@ jump_control _jump_control(
 
 // id
 wire con_alu_immediate, con_alu_signed, con_alu_sa;
-wire[1:0] con_reg_dst;
+wire con_jal;
 
 // exe
 wire[3:0] con_alu_op_id;
@@ -176,7 +176,7 @@ control _control(
     .con_alu_immediate(con_alu_immediate),
     .con_alu_signed(con_alu_signed),
     .con_alu_sa(con_alu_sa),
-    .con_reg_dst(con_reg_dst),
+    .con_jal(con_jal),
 
     .con_alu_op(con_alu_op_id),
     .con_reg_write(con_reg_write_id),
@@ -202,7 +202,7 @@ id_exe _id_exe(
     .con_alu_immediate(con_alu_immediate),
     .con_alu_signed(con_alu_signed),
     .con_alu_sa(con_alu_sa),
-    .con_reg_dst(con_reg_dst),
+    .con_jal(con_jal),
     
     .con_alu_op_in(con_alu_op_id),
     .con_reg_write_in(con_reg_write_id),
