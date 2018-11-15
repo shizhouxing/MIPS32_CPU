@@ -1,15 +1,23 @@
     .text
-    .p2align 2
     .global START
 START:
-    addiu $2, $0, 0x88
+    ori $2, $0, 1
     nop
     nop
     nop
     nop
-    addiu $3, $2, 0x58
+    ori $3, $0, 2
+    nop
+    nop
+    nop
+    nop    
+    addu $4, $2, $3
+    nop
+    nop
+    nop
+    nop    
+    addiu $30, $4, 0
     nop
     nop
     nop
     nop
-   

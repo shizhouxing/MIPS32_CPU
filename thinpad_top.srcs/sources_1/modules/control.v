@@ -29,7 +29,8 @@ always @(*) begin
         { con_reg_write, con_mem_write } = 2'b00;
     end
     else begin
-        con_alu_sa <= (inst[5:0] == 6'b000000) || (inst[5:0] == 6'b000010);
+        con_alu_sa <= (inst[31:26] == 6'b000000) && (
+            (inst[5:0] == 6'b000000) || (inst[5:0] == 6'b000010));
         con_mov_cond <= (inst[31:26] == 6'b000000) && (inst[5:0] == 6'b001010);
         con_jal <= inst[31:26] == 6'b000011;
 
@@ -46,7 +47,7 @@ always @(*) begin
                         con_alu_op <= `ALU_OP_AND;
                         con_alu_signed <= 1'b0;
                     end
-                    3'b001: begin // ORI 001101ssssstttttiiiiiiiiiiiiiiii
+                    3'b101: begin // ORI 001101ssssstttttiiiiiiiiiiiiiiii
                         con_alu_op <= `ALU_OP_OR;
                         con_alu_signed <= 1'b0;
                     end

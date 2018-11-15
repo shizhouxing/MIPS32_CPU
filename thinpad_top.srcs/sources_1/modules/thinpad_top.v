@@ -134,6 +134,7 @@ wire con_reg_write;
 wire[4:0] reg_write_address;
 wire[31:0] reg_write_data;
 wire[31:0] reg_read_data_1, reg_read_data_2;
+wire[31:0] result;
 registers _registers(
     .clk(clock),
     .rst(reset),
@@ -143,8 +144,10 @@ registers _registers(
     .write_data(reg_write_data),
     .con_reg_write(con_reg_write),
     .read_data_1(reg_read_data_1),
-    .read_data_2(reg_read_data_2)
+    .read_data_2(reg_read_data_2),
+    .result(result) // for debug
 );
+assign leds = result[15:0];
 
 jump_control _jump_control(
     .inst(inst_id),

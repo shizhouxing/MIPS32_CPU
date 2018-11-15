@@ -11,11 +11,13 @@ module registers(
     input wire con_reg_write,
 
     output reg[31:0] read_data_1,
-    output reg[31:0] read_data_2
+    output reg[31:0] read_data_2,
+    output wire[31:0] result // for debug
 );
 
 integer i;
 reg[31:0] r[0:31];
+assign result = r[30];
 
 always @(*) begin
     read_data_1 <= (con_reg_write && (read_address_1 == write_address)) ? 
