@@ -12,6 +12,7 @@
     `define ALU_OP_ROL 4'h9 
     `define ALU_OP_LUI 4'ha 
     `define ALU_OP_CLZ 4'hb 
+    `define ALU_OP_LUI 4'hc
 
     `define WB_SRC_PC_PLUS_8 2'b00 
     `define WB_SRC_MOV 2'b01 

@@ -28,14 +28,89 @@ always @(*) begin
         { con_reg_write, con_mem_write } = 2'b00;
     end
     else begin
-        case (inst[31:26])
-            6'b001001: begin // ADDIU 001001ssssstttttiiiiiiiiiiiiiiii
-                { con_alu_immediate, con_alu_signed, con_alu_sa, con_jal } <= 4'b1100;
-                con_alu_op <= `ALU_OP_ADD;
+        con_alu_sa <= (inst[5:0] == 6'b000000) || (inst[5:0] == 6'b000010);
+
+        case (inst[31:29])
+            3'b001: begin
+                { con_alu_immediate, con_jal } <= 4'b10;
                 { con_reg_write, con_mov_cond } <= 2'b10;
                 con_mem_mask <= 4'b0000;
                 con_mem_write <= 1'b0;
                 con_wb_src <= `WB_SRC_ALU;
+                case (inst[28:26])
+                    3'b001: begin // ADDIU 001001ssssstttttiiiiiiiiiiiiiiii
+                        con_alu_op <= `ALU_OP_ADD;
+                        con_alu_signed <= 1'b1;
+                    end
+                    3'b100: begin // ANDI 001100ssssstttttiiiiiiiiiiiiiiii
+                        con_alu_op <= `ALU_OP_AND;
+                        con_alu_signed <= 1'b0;
+                    end
+                    3'b001: begin // ORI 001101ssssstttttiiiiiiiiiiiiiiii
+                        con_alu_op <= `ALU_OP_OR;
+                        con_alu_signed <= 1'b0;
+                    end
+                    3'b110: begin // XORI 001110ssssstttttiiiiiiiiiiiiiiii
+                        con_alu_op <= `ALU_OP_XOR;
+                        con_alu_signed <= 1'b0;
+                    end
+                    3'b111: begin
+                        con_alu_op <= `ALU_OP_LUI;
+                        con_alu_signed <= 1'b0;
+                    end
+                endcase
+            end
+
+            3'b000: begin
+                case (inst[28:26]) 
+                    3'b000: begin
+                        { con_alu_immediate, con_alu_signed, con_jal } <= 4'b000;
+                        { con_mov_cond, con_mem_write } <= 2'b00;
+                        con_reg_write <= (inst[5:0] != 6'b001000) ? 1'b1 : 1'b0; // JR
+                        con_wb_src <= `WB_SRC_ALU;
+                        case (inst[5:0])
+                            6'b100000: begin // ADDU 000000ssssstttttddddd00000100001
+                                con_alu_op <= `ALU_OP_SLL;
+                            end     
+                            6'b100010: begin // ADDU 000000ssssstttttddddd00000100001
+                                con_alu_op <= `ALU_OP_SRL;
+                            end                                                     
+                            6'b100001: begin // ADDU 000000ssssstttttddddd00000100001
+                                con_alu_op <= `ALU_OP_ADD;
+                            end
+                            6'b100010: begin // SUB 0000 00ss ssst tttt dddd d000 0010 0010
+                                con_alu_op <= `ALU_OP_SUB;
+                            end
+                            6'b100100: begin // AND 000000ssssstttttddddd00000100100
+                                con_alu_op <= `ALU_OP_AND;
+                            end
+                            6'b100101: begin // OR 000000ssssstttttddddd00000100101
+                                con_alu_op <= `ALU_OP_OR;
+                            end
+                            6'b100110: begin // XOR 000000ssssstttttddddd00000100110
+                                con_alu_op <= `ALU_OP_XOR;
+                            end
+                            6'b000110: begin // SRLV 000000ssssstttttddddd00000000110
+                                con_alu_op <= `ALU_OP_SRL;
+                            end
+                        endcase
+                    end
+                    3'b011: begin // JAL
+                        con_jal <= 1'b1;
+                        { con_reg_write, con_mem_write } <= 2'b10;
+                        con_wb_src <= `WB_SRC_PC_PLUS_8;
+                    end
+                    default: begin // branch or j or jr
+                        { con_reg_write, con_mem_write } = 2'b00;
+                    end
+                endcase
+            end
+
+            3'b011: begin // CLZ
+                { con_jal, con_reg_write, con_mov_cond } = 3'b010;
+                con_mem_write <= 1'b0;
+                con_wb_src <= `WB_SRC_ALU;
+                con_alu_op <= `ALU_OP_CLZ;
             end
         endcase
     end
