@@ -80,12 +80,21 @@ module thinpad_top(
     output wire video_de           //行数据有效信号，用于区分消隐区
 );
 
-// main clock
-wire clock;
-assign clock = clock_btn;
 // reset
 wire reset;
 assign reset = reset_btn;
+
+wire clk_slow; 
+clock_frac _clock_frac(
+    .rst(reset),
+    .clk_in(clk_50M),
+    .clk_out(clk_slow)
+);
+
+// main clock
+wire clock;
+assign clock = clk_slow;
+//assign clock = clock_btn;
 
 wire[31:0] pc_current;
 wire stall_pc; // un

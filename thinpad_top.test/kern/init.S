@@ -11,6 +11,16 @@ START:
     nop
     nop
     nop    
+    sw $2, ($0)
+    nop
+    nop
+    nop
+    nop        
+    sw $3, 4($0)
+    nop
+    nop
+    nop
+    nop     
     ori $20, $0, 2
     nop
     nop
@@ -21,6 +31,11 @@ START:
     nop
     nop
     nop    
+    ori $22, $0, 8
+    nop
+    nop
+    nop
+    nop        
 loop:
     beq $20, $21, done
     nop
@@ -42,18 +57,33 @@ loop:
     nop
     nop
     nop    
-    addiu $20, $20, 1
+    sw $4, ($22)
     nop
     nop
     nop
     nop    
+    addiu $20, $20, 1
+    nop
+    nop
+    nop
+    nop  
+    addiu $22, $22, 4
+    nop
+    nop
+    nop
+    nop        
+    addiu $30, $4, 0
+    nop
+    nop
+    nop
+    nop            
     j loop
     nop
     nop
     nop
     nop    
 done:
-    addiu $30, $4, 0
+    lw $30, 36($0)
     nop
     nop
     nop
