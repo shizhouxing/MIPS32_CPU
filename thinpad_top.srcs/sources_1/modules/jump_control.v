@@ -24,7 +24,7 @@ always @(*) begin
         6'b000100: // BEQ
             con_pc_jump <= data_a == data_b;
         6'b000111: // BGTZ
-            con_pc_jump <= ~data_a[31];
+            con_pc_jump <= ~data_a[31] & (data_a != 32'b0);
         6'b000101: // BNE
             con_pc_jump <= data_a != data_b;
         6'b000010: // J

@@ -41,6 +41,7 @@ SECTIONS
     PROVIDE(uregs_sp = uregs + (29 - 1) * 4);
     PROVIDE(uregs_fp = uregs + (30 - 1) * 4);
     . = 0x80000000;
+
     .text.init : {
         KEEP (*(.text.init))
     }
