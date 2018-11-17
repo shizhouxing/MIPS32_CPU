@@ -58,7 +58,8 @@ reg[31:0] data_A_no_forw, data_B_no_forw;
 wire[31:0] data_A_forw, data_B_forw;
 reg reg_data_A, reg_data_B; // whether data_A and data_B are from registers respectively
 
-forward_exe _forward_exe_A(
+forward _forward_A(
+    .source(3'b110),
     .read_address(read_address_1),
     .read_data(data_A_no_forw),
     .reg_write_address_mem(forw_reg_write_address_mem),
@@ -72,7 +73,8 @@ forward_exe _forward_exe_A(
     .read_data_new(data_A_forw)
 );   
 
-forward_exe _forward_exe_B(
+forward _forward_B(
+    .source(3'b110),
     .read_address(read_address_2),
     .read_data(data_B_no_forw),
     .reg_write_address_mem(forw_reg_write_address_mem),
@@ -118,7 +120,7 @@ always @(posedge clk or posedge rst) begin
         pc_plus_8 <= pc_plus_4 + 4'h4;
 
         if (con_jal)
-            reg_write_address <= 5'b10000; // save $31 for jal
+            reg_write_address <= 5'b11111; // save $31 for jal
         else
             reg_write_address <= con_alu_immediate ? inst_in[20:16] : inst_in[15:11];
 

@@ -46,7 +46,8 @@ module exe_mem(
 reg[4:0] read_address_1, read_address_2;
 reg[31:0] mov_data_no_forw, mem_write_data_no_forw;
 
-forward_mem _forward_mem_A(
+forward _forward_A(
+    .source(3'b011),
     .read_address(read_address_1),
     .read_data(mov_data_no_forw),
     .reg_write_address_wb(forw_reg_write_address_wb),
@@ -58,7 +59,8 @@ forward_mem _forward_mem_A(
     .read_data_new(mov_data)
 );
 
-forward_mem _forward_mem_B(
+forward _forward_B(
+    .source(3'b011),
     .read_address(read_address_2),
     .read_data(mem_write_data_no_forw),
     .reg_write_address_wb(forw_reg_write_address_wb),

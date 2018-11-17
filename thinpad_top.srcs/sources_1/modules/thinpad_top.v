@@ -158,15 +158,6 @@ registers _registers(
 );
 assign leds = result[15:0];
 
-jump_control _jump_control(
-    .inst(inst_id),
-    .pc_plus_4(pc_plus_4_id),
-    .data_a(reg_read_data_1),
-    .data_b(reg_read_data_2),
-    .con_pc_jump(con_pc_jump),
-    .pc_jump(pc_jump)
-);
-
 // id
 wire con_alu_immediate, con_alu_signed, con_alu_sa;
 wire con_jal;
@@ -182,6 +173,48 @@ wire con_mem_write_id, con_mem_write_exe, con_mem_write;
 wire con_mem_signed_extend_id, con_mem_signed_extend_exe, con_mem_signed_extend;
 wire[3:0] con_mem_mask_id, con_mem_mask_exe, con_mem_mask;
 wire[1:0] con_wb_src, con_wb_src_id, con_wb_src_exe;
+wire[31:0] pc_plus_8_mem;
+wire[31:0] mem_address;
+wire[31:0] mem_write_data;
+wire[4:0] reg_write_address_mem;
+wire[31:0] reg_write_data_mem;
+wire con_reg_write_mem;
+wire[31:0] alu_res_mem, mov_data_mem;
+
+wire[31:0] reg_read_data_1_forw, reg_read_data_2_forw;
+
+forward _forward_id_A(
+    .source(3'b100),
+    .read_address(inst_id[25:21]),
+    .read_data(reg_read_data_1),
+    .reg_write_address_mem(reg_write_address_mem),
+    .reg_write_mem(con_reg_write_mem),
+    .wb_src_mem(con_wb_src),
+    .pc_plus_8_mem(pc_plus_8_mem),
+    .alu_res_mem(alu_res_mem),
+    .read_data_new(reg_read_data_1_forw)
+);
+
+forward _forward_id_B(
+    .source(3'b100),
+    .read_address(inst_id[20:16]),
+    .read_data(reg_read_data_2),
+    .reg_write_address_mem(reg_write_address_mem),
+    .reg_write_mem(con_reg_write_mem),
+    .wb_src_mem(con_wb_src),
+    .pc_plus_8_mem(pc_plus_8_mem),
+    .alu_res_mem(alu_res_mem),
+    .read_data_new(reg_read_data_2_forw)
+);
+
+jump_control _jump_control(
+    .inst(inst_id),
+    .pc_plus_4(pc_plus_4_id),
+    .data_a(reg_read_data_1_forw),
+    .data_b(reg_read_data_2_forw),
+    .con_pc_jump(con_pc_jump),
+    .pc_jump(pc_jump)
+);
 
 control _control(
     .inst(inst_id),
@@ -206,15 +239,6 @@ wire[4:0] reg_write_address_exe;
 wire[31:0] mem_write_data_exe;
 wire[31:0] pc_plus_8_exe;
 wire[31:0] inst_exe;
-
-// mem
-wire[31:0] pc_plus_8_mem;
-wire[31:0] mem_address;
-wire[31:0] mem_write_data;
-wire[4:0] reg_write_address_mem;
-wire[31:0] reg_write_data_mem;
-wire con_reg_write_mem;
-wire[31:0] alu_res_mem, mov_data_mem;
 
 id_exe _id_exe(
     .clk(clock),
