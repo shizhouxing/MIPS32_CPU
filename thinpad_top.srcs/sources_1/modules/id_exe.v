@@ -3,6 +3,8 @@
 module id_exe(
     input wire clk,
     input wire rst,
+    input wire stall,
+    input wire nop,
     input wire[31:0] data_1,
     input wire[31:0] data_2,
     input wire[31:0] inst_in,
@@ -97,34 +99,42 @@ always @(posedge clk or posedge rst) begin
         con_mem_write_out <= 1'b0;
     end
     else begin
-        inst_out <= inst_in;
+        if (~stall) begin
+            if (nop) begin
+                { con_reg_write_out, con_mem_write_out } <= 2'b00;
+                inst_out <= 32'b0;
+            end
+            else begin
+                inst_out <= inst_in;
 
-        con_alu_op_out <= con_alu_op_in;
-        con_reg_write_out <= con_reg_write_in;
-        con_mov_cond_out <= con_mov_cond_in;
+                con_alu_op_out <= con_alu_op_in;
+                con_reg_write_out <= con_reg_write_in;
+                con_mov_cond_out <= con_mov_cond_in;
 
-        con_mem_mask_out <= con_mem_mask_in;
-        con_mem_write_out <= con_mem_write_in;
-        con_mem_signed_extend_out <= con_mem_signed_extend_in;
+                con_mem_mask_out <= con_mem_mask_in;
+                con_mem_write_out <= con_mem_write_in;
+                con_mem_signed_extend_out <= con_mem_signed_extend_in;
 
-        con_wb_src_out <= con_wb_src_in;
+                con_wb_src_out <= con_wb_src_in;
 
-        read_address_1 <= inst_in[25:21];
-        read_address_2 <= inst_in[20:16];
+                read_address_1 <= inst_in[25:21];
+                read_address_2 <= inst_in[20:16];
 
-        data_A_no_forw <= con_alu_sa ? inst_in[10:6] : data_1;
-        data_B_no_forw <= con_alu_immediate ? immediate : data_2;
-        reg_data_A <= ~con_alu_sa;
-        reg_data_B <= ~con_alu_immediate;
+                data_A_no_forw <= con_alu_sa ? inst_in[10:6] : data_1;
+                data_B_no_forw <= con_alu_immediate ? immediate : data_2;
+                reg_data_A <= ~con_alu_sa;
+                reg_data_B <= ~con_alu_immediate;
 
-        pc_plus_8 <= pc_plus_4 + 4'h4;
+                pc_plus_8 <= pc_plus_4 + 4'h4;
 
-        if (con_jal)
-            reg_write_address <= 5'b11111; // save $31 for jal
-        else
-            reg_write_address <= con_alu_immediate ? inst_in[20:16] : inst_in[15:11];
+                if (con_jal)
+                    reg_write_address <= 5'b11111; // save $31 for jal
+                else
+                    reg_write_address <= con_alu_immediate ? inst_in[20:16] : inst_in[15:11];
 
-        mem_write_data <= data_2;
+                mem_write_data <= data_2;
+            end
+        end
     end
 end
 

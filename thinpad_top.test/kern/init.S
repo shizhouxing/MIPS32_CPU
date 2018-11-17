@@ -10,7 +10,7 @@ done:
 
 stall:
     ori $2, $0, 1
-    ori $3, $0, 2
+    ori $3, $0, 1
     beq $2, $3, stall_1
     nop
     ori $30, $0, 0x233

@@ -3,6 +3,7 @@
 module exe_mem(
     input wire clk,
     input wire rst,
+    input wire nop,
     input wire[31:0] inst_in,
     input wire alu_z,
     input wire[31:0] alu_res,
@@ -78,25 +79,30 @@ always @(posedge clk or posedge rst) begin
         con_mem_write_out <= 1'b0;
     end
     else begin
-        read_address_1 <= inst_in[25:21];
-        read_address_2 <= inst_in[20:16];
+        if (nop) begin
+            { con_mem_write_out, reg_write } <= 2'b00;
+        end
+        else begin
+            read_address_1 <= inst_in[25:21];
+            read_address_2 <= inst_in[20:16];
 
-        con_mem_mask_out <= con_mem_mask_in;
-        con_mem_write_out <= con_mem_write_in;
-        con_mem_signed_extend_out <= con_mem_signed_extend_in;
+            con_mem_mask_out <= con_mem_mask_in;
+            con_mem_write_out <= con_mem_write_in;
+            con_mem_signed_extend_out <= con_mem_signed_extend_in;
 
-        con_wb_src_out <= con_wb_src_in;
+            con_wb_src_out <= con_wb_src_in;
 
-        pc_plus_8_out <= pc_plus_8_in;
-        mem_address <= alu_res;
-        mem_write_data_no_forw <= mem_write_data_in;
-        reg_write_address <= reg_write_address_in;
+            pc_plus_8_out <= pc_plus_8_in;
+            mem_address <= alu_res;
+            mem_write_data_no_forw <= mem_write_data_in;
+            reg_write_address <= reg_write_address_in;
 
-        // decide reg write
-        reg_write <= con_reg_write & (~con_mov_cond | alu_z);
-        
-        alu_res_out <= alu_res;
-        mov_data_no_forw <= data_A;
+            // decide reg write
+            reg_write <= con_reg_write & (~con_mov_cond | alu_z);
+            
+            alu_res_out <= alu_res;
+            mov_data_no_forw <= data_A;
+        end
     end
 end
 

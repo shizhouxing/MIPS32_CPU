@@ -103,31 +103,6 @@ wire[31:0] inst_if;
 wire con_pc_jump;
 wire[31:0] pc_jump;
 
-// TODO
-assign stall_pc = 1'b0;
-
-pc _pc(
-    .clk(clock),
-    .rst(reset),
-    .stall(stall_pc),
-    .inst(inst_if),  
-    .pc_jump(pc_jump),
-    .con_pc_jump(con_pc_jump),  
-    .pc_plus_4(pc_plus_4_if),
-    .pc_current(pc_current)
-);
-
-inst_mem _inst_mem(
-    .address(pc_current),
-    .data(inst_if),
-    .ram_data(ext_ram_data),
-    .ram_addr(ext_ram_addr),
-    .ram_be_n(ext_ram_be_n),
-    .ram_ce_n(ext_ram_ce_n),
-    .ram_oe_n(ext_ram_oe_n),
-    .ram_we_n(ext_ram_we_n)
-);
-
 // id
 wire[31:0] inst_id, pc_plus_4_id;
 wire con_alu_immediate, con_alu_signed, con_alu_sa;
@@ -157,10 +132,36 @@ wire[31:0] reg_write_data_mem;
 wire con_reg_write_mem;
 wire[31:0] alu_res_mem, mov_data_mem;
 
+// hazard
+wire[0:2] stall, nop;
+
+pc _pc(
+    .clk(clock),
+    .rst(reset),
+    .stall(stall[0]),
+    .inst(inst_if),  
+    .pc_jump(pc_jump),
+    .con_pc_jump(con_pc_jump),  
+    .pc_plus_4(pc_plus_4_if),
+    .pc_current(pc_current)
+);
+
+inst_mem _inst_mem(
+    .address(pc_current),
+    .data(inst_if),
+    .ram_data(ext_ram_data),
+    .ram_addr(ext_ram_addr),
+    .ram_be_n(ext_ram_be_n),
+    .ram_ce_n(ext_ram_ce_n),
+    .ram_oe_n(ext_ram_oe_n),
+    .ram_we_n(ext_ram_we_n)
+);
+
 if_id _if_id(
     .clk(clock),
     .rst(reset),
-    .stall(1'b0), // TODO
+    .stall(stall[1]),
+    .nop(nop[0]),
     .inst_in(inst_if),
     .pc_plus_4_in(pc_plus_4_if),
     .inst_out(inst_id),
@@ -239,7 +240,6 @@ control _control(
     .con_wb_src(con_wb_src_id)
 );
 
-wire stall;
 wire mem_conflict;
 assign mem_conflict = 1'b0; // TODO
 hazard_detector _hazard_detector(
@@ -253,12 +253,15 @@ hazard_detector _hazard_detector(
     .reg_write_mem(con_reg_write_mem),
     .wb_src_mem(con_wb_src),
     .mem_conflict(mem_conflict),
-    .stall(stall)
+    .stall(stall),
+    .nop(nop) 
 );
 
 id_exe _id_exe(
     .clk(clock),
     .rst(reset),
+    .stall(stall[2]),
+    .nop(nop[1]),
     .data_1(reg_read_data_1),
     .data_2(reg_read_data_2),
     .inst_in(inst_id),
@@ -325,6 +328,7 @@ wire[31:0] reg_write_data_end;
 exe_mem _exe_mem(
     .clk(clock),
     .rst(reset),
+    .nop(nop[2]),    
     .inst_in(inst_exe),
     .alu_z(alu_z),
     .alu_res(alu_res),
