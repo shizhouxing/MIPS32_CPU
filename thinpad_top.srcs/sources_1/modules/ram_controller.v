@@ -32,10 +32,9 @@ module ram_controller(
 
 reg base_write, ext_write;
 assign result_inst = ext_ram_data;
-assign result_data = (conflict ? ext_ram_data : base_ram_data) & ~mask;
+assign result_data = conflict ? ext_ram_data : base_ram_data;
 assign ext_ram_ce_n = 1'b0;
-//assign base_ram_ce_n = data_en;
-assign base_ram_ce_n = 1'b0;
+assign base_ram_ce_n = data_en;
 assign base_ram_we_n = base_write ? ~clk : 1'b1;
 assign ext_ram_we_n = ext_write ? ~clk : 1'b1;
 assign base_ram_oe_n = ~base_write ? 1'b0 : 1'b1;

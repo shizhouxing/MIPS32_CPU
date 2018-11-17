@@ -3,10 +3,12 @@
 module mem(
     input wire[31:0] address,
     input wire[31:0] ram_read_data,
+    input wire[31:0] uart_read_data,
     input wire mem_read,
     input wire mem_write,
 
     output reg ram_en,
+    output reg uart_en,
     output reg[31:0] read_data
 );
 
@@ -17,10 +19,14 @@ always @(*) begin
             ram_en <= 1'b0;
         else
             ram_en <= 1'b1;
+        uart_en <= 1'b1;
     end
-    else begin // TODO: uart, .etc
-        ram_en <= 1'b1;
+    else begin 
+        // uart 
         // 0xBFD003F8-0xBFD003FD
+        ram_en <= 1'b1;
+        uart_en <= 1'b0;
+        read_data <= uart_read_data;
     end
 end
 

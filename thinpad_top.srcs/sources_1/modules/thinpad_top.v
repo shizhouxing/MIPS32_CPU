@@ -141,7 +141,7 @@ wire[4:0] reg_write_address_mem;
 wire[31:0] reg_write_data_mem;
 wire con_reg_write_mem;
 wire[31:0] alu_res_mem, mov_data_mem;
-wire[31:0] mem_read_data;
+wire[31:0] mem_read_data, uart_read_data;
 
 // end
 wire[4:0] reg_write_address_end;
@@ -152,7 +152,7 @@ wire[31:0] reg_write_data_end;
 wire[0:2] stall, nop;
 
 wire mem_conflict;
-wire mem_ram_en; // TODO
+wire mem_ram_en, mem_uart_en; // TODO
 wire[31:0] mem_ram_read_data;
 
 pc _pc(
@@ -193,6 +193,24 @@ ram_controller _ram_controller(
     .result_inst(inst_if),
     .result_data(mem_ram_read_data),
     .conflict(mem_conflict)
+);
+
+uart_controller _uart_controller(
+    .clk(clock),
+    .address(mem_address),
+    .data(mem_write_data),
+    .en(mem_uart_en),
+    .data_read(con_mem_read),
+    .data_write(con_mem_write),
+
+    .uart_data(base_ram_data[7:0]),
+    .uart_rdn(uart_rdn),
+    .uart_wrn(uart_wrn),
+    .uart_dataready(uart_dataready),
+    .uart_tbre(uart_tbre),
+    .uart_tsre(uart_tsre),
+
+    .result_data(mem_uart_read_data)
 );
 
 if_id _if_id(
@@ -399,9 +417,11 @@ exe_mem _exe_mem(
 mem _mem(
     .address(mem_address),
     .ram_read_data(mem_ram_read_data),
+    .uart_read_data(mem_uart_read_data),
     .mem_read(con_mem_read),
     .mem_write(con_mem_write),
     .ram_en(mem_ram_en),
+    .uart_en(mem_uart_en),
     .read_data(mem_read_data)
 );
 
