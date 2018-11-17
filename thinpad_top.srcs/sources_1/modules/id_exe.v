@@ -16,7 +16,7 @@ module id_exe(
     input wire[31:0] forw_alu_res_mem,
     input wire[4:0] forw_reg_write_address_wb,
     input wire forw_reg_write_wb,
-    input wire[31:0] forw_reg_write_data,
+    input wire[31:0] forw_reg_write_data_wb,
 
     // control signals
     input wire con_alu_immediate,
@@ -46,7 +46,8 @@ module id_exe(
     output wire[31:0] data_B, // for alu
     output reg[4:0] reg_write_address,
     output reg[31:0] mem_write_data,
-    output reg[31:0] pc_plus_8
+    output reg[31:0] pc_plus_8,
+    output reg[31:0] inst_out
 ); 
 
 wire[31:0] immediate;
@@ -67,7 +68,7 @@ forward_exe _forward_exe_A(
     .alu_res_mem(forw_alu_res_mem),
     .reg_write_address_wb(forw_reg_write_address_wb),
     .reg_write_wb(forw_reg_write_wb),
-    .reg_write_data(forw_reg_write_data),
+    .reg_write_data_wb(forw_reg_write_data_wb),
     .read_data_new(data_A_forw)
 );   
 
@@ -81,14 +82,12 @@ forward_exe _forward_exe_B(
     .alu_res_mem(forw_alu_res_mem),
     .reg_write_address_wb(forw_reg_write_address_wb),
     .reg_write_wb(forw_reg_write_wb),
-    .reg_write_data(forw_reg_write_data),
+    .reg_write_data_wb(forw_reg_write_data_wb),
     .read_data_new(data_B_forw)
 );   
 
 assign data_A = reg_data_A ? data_A_forw : data_A_no_forw;
 assign data_B = reg_data_B ? data_B_forw : data_B_no_forw;
-// assign data_A = data_A_no_forw;
-// assign data_B = data_B_no_forw;
 
 always @(posedge clk or posedge rst) begin
     if (rst) begin
@@ -96,6 +95,8 @@ always @(posedge clk or posedge rst) begin
         con_mem_write_out <= 1'b0;
     end
     else begin
+        inst_out <= inst_in;
+
         con_alu_op_out <= con_alu_op_in;
         con_reg_write_out <= con_reg_write_in;
         con_mov_cond_out <= con_mov_cond_in;

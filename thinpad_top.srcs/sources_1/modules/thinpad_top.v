@@ -205,6 +205,7 @@ wire[31:0] alu_a, alu_b;
 wire[4:0] reg_write_address_exe;
 wire[31:0] mem_write_data_exe;
 wire[31:0] pc_plus_8_exe;
+wire[31:0] inst_exe;
 
 // mem
 wire[31:0] pc_plus_8_mem;
@@ -231,7 +232,7 @@ id_exe _id_exe(
     .forw_alu_res_mem(alu_res_mem),
     .forw_reg_write_address_wb(reg_write_address),
     .forw_reg_write_wb(con_reg_write),
-    .forw_reg_write_data(reg_write_data),
+    .forw_reg_write_data_wb(reg_write_data),
 
     .con_alu_immediate(con_alu_immediate),
     .con_alu_signed(con_alu_signed),
@@ -259,7 +260,8 @@ id_exe _id_exe(
     .data_B(alu_b),
     .reg_write_address(reg_write_address_exe),
     .mem_write_data(mem_write_data_exe),
-    .pc_plus_8(pc_plus_8_exe)
+    .pc_plus_8(pc_plus_8_exe),
+    .inst_out(inst_exe)
 );
 
 wire[31:0] alu_res;
@@ -276,9 +278,14 @@ alu _alu(
     .V(alu_v)
 );
 
+wire[4:0] reg_write_address_end;
+wire reg_write_end;
+wire[31:0] reg_write_data_end;
+
 exe_mem _exe_mem(
     .clk(clock),
     .rst(reset),
+    .inst_in(inst_exe),
     .alu_z(alu_z),
     .alu_res(alu_res),
     .pc_plus_8_in(pc_plus_8_exe),
@@ -286,6 +293,14 @@ exe_mem _exe_mem(
     .mem_write_data_in(mem_write_data_exe),
     .data_A(alu_a),
 
+    // for forwarding
+    .forw_reg_write_address_wb(reg_write_address),
+    .forw_reg_write_wb(con_reg_write),
+    .forw_reg_write_data_wb(reg_write_data),
+    .forw_reg_write_address_end(reg_write_address_end),
+    .forw_reg_write_end(reg_write_end),
+    .forw_reg_write_data_end(reg_write_data_end),
+ 
     .con_reg_write(con_reg_write_exe),
     .con_mov_cond(con_mov_cond),
 
@@ -338,6 +353,17 @@ mem_wb _mem_wb(
     .reg_write_out(con_reg_write),
     .reg_write_address_out(reg_write_address),
     .reg_write_data(reg_write_data)
+);
+
+wb_end _wb_end(
+    .clk(clock),
+    .rst(reset),
+    .reg_write_address_in(reg_write_address),
+    .reg_write_data_in(reg_write_data),
+    .reg_write_in(con_reg_write),
+    .reg_write_address_out(reg_write_address_end),
+    .reg_write_data_out(reg_write_data_end),
+    .reg_write_out(reg_write_end)
 );
 
 // ********************************************************

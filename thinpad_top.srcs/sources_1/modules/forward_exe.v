@@ -14,7 +14,7 @@ module forward_exe(
     // forward from wb
     input wire[4:0] reg_write_address_wb,
     input wire reg_write_wb,
-    input wire[31:0] reg_write_data,
+    input wire[31:0] reg_write_data_wb,
 
     output reg[31:0] read_data_new
 );
@@ -28,7 +28,7 @@ always @(*) begin
     else begin
         if (reg_write_wb 
             && reg_write_address_wb != 5'b0 && reg_write_address_wb == read_address)
-                read_data_new <= reg_write_data;
+                read_data_new <= reg_write_data_wb;
         else
             read_data_new <= read_data;
     end
