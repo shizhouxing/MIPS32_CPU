@@ -1,6 +1,6 @@
-    .section .text.init
-    .globl START
-START:
+    #.section .text.init
+    .globl main
+main:
     ori $20, $0, 0
     ori $21, $0, 10
     ori $2, $0, 0
@@ -10,7 +10,7 @@ START:
 loop:
     beq $20, $21, done
     nop
-    nop    
+    nop
     addu $2, $2, $20
     addu $3, $3, $2
     ori $30, $3, 0
@@ -21,7 +21,7 @@ loop:
     nop
     nop
 done:
-    j done
+    jr $31
     nop
 
 
@@ -41,15 +41,12 @@ done:
 # loop:
 #     beq $20, $21, done
 #     nop
-#     nop
 #     addu $4, $2, $3    
 #     addiu $2, $3, 0
-#     addiu $3, $4, 0
 #     nop
-#     nop    
-#     sw $4, ($22)   
 #     nop
-#     nop 
+#     addiu $3, $4, 0    
+#     sw $4, ($22)    
 #     addiu $20, $20, 1
 #     addiu $22, $22, 4
 #     addiu $30, $4, 0

@@ -17,8 +17,6 @@ module data_mem(
 );
 
 // TODO: integrate uart
-// TODO: sign extend when a mask is set
-
 assign ram_ce_n = 1'b0;
 assign ram_we_n = write ? ~clk : 1'b1;
 assign ram_oe_n = ~write ? 1'b0 : 1'b1;

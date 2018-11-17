@@ -93,8 +93,8 @@ clock_frac _clock_frac(
 
 // main clock
 wire clock;
-assign clock = clk_slow;
-//assign clock = clock_btn;
+//assign clock = clk_slow;
+assign clock = clock_btn;
 
 wire[31:0] pc_current;
 wire stall_pc; // un
@@ -205,6 +205,16 @@ wire[31:0] alu_a, alu_b;
 wire[4:0] reg_write_address_exe;
 wire[31:0] mem_write_data_exe;
 wire[31:0] pc_plus_8_exe;
+
+// mem
+wire[31:0] pc_plus_8_mem;
+wire[31:0] mem_address;
+wire[31:0] mem_write_data;
+wire[4:0] reg_write_address_mem;
+wire[31:0] reg_write_data_mem;
+wire con_reg_write_mem;
+wire[31:0] alu_res_mem, mov_data_mem;
+
 id_exe _id_exe(
     .clk(clock),
     .rst(reset),
@@ -212,6 +222,16 @@ id_exe _id_exe(
     .data_2(reg_read_data_2),
     .inst_in(inst_id),
     .pc_plus_4(pc_plus_4_id),
+
+    // for forwarding
+    .forw_reg_write_address_mem(reg_write_address_mem),
+    .forw_reg_write_mem(con_reg_write_mem),
+    .forw_wb_src_mem(con_wb_src),
+    .forw_pc_plus_8_mem(pc_plus_8_mem),
+    .forw_alu_res_mem(alu_res_mem),
+    .forw_reg_write_address_wb(reg_write_address),
+    .forw_reg_write_wb(con_reg_write),
+    .forw_reg_write_data(reg_write_data),
 
     .con_alu_immediate(con_alu_immediate),
     .con_alu_signed(con_alu_signed),
@@ -255,15 +275,6 @@ alu _alu(
     .C(alu_c),
     .V(alu_v)
 );
-
-wire[31:0] pc_plus_8_mem;
-wire[31:0] mem_address;
-wire[31:0] mem_write_data;
-
-wire[4:0] reg_write_address_mem;
-wire[31:0] reg_write_data_mem;
-wire con_reg_write_mem;
-wire[31:0] alu_res_mem, mov_data_mem;
 
 exe_mem _exe_mem(
     .clk(clock),

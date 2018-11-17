@@ -8,6 +8,16 @@ module id_exe(
     input wire[31:0] inst_in,
     input wire[31:0] pc_plus_4,
 
+    // for forward
+    input wire[4:0] forw_reg_write_address_mem,
+    input wire forw_reg_write_mem,
+    input wire[1:0] forw_wb_src_mem,
+    input wire[31:0] forw_pc_plus_8_mem,
+    input wire[31:0] forw_alu_res_mem,
+    input wire[4:0] forw_reg_write_address_wb,
+    input wire forw_reg_write_wb,
+    input wire[31:0] forw_reg_write_data,
+
     // control signals
     input wire con_alu_immediate,
     input wire con_alu_signed,
@@ -32,17 +42,53 @@ module id_exe(
     input wire[1:0] con_wb_src_in,
     output reg[1:0] con_wb_src_out,
 
-    output reg[31:0] data_A, // for alu
-    output reg[31:0] data_B, // for alu
+    output wire[31:0] data_A, // for alu
+    output wire[31:0] data_B, // for alu
     output reg[4:0] reg_write_address,
     output reg[31:0] mem_write_data,
     output reg[31:0] pc_plus_8
 ); 
 
-wire[15:0] immediate_16;
 wire[31:0] immediate;
-assign immediate_16 = inst_in[15:0];
-assign immediate = con_alu_signed ? $signed(immediate_16) : immediate_16;
+assign immediate = con_alu_signed ? $signed(inst_in[15:0]) : inst_in[15:0];
+
+reg[4:0] read_address_1, read_address_2;
+reg[31:0] data_A_no_forw, data_B_no_forw;
+wire[31:0] data_A_forw, data_B_forw;
+reg reg_data_A, reg_data_B; // whether data_A and data_B are from registers respectively
+
+forward_exe _forward_exe_A(
+    .read_address(read_address_1),
+    .read_data(data_A_no_forw),
+    .reg_write_address_mem(forw_reg_write_address_mem),
+    .reg_write_mem(forw_reg_write_mem),
+    .wb_src_mem(forw_wb_src_mem),
+    .pc_plus_8_mem(forw_pc_plus_8_mem),
+    .alu_res_mem(forw_alu_res_mem),
+    .reg_write_address_wb(forw_reg_write_address_wb),
+    .reg_write_wb(forw_reg_write_wb),
+    .reg_write_data(forw_reg_write_data),
+    .read_data_new(data_A_forw)
+);   
+
+forward_exe _forward_exe_B(
+    .read_address(read_address_2),
+    .read_data(data_B_no_forw),
+    .reg_write_address_mem(forw_reg_write_address_mem),
+    .reg_write_mem(forw_reg_write_mem),
+    .wb_src_mem(forw_wb_src_mem),
+    .pc_plus_8_mem(forw_pc_plus_8_mem),
+    .alu_res_mem(forw_alu_res_mem),
+    .reg_write_address_wb(forw_reg_write_address_wb),
+    .reg_write_wb(forw_reg_write_wb),
+    .reg_write_data(forw_reg_write_data),
+    .read_data_new(data_B_forw)
+);   
+
+assign data_A = reg_data_A ? data_A_forw : data_A_no_forw;
+assign data_B = reg_data_B ? data_B_forw : data_B_no_forw;
+// assign data_A = data_A_no_forw;
+// assign data_B = data_B_no_forw;
 
 always @(posedge clk or posedge rst) begin
     if (rst) begin
@@ -60,8 +106,14 @@ always @(posedge clk or posedge rst) begin
 
         con_wb_src_out <= con_wb_src_in;
 
-        data_A <= con_alu_sa ? inst_in[10:6] : data_1;
-        data_B <= con_alu_immediate ? immediate : data_2;
+        read_address_1 <= inst_in[25:21];
+        read_address_2 <= inst_in[20:16];
+
+        data_A_no_forw <= con_alu_sa ? inst_in[10:6] : data_1;
+        data_B_no_forw <= con_alu_immediate ? immediate : data_2;
+        reg_data_A <= ~con_alu_sa;
+        reg_data_B <= ~con_alu_immediate;
+
         pc_plus_8 <= pc_plus_4 + 4'h4;
 
         if (con_jal)
