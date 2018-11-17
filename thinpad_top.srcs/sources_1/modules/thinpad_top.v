@@ -128,7 +128,35 @@ inst_mem _inst_mem(
     .ram_we_n(ext_ram_we_n)
 );
 
+// id
 wire[31:0] inst_id, pc_plus_4_id;
+wire con_alu_immediate, con_alu_signed, con_alu_sa;
+wire con_jal;
+
+// exe
+wire[3:0] con_alu_op_id;
+wire[3:0] con_alu_op;
+wire con_reg_write_id, con_mov_cond_id;
+wire con_reg_write_exe, con_mov_cond;
+wire[31:0] alu_a, alu_b;
+wire[4:0] reg_write_address_exe;
+wire[31:0] mem_write_data_exe;
+wire[31:0] pc_plus_8_exe;
+wire[31:0] inst_exe;
+
+// mem
+wire con_mem_write_id, con_mem_write_exe, con_mem_write;
+wire con_mem_signed_extend_id, con_mem_signed_extend_exe, con_mem_signed_extend;
+wire[3:0] con_mem_mask_id, con_mem_mask_exe, con_mem_mask;
+wire[1:0] con_wb_src, con_wb_src_id, con_wb_src_exe;
+wire[31:0] pc_plus_8_mem;
+wire[31:0] mem_address;
+wire[31:0] mem_write_data;
+wire[4:0] reg_write_address_mem;
+wire[31:0] reg_write_data_mem;
+wire con_reg_write_mem;
+wire[31:0] alu_res_mem, mov_data_mem;
+
 if_id _if_id(
     .clk(clock),
     .rst(reset),
@@ -157,29 +185,6 @@ registers _registers(
     .result(result) // for debug
 );
 assign leds = result[15:0];
-
-// id
-wire con_alu_immediate, con_alu_signed, con_alu_sa;
-wire con_jal;
-
-// exe
-wire[3:0] con_alu_op_id;
-wire[3:0] con_alu_op;
-wire con_reg_write_id, con_mov_cond_id;
-wire con_reg_write_exe, con_mov_cond;
-
-// mem
-wire con_mem_write_id, con_mem_write_exe, con_mem_write;
-wire con_mem_signed_extend_id, con_mem_signed_extend_exe, con_mem_signed_extend;
-wire[3:0] con_mem_mask_id, con_mem_mask_exe, con_mem_mask;
-wire[1:0] con_wb_src, con_wb_src_id, con_wb_src_exe;
-wire[31:0] pc_plus_8_mem;
-wire[31:0] mem_address;
-wire[31:0] mem_write_data;
-wire[4:0] reg_write_address_mem;
-wire[31:0] reg_write_data_mem;
-wire con_reg_write_mem;
-wire[31:0] alu_res_mem, mov_data_mem;
 
 wire[31:0] reg_read_data_1_forw, reg_read_data_2_forw;
 
@@ -234,11 +239,22 @@ control _control(
     .con_wb_src(con_wb_src_id)
 );
 
-wire[31:0] alu_a, alu_b;
-wire[4:0] reg_write_address_exe;
-wire[31:0] mem_write_data_exe;
-wire[31:0] pc_plus_8_exe;
-wire[31:0] inst_exe;
+wire stall;
+wire mem_conflict;
+assign mem_conflict = 1'b0; // TODO
+hazard_detector _hazard_detector(
+    .read_address_1_id(inst_id[25:21]),
+    .read_address_2_id(inst_id[20:16]),
+    .reg_write_address_exe(reg_write_address_exe),
+    .reg_write_exe(con_reg_write_exe),
+    .read_address_1_exe(inst_exe[25:21]),
+    .read_address_2_exe(inst_exe[20:16]),
+    .reg_write_address_mem(reg_write_address_mem),
+    .reg_write_mem(con_reg_write_mem),
+    .wb_src_mem(con_wb_src),
+    .mem_conflict(mem_conflict),
+    .stall(stall)
+);
 
 id_exe _id_exe(
     .clk(clock),

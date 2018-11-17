@@ -1,11 +1,25 @@
     .section .text.init
     .globl START
 START:
-    jal fib
+#    jal fib
+    jal stall
     nop
 done:
     j done
     nop
+
+stall:
+    ori $2, $0, 1
+    ori $3, $0, 2
+    beq $2, $3, stall_1
+    nop
+    ori $30, $0, 0x233
+    jr $31
+    nop
+    stall_1:
+        ori $30, $0, 0x666
+        jr $31
+        nop
 
 fib:
         ori $2, $0, 1
