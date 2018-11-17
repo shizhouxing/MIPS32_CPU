@@ -27,9 +27,11 @@ module exe_mem(
 
     // for mem
     input wire[3:0] con_mem_mask_in,
+    input wire con_mem_read_in,
     input wire con_mem_write_in,
     input wire con_mem_signed_extend_in,
     output reg[3:0] con_mem_mask_out, 
+    output reg con_mem_read_out,
     output reg con_mem_write_out,
     output reg con_mem_signed_extend_out,
     input wire[1:0] con_wb_src_in,
@@ -75,18 +77,18 @@ forward _forward_B(
 
 always @(posedge clk or posedge rst) begin
     if (rst) begin
-        reg_write <= 1'b0;
-        con_mem_write_out <= 1'b0;
+        { reg_write, con_mem_read_out, con_mem_write_out } = 3'b000;
     end
     else begin
         if (nop) begin
-            { con_mem_write_out, reg_write } <= 2'b00;
+            { con_mem_read_out, con_mem_write_out, reg_write } <= 3'b000;
         end
         else begin
             read_address_1 <= inst_in[25:21];
             read_address_2 <= inst_in[20:16];
 
             con_mem_mask_out <= con_mem_mask_in;
+            con_mem_read_out <= con_mem_read_in;
             con_mem_write_out <= con_mem_write_in;
             con_mem_signed_extend_out <= con_mem_signed_extend_in;
 

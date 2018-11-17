@@ -96,6 +96,7 @@ wire clock;
 //assign clock = clk_slow;
 assign clock = clock_btn;
 
+// if
 wire[31:0] pc_current;
 wire stall_pc; // un
 wire[31:0] pc_plus_4_if;
@@ -107,6 +108,11 @@ wire[31:0] pc_jump;
 wire[31:0] inst_id, pc_plus_4_id;
 wire con_alu_immediate, con_alu_signed, con_alu_sa;
 wire con_jal;
+wire con_reg_write;
+wire[4:0] reg_write_address;
+wire[31:0] reg_write_data;
+wire[31:0] reg_read_data_1, reg_read_data_2;
+wire[31:0] result;
 
 // exe
 wire[3:0] con_alu_op_id;
@@ -118,9 +124,14 @@ wire[4:0] reg_write_address_exe;
 wire[31:0] mem_write_data_exe;
 wire[31:0] pc_plus_8_exe;
 wire[31:0] inst_exe;
+wire[31:0] alu_res;
+wire alu_z;
+wire alu_s, alu_c, alu_v; // unused
 
 // mem
+wire con_mem_read_id, con_mem_read_exe, con_mem_read;
 wire con_mem_write_id, con_mem_write_exe, con_mem_write;
+
 wire con_mem_signed_extend_id, con_mem_signed_extend_exe, con_mem_signed_extend;
 wire[3:0] con_mem_mask_id, con_mem_mask_exe, con_mem_mask;
 wire[1:0] con_wb_src, con_wb_src_id, con_wb_src_exe;
@@ -131,9 +142,19 @@ wire[4:0] reg_write_address_mem;
 wire[31:0] reg_write_data_mem;
 wire con_reg_write_mem;
 wire[31:0] alu_res_mem, mov_data_mem;
+wire[31:0] mem_read_data;
+
+// end
+wire[4:0] reg_write_address_end;
+wire reg_write_end;
+wire[31:0] reg_write_data_end;
 
 // hazard
 wire[0:2] stall, nop;
+
+wire mem_conflict;
+wire mem_ram_en; // TODO
+wire[31:0] mem_ram_read_data;
 
 pc _pc(
     .clk(clock),
@@ -146,15 +167,32 @@ pc _pc(
     .pc_current(pc_current)
 );
 
-inst_mem _inst_mem(
-    .address(pc_current),
-    .data(inst_if),
-    .ram_data(ext_ram_data),
-    .ram_addr(ext_ram_addr),
-    .ram_be_n(ext_ram_be_n),
-    .ram_ce_n(ext_ram_ce_n),
-    .ram_oe_n(ext_ram_oe_n),
-    .ram_we_n(ext_ram_we_n)
+ram_controller _ram_controller(
+    .clk(clock),
+    .inst_addr(pc_current),
+    .data_addr(mem_address),
+    .mask(con_mem_mask),
+    .data(mem_write_data),
+    .data_en(mem_ram_en),
+    .data_write(con_mem_write),
+
+    .base_ram_data(base_ram_data),
+    .base_ram_addr(base_ram_addr),
+    .base_ram_be_n(base_ram_be_n),
+    .base_ram_ce_n(base_ram_ce_n),
+    .base_ram_oe_n(base_ram_oe_n),
+    .base_ram_we_n(base_ram_we_n),
+
+    .ext_ram_data(ext_ram_data),
+    .ext_ram_addr(ext_ram_addr),
+    .ext_ram_be_n(ext_ram_be_n),
+    .ext_ram_ce_n(ext_ram_ce_n),
+    .ext_ram_oe_n(ext_ram_oe_n),
+    .ext_ram_we_n(ext_ram_we_n),
+
+    .result_inst(inst_if),
+    .result_data(mem_ram_read_data),
+    .conflict(mem_conflict)
 );
 
 if_id _if_id(
@@ -168,11 +206,6 @@ if_id _if_id(
     .pc_plus_4_out(pc_plus_4_id)
 );
 
-wire con_reg_write;
-wire[4:0] reg_write_address;
-wire[31:0] reg_write_data;
-wire[31:0] reg_read_data_1, reg_read_data_2;
-wire[31:0] result;
 registers _registers(
     .clk(clock),
     .rst(reset),
@@ -235,13 +268,12 @@ control _control(
     .con_mov_cond(con_mov_cond_id),
 
     .con_mem_mask(con_mem_mask_id),
+    .con_mem_read(con_mem_read_id),    
     .con_mem_write(con_mem_write_id),
     .con_mem_signed_extend(con_mem_signed_extend_id),
     .con_wb_src(con_wb_src_id)
 );
 
-wire mem_conflict;
-assign mem_conflict = 1'b0; // TODO
 hazard_detector _hazard_detector(
     .read_address_1_id(inst_id[25:21]),
     .read_address_2_id(inst_id[20:16]),
@@ -290,9 +322,11 @@ id_exe _id_exe(
     .con_mov_cond_out(con_mov_cond),     
 
     .con_mem_mask_in(con_mem_mask_id),
+    .con_mem_read_in(con_mem_read_id),    
     .con_mem_write_in(con_mem_write_id),
     .con_mem_signed_extend_in(con_mem_signed_extend_id),
     .con_mem_mask_out(con_mem_mask_exe),
+    .con_mem_read_out(con_mem_read_exe),    
     .con_mem_write_out(con_mem_write_exe),
     .con_mem_signed_extend_out(con_mem_signed_extend_exe),
 
@@ -307,9 +341,6 @@ id_exe _id_exe(
     .inst_out(inst_exe)
 );
 
-wire[31:0] alu_res;
-wire alu_z;
-wire alu_s, alu_c, alu_v; // unused
 alu _alu(
     .op(con_alu_op),
     .A(alu_a),
@@ -320,10 +351,6 @@ alu _alu(
     .C(alu_c),
     .V(alu_v)
 );
-
-wire[4:0] reg_write_address_end;
-wire reg_write_end;
-wire[31:0] reg_write_data_end;
 
 exe_mem _exe_mem(
     .clk(clock),
@@ -349,9 +376,11 @@ exe_mem _exe_mem(
     .con_mov_cond(con_mov_cond),
 
     .con_mem_mask_in(con_mem_mask_exe),
+    .con_mem_read_in(con_mem_read_exe),    
     .con_mem_write_in(con_mem_write_exe),
     .con_mem_signed_extend_in(con_mem_signed_extend_exe),
     .con_mem_mask_out(con_mem_mask),
+    .con_mem_read_out(con_mem_read),
     .con_mem_write_out(con_mem_write),
     .con_mem_signed_extend_out(con_mem_signed_extend),
     .con_wb_src_in(con_wb_src_exe),
@@ -366,21 +395,14 @@ exe_mem _exe_mem(
     .mov_data(mov_data_mem)
 );
 
-wire[31:0] mem_read_data;
-data_mem _data_mem(
+mem _mem(
     .clk(clock),
-    .mask(con_mem_mask),
-    .write(con_mem_write),
     .address(mem_address),
-    .data_in(mem_write_data),
-    .data_out(mem_read_data),
-    
-    .ram_data(base_ram_data),
-    .ram_addr(base_ram_addr),
-    .ram_be_n(base_ram_be_n),
-    .ram_ce_n(base_ram_ce_n),
-    .ram_oe_n(base_ram_oe_n),
-    .ram_we_n(base_ram_we_n)
+    .ram_read_data(mem_ram_read_data),
+    .mem_read(con_mem_read),
+    .mem_write(con_mem_write),
+    .ram_en(mem_ram_en),
+    .read_data(mem_read_data)
 );
 
 mem_wb _mem_wb(

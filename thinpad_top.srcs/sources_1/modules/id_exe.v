@@ -36,9 +36,11 @@ module id_exe(
 
     // for mem
     input wire[3:0] con_mem_mask_in,
+    input wire con_mem_read_in,
     input wire con_mem_write_in,
     input wire con_mem_signed_extend_in,
     output reg[3:0] con_mem_mask_out, 
+    output reg con_mem_read_out,
     output reg con_mem_write_out,
     output reg con_mem_signed_extend_out,
     input wire[1:0] con_wb_src_in,
@@ -96,12 +98,13 @@ assign data_B = reg_data_B ? data_B_forw : data_B_no_forw;
 always @(posedge clk or posedge rst) begin
     if (rst) begin
         con_reg_write_out <= 1'b0;
+        con_mem_read_out <= 1'b0;
         con_mem_write_out <= 1'b0;
     end
     else begin
         if (~stall) begin
             if (nop) begin
-                { con_reg_write_out, con_mem_write_out } <= 2'b00;
+                { con_reg_write_out, con_mem_read_out, con_mem_write_out } <= 3'b000;
                 inst_out <= 32'b0;
             end
             else begin
@@ -112,6 +115,7 @@ always @(posedge clk or posedge rst) begin
                 con_mov_cond_out <= con_mov_cond_in;
 
                 con_mem_mask_out <= con_mem_mask_in;
+                con_mem_read_out <= con_mem_read_in;
                 con_mem_write_out <= con_mem_write_in;
                 con_mem_signed_extend_out <= con_mem_signed_extend_in;
 

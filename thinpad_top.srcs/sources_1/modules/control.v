@@ -19,6 +19,7 @@ module control(
 
     // mem
     output reg[3:0] con_mem_mask,
+    output reg con_mem_read, 
     output reg con_mem_write,
     output reg con_mem_signed_extend,
     output reg[1:0] con_wb_src
@@ -26,17 +27,19 @@ module control(
 
 always @(*) begin
     if (inst == 32'b0) begin // NOP
-        { con_reg_write, con_mem_write } = 2'b00;
+        { con_reg_write, con_mem_read, con_mem_write } = 3'b000;
     end
     else begin
         con_alu_sa <= (inst[31:26] == 6'b000000) && (
             (inst[5:0] == 6'b000000) || (inst[5:0] == 6'b000010));
         con_mov_cond <= (inst[31:26] == 6'b000000) && (inst[5:0] == 6'b001010);
         con_jal <= inst[31:26] == 6'b000011;
+        con_mem_read <= inst[31:29] == 3'b100;
+        con_mem_write <= inst[31:29] == 'b101;
 
         case (inst[31:29])
             3'b001: begin // alu-based operations with an immediate number
-                { con_alu_immediate, con_reg_write, con_mem_write }  <= 3'b110;
+                { con_alu_immediate, con_reg_write }  <= 2'b11;
                 con_wb_src <= `WB_SRC_ALU;
                 case (inst[28:26])
                     3'b001: begin // ADDIU 001001ssssstttttiiiiiiiiiiiiiiii
@@ -65,7 +68,7 @@ always @(*) begin
             3'b000: begin // alu-based operations without an immediate number, or branch/jump
                 case (inst[28:26]) 
                     3'b000: begin
-                        { con_alu_immediate, con_mem_write } <= 2'b00;
+                        con_alu_immediate <= 1'b0;
                         con_reg_write <= inst[5:0] != 6'b001000; // JR
                         con_wb_src <= `WB_SRC_ALU;
                         case (inst[5:0])
@@ -99,17 +102,17 @@ always @(*) begin
                         endcase
                     end
                     3'b011: begin // JAL
-                        { con_reg_write, con_mem_write } <= 2'b10;
+                        con_reg_write <= 1'b1;
                         con_wb_src <= `WB_SRC_PC_PLUS_8;
                     end
                     default: begin // branch or j or jr
-                        { con_reg_write, con_mem_write } = 2'b00;
+                        con_reg_write <= 1'b0;
                     end
                 endcase
             end
 
             3'b100: begin // load
-                { con_alu_immediate, con_alu_signed, con_reg_write, con_mem_write }  <= 4'b1110;
+                { con_alu_immediate, con_alu_signed, con_reg_write }  <= 3'b111;
                 con_alu_op <= `ALU_OP_ADD;
                 con_wb_src <= `WB_SRC_MEM;
                 case (inst[28:26])
@@ -129,7 +132,7 @@ always @(*) begin
             end
 
             3'b101: begin // store
-                { con_alu_immediate, con_alu_signed, con_reg_write, con_mem_write }  <= 4'b1101;
+                { con_alu_immediate, con_alu_signed, con_reg_write }  <= 3'b110;
                 con_alu_op <= `ALU_OP_ADD;
                 case (inst[28:26])
                     3'b000: begin // SB

@@ -1,8 +1,8 @@
     .section .text.init
     .globl START
 START:
-#    jal fib
-    jal stall
+    jal fib
+#    jal stall
     nop
 done:
     j done
@@ -22,14 +22,15 @@ stall:
         nop
 
 fib:
+        lui $10, 0x8040
         ori $2, $0, 1
         ori $3, $0, 2
         nop
-        sw $2, ($0)
-        sw $3, 4($0)   
+        sw $2, ($10)
+        sw $3, 4($10)   
         ori $20, $0, 2    
-        ori $21, $0, 10    
-        ori $22, $0, 8
+        ori $21, $0, 10  
+        addu $22, $10, 8
         nop
     fib_loop:
         beq $20, $21, fib_done
@@ -44,10 +45,9 @@ fib:
         j fib_loop
         nop
     fib_done:
-        lw $30, 36($0)
+        lw $30, 36($10)
         jr $31
         nop
-
 
 # test forward to id
 #     ori $2, $0, 1
