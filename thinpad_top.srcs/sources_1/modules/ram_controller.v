@@ -12,7 +12,7 @@ module ram_controller(
     input wire data_write,
 
     inout wire[31:0] base_ram_data, 
-    output reg[19:0] base_ram_addr, 
+    output wire[19:0] base_ram_addr, 
     output wire[3:0] base_ram_be_n, 
     output wire base_ram_ce_n, 
     output wire base_ram_oe_n, 
@@ -34,7 +34,8 @@ reg base_write, ext_write;
 assign result_inst = ext_ram_data;
 assign result_data = (conflict ? ext_ram_data : base_ram_data) & ~mask;
 assign ext_ram_ce_n = 1'b0;
-assign base_ram_ce_n = data_en;
+//assign base_ram_ce_n = data_en;
+assign base_ram_ce_n = 1'b0;
 assign base_ram_we_n = base_write ? ~clk : 1'b1;
 assign ext_ram_we_n = ext_write ? ~clk : 1'b1;
 assign base_ram_oe_n = ~base_write ? 1'b0 : 1'b1;
@@ -43,6 +44,7 @@ assign base_ram_be_n = base_write ? mask : 4'b0;
 assign ext_ram_be_n = ext_write ? mask : 4'b0;
 assign base_ram_data = base_write ? data : 32'bz;
 assign ext_ram_data = ext_write ? data : 32'bz;
+assign base_ram_addr = data_addr[21:2];
 
 always @(*) begin
     if (data_en) begin
@@ -61,7 +63,6 @@ always @(*) begin
             conflict <= 1'b0;
             base_write <= data_write;
             ext_write <= 1'b0;
-            base_ram_addr <= data_addr[21:2];
             ext_ram_addr <= inst_addr[21:2];
         end
     end

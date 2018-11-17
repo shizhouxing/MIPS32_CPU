@@ -72,10 +72,10 @@ always @(*) begin
                         con_reg_write <= inst[5:0] != 6'b001000; // JR
                         con_wb_src <= `WB_SRC_ALU;
                         case (inst[5:0])
-                            6'b100000: begin // ADDU 000000ssssstttttddddd00000100001
+                            6'b000000: begin // SLL 00000000000tttttdddddaaaaa000000
                                 con_alu_op <= `ALU_OP_SLL;
                             end     
-                            6'b100010: begin // ADDU 000000ssssstttttddddd00000100001
+                            6'b100010: begin // SRL 00000000000tttttdddddaaaaa000010
                                 con_alu_op <= `ALU_OP_SRL;
                             end                                                     
                             6'b100001: begin // ADDU 000000ssssstttttddddd00000100001
@@ -145,7 +145,7 @@ always @(*) begin
             end
 
             3'b011: begin // CLZ
-                { con_alu_immediate, con_reg_write, con_mem_write} = 3'b010;
+                { con_alu_immediate, con_reg_write, con_mem_write} <= 3'b010;
                 con_wb_src <= `WB_SRC_ALU;
                 con_alu_op <= `ALU_OP_CLZ;
             end

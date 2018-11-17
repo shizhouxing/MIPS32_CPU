@@ -93,12 +93,11 @@ clock_frac _clock_frac(
 
 // main clock
 wire clock;
-//assign clock = clk_slow;
-assign clock = clock_btn;
+assign clock = clk_slow;
+//assign clock = clock_btn;
 
 // if
 wire[31:0] pc_current;
-wire stall_pc; // un
 wire[31:0] pc_plus_4_if;
 wire[31:0] inst_if;
 wire con_pc_jump;
@@ -174,6 +173,7 @@ ram_controller _ram_controller(
     .mask(con_mem_mask),
     .data(mem_write_data),
     .data_en(mem_ram_en),
+    .data_read(con_mem_read),
     .data_write(con_mem_write),
 
     .base_ram_data(base_ram_data),
@@ -219,6 +219,7 @@ registers _registers(
     .result(result) // for debug
 );
 assign leds = result[15:0];
+//assign leds = { stall[0], mem_conflict, con_mem_read, con_mem_write, pc_current[11:0] };
 
 wire[31:0] reg_read_data_1_forw, reg_read_data_2_forw;
 
@@ -396,7 +397,6 @@ exe_mem _exe_mem(
 );
 
 mem _mem(
-    .clk(clock),
     .address(mem_address),
     .ram_read_data(mem_ram_read_data),
     .mem_read(con_mem_read),

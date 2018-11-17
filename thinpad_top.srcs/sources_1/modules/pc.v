@@ -17,7 +17,7 @@ always @(posedge clk or posedge rst) begin
     if (rst)
         pc_current <= 32'h80000000; // default entry
     else begin
-        if (!stall) begin
+        if (~stall) begin
             // using branch delay slot
             if (con_pc_jump) 
                 pc_current <= pc_jump;
