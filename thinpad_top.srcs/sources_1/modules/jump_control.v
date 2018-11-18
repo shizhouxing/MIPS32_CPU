@@ -39,7 +39,7 @@ always @(*) begin
 
     // branch
     if (inst[31:26] == 6'b000100 || inst[31:26] == 6'b000111 || inst[31:26] == 6'b000101)
-        pc_jump <= pc_plus_4 + $signed({ inst[15:0], 2'b00 });
+        pc_jump <= $signed(pc_plus_4) + $signed({ inst[15:0], 2'b00 });
     // J or JAL
     else if (inst[31:26] == 6'b000010 || inst[31:26] == 6'b000011) 
         pc_jump <= { pc_plus_4[31:28], inst[25:0], 2'b00 };

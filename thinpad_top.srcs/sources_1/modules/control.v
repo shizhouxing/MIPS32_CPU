@@ -35,7 +35,7 @@ always @(*) begin
         con_mov_cond <= (inst[31:26] == 6'b000000) && (inst[5:0] == 6'b001010);
         con_jal <= inst[31:26] == 6'b000011;
         con_mem_read <= inst[31:29] == 3'b100;
-        con_mem_write <= inst[31:29] == 'b101;
+        con_mem_write <= inst[31:29] == 3'b101;
 
         case (inst[31:29])
             3'b001: begin // alu-based operations with an immediate number

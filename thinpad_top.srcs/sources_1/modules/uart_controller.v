@@ -32,14 +32,14 @@ always @(*) begin
         result_data <= { 30'b0, uart_dataready, uart_tsre };
     end
     else begin
-        if (data_read) begin
-            write <= 1'b0;
-            { uart_rdn, uart_wrn}  <= { ~clk, 1'b1 };
-            result_data <= { 24'b0, uart_data };
+        if (data_write) begin
+            write <= 1'b1;
+            { uart_rdn, uart_wrn }  <= { 1'b1, ~clk};        
         end
         else begin
-            write <= 1'b1;
-            { uart_rdn, uart_wrn}  <= { 1'b1, ~clk};
+            write <= 1'b0;
+            { uart_rdn, uart_wrn }  <= { ~clk, 1'b1 };
+            result_data <= { 24'b0, uart_data };        
         end
     end
 end
