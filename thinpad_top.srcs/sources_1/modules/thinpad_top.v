@@ -132,7 +132,7 @@ wire con_mem_read_id, con_mem_read_exe, con_mem_read;
 wire con_mem_write_id, con_mem_write_exe, con_mem_write;
 
 wire con_mem_signed_extend_id, con_mem_signed_extend_exe, con_mem_signed_extend;
-wire[3:0] con_mem_mask_id, con_mem_mask_exe, con_mem_mask;
+wire con_mem_byte_id, con_mem_byte_exe, con_mem_byte;
 wire[1:0] con_wb_src, con_wb_src_id, con_wb_src_exe;
 wire[31:0] pc_plus_8_mem;
 wire[31:0] mem_address;
@@ -152,8 +152,8 @@ wire[31:0] reg_write_data_end;
 wire[0:2] stall, nop;
 
 wire mem_conflict;
-wire mem_ram_en, mem_uart_en; // TODO
-wire[31:0] mem_ram_read_data;
+wire mem_ram_en, mem_uart_en; 
+wire[31:0] mem_ram_read_data, mem_uart_read_data;
 
 pc _pc(
     .clk(clock),
@@ -170,7 +170,7 @@ ram_controller _ram_controller(
     .clk(clock),
     .inst_addr(pc_current),
     .data_addr(mem_address),
-    .mask(con_mem_mask),
+    .byte(con_mem_byte),
     .data(mem_write_data),
     .data_en(mem_ram_en),
     .data_read(con_mem_read),
@@ -236,7 +236,7 @@ registers _registers(
     .read_data_2(reg_read_data_2),
     .result(result) // for debug
 );
-assign leds = result[15:0];
+assign leds = { uart_dataready, result[14:0]};
 //assign leds = { stall[0], mem_conflict, con_mem_read, con_mem_write, pc_current[11:0] };
 
 wire[31:0] reg_read_data_1_forw, reg_read_data_2_forw;
@@ -286,7 +286,7 @@ control _control(
     .con_reg_write(con_reg_write_id),
     .con_mov_cond(con_mov_cond_id),
 
-    .con_mem_mask(con_mem_mask_id),
+    .con_mem_byte(con_mem_byte_id),
     .con_mem_read(con_mem_read_id),    
     .con_mem_write(con_mem_write_id),
     .con_mem_signed_extend(con_mem_signed_extend_id),
@@ -304,6 +304,7 @@ hazard_detector _hazard_detector(
     .reg_write_mem(con_reg_write_mem),
     .wb_src_mem(con_wb_src),
     .mem_conflict(mem_conflict),
+    .con_pc_jump(con_pc_jump),
     .stall(stall),
     .nop(nop) 
 );
@@ -340,11 +341,11 @@ id_exe _id_exe(
     .con_reg_write_out(con_reg_write_exe),
     .con_mov_cond_out(con_mov_cond),     
 
-    .con_mem_mask_in(con_mem_mask_id),
+    .con_mem_byte_in(con_mem_byte_id),
     .con_mem_read_in(con_mem_read_id),    
     .con_mem_write_in(con_mem_write_id),
     .con_mem_signed_extend_in(con_mem_signed_extend_id),
-    .con_mem_mask_out(con_mem_mask_exe),
+    .con_mem_byte_out(con_mem_byte_exe),
     .con_mem_read_out(con_mem_read_exe),    
     .con_mem_write_out(con_mem_write_exe),
     .con_mem_signed_extend_out(con_mem_signed_extend_exe),
@@ -394,11 +395,11 @@ exe_mem _exe_mem(
     .con_reg_write(con_reg_write_exe),
     .con_mov_cond(con_mov_cond),
 
-    .con_mem_mask_in(con_mem_mask_exe),
+    .con_mem_byte_in(con_mem_byte_exe),
     .con_mem_read_in(con_mem_read_exe),    
     .con_mem_write_in(con_mem_write_exe),
     .con_mem_signed_extend_in(con_mem_signed_extend_exe),
-    .con_mem_mask_out(con_mem_mask),
+    .con_mem_byte_out(con_mem_byte),
     .con_mem_read_out(con_mem_read),
     .con_mem_write_out(con_mem_write),
     .con_mem_signed_extend_out(con_mem_signed_extend),

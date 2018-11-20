@@ -24,6 +24,8 @@ uregs:
      *  用户程序入口临时存储：0x807F0078
      */
 SHELL:
+
+
     jal READSERIAL                  // 读操作符
     nop
 
@@ -99,10 +101,14 @@ SHELL:
     lui s0, %hi(uregs)
     ori s1, zero, 120               // 计数器，打印120字节
 .LC0:
+    ori $30, s1, 0 // debug
+
     lb a0, %lo(uregs)(s0)           // 读取字节
     addiu s1, s1, -1                // 滚动计数器
+
     jal WRITESERIAL                 // 写入串口
     nop
+
     addiu s0, s0, 0x1               // 移动打印指针
     bne s1, zero, .LC0              // 打印循环
     nop
@@ -110,6 +116,7 @@ SHELL:
     lw s0, 0(sp)                    // 恢复s0,s1
     lw s1, 4(sp)
     addiu sp, sp, 8
+
     j .DONE
     nop
 

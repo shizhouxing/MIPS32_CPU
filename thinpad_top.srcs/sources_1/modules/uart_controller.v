@@ -18,28 +18,26 @@ module uart_controller(
     output reg[31:0] result_data
 );
 
-reg write;
-assign uart_data = write ? data : 8'bz;
+assign uart_data = data_write ? data : 8'bz;
 
 always @(*) begin
     if (en) begin
-        write <= 1'b0;
         { uart_rdn, uart_wrn } <= 2'b11;
     end
     else if (address == 32'hBFD003FC) begin
-        write <= 1'b0;
         { uart_rdn, uart_wrn } <= 2'b11;
-        result_data <= { 30'b0, uart_dataready, uart_tsre };
+        result_data <= { 30'b0, uart_dataready, uart_tsre }; // debug
     end
     else begin
         if (data_write) begin
-            write <= 1'b1;
             { uart_rdn, uart_wrn }  <= { 1'b1, ~clk};        
         end
-        else begin
-            write <= 1'b0;
+        else if (data_read) begin
             { uart_rdn, uart_wrn }  <= { ~clk, 1'b1 };
             result_data <= { 24'b0, uart_data };        
+        end
+        else begin
+            { uart_rdn, uart_wrn }  <= 2'b11;
         end
     end
 end

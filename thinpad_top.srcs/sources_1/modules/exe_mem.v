@@ -26,11 +26,11 @@ module exe_mem(
     input wire con_mov_cond,
 
     // for mem
-    input wire[3:0] con_mem_mask_in,
+    input wire con_mem_byte_in,
     input wire con_mem_read_in,
     input wire con_mem_write_in,
     input wire con_mem_signed_extend_in,
-    output reg[3:0] con_mem_mask_out, 
+    output reg con_mem_byte_out, 
     output reg con_mem_read_out,
     output reg con_mem_write_out,
     output reg con_mem_signed_extend_out,
@@ -87,7 +87,7 @@ always @(posedge clk or posedge rst) begin
             read_address_1 <= inst_in[25:21];
             read_address_2 <= inst_in[20:16];
 
-            con_mem_mask_out <= con_mem_mask_in;
+            con_mem_byte_out <= con_mem_byte_in;
             con_mem_read_out <= con_mem_read_in;
             con_mem_write_out <= con_mem_write_in;
             con_mem_signed_extend_out <= con_mem_signed_extend_in;

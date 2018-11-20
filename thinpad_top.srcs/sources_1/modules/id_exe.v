@@ -35,11 +35,11 @@ module id_exe(
     output reg con_mov_cond_out,
 
     // for mem
-    input wire[3:0] con_mem_mask_in,
+    input wire con_mem_byte_in,
     input wire con_mem_read_in,
     input wire con_mem_write_in,
     input wire con_mem_signed_extend_in,
-    output reg[3:0] con_mem_mask_out, 
+    output reg con_mem_byte_out, 
     output reg con_mem_read_out,
     output reg con_mem_write_out,
     output reg con_mem_signed_extend_out,
@@ -55,7 +55,7 @@ module id_exe(
 ); 
 
 wire[31:0] immediate;
-assign immediate = con_alu_signed ? $signed(inst_in[15:0]) : inst_in[15:0];
+assign immediate = con_alu_signed ? { {16{inst_in[15]}}, inst_in[15:0] } : inst_in[15:0];
 
 reg[4:0] read_address_1, read_address_2;
 reg[31:0] data_A_no_forw, data_B_no_forw;
@@ -114,7 +114,7 @@ always @(posedge clk or posedge rst) begin
                 con_reg_write_out <= con_reg_write_in;
                 con_mov_cond_out <= con_mov_cond_in;
 
-                con_mem_mask_out <= con_mem_mask_in;
+                con_mem_byte_out <= con_mem_byte_in;
                 con_mem_read_out <= con_mem_read_in;
                 con_mem_write_out <= con_mem_write_in;
                 con_mem_signed_extend_out <= con_mem_signed_extend_in;

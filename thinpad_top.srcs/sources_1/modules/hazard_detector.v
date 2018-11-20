@@ -13,6 +13,7 @@ module hazard_detector(
     input wire[1:0] wb_src_mem,
 
     input wire mem_conflict,
+    input wire con_pc_jump,
 
     output reg[0:2] stall, // pc, if, id
     output reg[0:2] nop // if, id, exe
@@ -37,7 +38,8 @@ always @(*) begin
         (read_address_1_id != 5'b0 && read_address_1_id == reg_write_address_mem && reg_write_mem && 
             (wb_src_mem == `WB_SRC_MOV || wb_src_mem == `WB_SRC_MEM)) || 
         (read_address_2_id != 5'b0 && read_address_2_id == reg_write_address_mem && reg_write_mem && 
-            (wb_src_mem == `WB_SRC_MOV || wb_src_mem == `WB_SRC_MEM))
+            (wb_src_mem == `WB_SRC_MOV || wb_src_mem == `WB_SRC_MEM)) || 
+        (mem_conflict && con_pc_jump)
     ) begin
         stall <= 3'b110;
         nop <= 3'b010;

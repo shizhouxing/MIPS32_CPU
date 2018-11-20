@@ -18,7 +18,7 @@ module control(
     output reg con_mov_cond,
 
     // mem
-    output reg[3:0] con_mem_mask,
+    output reg con_mem_byte,
     output reg con_mem_read, 
     output reg con_mem_write,
     output reg con_mem_signed_extend,
@@ -75,7 +75,7 @@ always @(*) begin
                             6'b000000: begin // SLL 00000000000tttttdddddaaaaa000000
                                 con_alu_op <= `ALU_OP_SLL;
                             end     
-                            6'b100010: begin // SRL 00000000000tttttdddddaaaaa000010
+                            6'b000010: begin // SRL 00000000000tttttdddddaaaaa000010
                                 con_alu_op <= `ALU_OP_SRL;
                             end                                                     
                             6'b100001: begin // ADDU 000000ssssstttttddddd00000100001
@@ -117,15 +117,15 @@ always @(*) begin
                 con_wb_src <= `WB_SRC_MEM;
                 case (inst[28:26])
                     3'b000: begin // LB
-                        con_mem_mask <= 4'b1110;
+                        con_mem_byte <= 1'b1;
                         con_mem_signed_extend <= 1'b1;
                     end
                     3'b011: begin // LW
-                        con_mem_mask <= 4'b0;
+                        con_mem_byte <= 1'b0;
                         con_mem_signed_extend <= 1'b0;
                     end
                     3'b100: begin // LBU
-                        con_mem_mask <= 4'b1110;
+                        con_mem_byte <= 1'b1;
                         con_mem_signed_extend <= 1'b0;
                     end
                 endcase
@@ -136,10 +136,10 @@ always @(*) begin
                 con_alu_op <= `ALU_OP_ADD;
                 case (inst[28:26])
                     3'b000: begin // SB
-                        con_mem_mask <= 4'b1110;
+                        con_mem_byte <= 1'b1;
                     end
                     3'b011: begin // SW
-                        con_mem_mask <= 4'b0;
+                        con_mem_byte <= 1'b0;
                     end
                 endcase
             end
