@@ -84,8 +84,10 @@ READSERIALWORD:
     sw s2, 0xC(sp)
     sw s3, 0x10(sp)
 
+
     jal READSERIAL                  // 读串口获得八个比特
     nop
+
     or s0, zero, v0                 // 结果存入s0
     jal READSERIAL                  // 读串口获得八个比特
     nop

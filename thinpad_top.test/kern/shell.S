@@ -29,6 +29,13 @@ SHELL:
     jal READSERIAL                  // 读操作符
     nop
 
+
+
+DEBUG:
+    ori $30, v0, 0xf000
+    j DEBUG
+    nop
+
     ori t0, zero, SH_OP_R
     beq v0, t0, .OP_R
     nop
@@ -101,8 +108,6 @@ SHELL:
     lui s0, %hi(uregs)
     ori s1, zero, 120               // 计数器，打印120字节
 .LC0:
-    ori $30, s1, 0 // debug
-
     lb a0, %lo(uregs)(s0)           // 读取字节
     addiu s1, s1, -1                // 滚动计数器
 
@@ -125,14 +130,17 @@ SHELL:
     sw s0, 0(sp)
     sw s1, 4(sp)
 
+
     jal READSERIALWORD
     nop
+
     or s0, v0, zero                 // 获得addr
     jal READSERIALWORD
     nop
     or s1, v0, zero                 // 获得num
 
 .LC1:
+
     lb a0, 0(s0)                    // 读取字节
     addiu s1, s1, -1                // 滚动计数器
     jal WRITESERIAL                 // 写入串口

@@ -16,6 +16,12 @@ wire[7:0]  dpy1;       //数码管高位信号，包括小数点，输出1点亮
 wire txd;  //直连串口发送端
 wire rxd;  //直连串口接收端
 
+wire uart_rdn;          //读串口信号，低有效
+wire uart_wrn;          //写串口信号，低有效
+wire uart_dataready;    //串口数据准备好
+wire uart_tbre;         //发送数据标志
+wire uart_tsre;         //数据发送完毕标志
+
 wire[31:0] base_ram_data; //BaseRAM数据，低8位与CPLD串口控制器共享
 wire[19:0] base_ram_addr; //BaseRAM地址
 wire[3:0] base_ram_be_n;  //BaseRAM字节使能，低有效。如果不使用字节使能，请保持为0
@@ -45,6 +51,8 @@ parameter EXT_RAM_INIT_FILE = "E:\\thinpad_top\\thinpad_top.test\\kernel.bin";  
 parameter FLASH_INIT_FILE = "E:\\thinpad_top\\thinpad_top.test\\flash.bin";    //Flash初始化文件，请修改为实际的绝对路径
 
 assign rxd = 1'b1; //idle state
+assign uart_dataready = 1'b1;
+assign uart_tsre = 1'b1;
 
 initial begin 
     //在这里可以自定义测试输入序列，例如：
@@ -74,6 +82,11 @@ thinpad_top dut(
     .dpy0(dpy0),
     .txd(txd),
     .rxd(rxd),
+    .uart_rdn(uart_rdn),
+    .uart_wrn(uart_wrn),
+    .uart_dataready(uart_dataready),
+    .uart_tbre(uart_tbre),
+    .uart_tsre(uart_tsre),   
     .base_ram_data(base_ram_data),
     .base_ram_addr(base_ram_addr),
     .base_ram_ce_n(base_ram_ce_n),

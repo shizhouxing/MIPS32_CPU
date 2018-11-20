@@ -9,19 +9,18 @@ module control(
     // id
     output reg con_alu_immediate,
     output reg con_alu_signed,
-    output reg con_alu_sa,
-    output reg con_jal,
+    output reg con_alu_sa, // for SLL and SRL
+    output reg con_jal, // for JAL
 
     // exe
     output reg[3:0] con_alu_op,
     output reg con_reg_write,    
-    output reg con_mov_cond,
+    output reg con_mov_cond, // conditional mov
 
     // mem
-    output reg con_mem_byte,
+    output reg con_mem_byte, // byte load or store
     output reg con_mem_read, 
     output reg con_mem_write,
-    output reg con_mem_signed_extend,
     output reg[1:0] con_wb_src
 );
 
@@ -118,15 +117,12 @@ always @(*) begin
                 case (inst[28:26])
                     3'b000: begin // LB
                         con_mem_byte <= 1'b1;
-                        con_mem_signed_extend <= 1'b1;
                     end
                     3'b011: begin // LW
                         con_mem_byte <= 1'b0;
-                        con_mem_signed_extend <= 1'b0;
                     end
                     3'b100: begin // LBU
                         con_mem_byte <= 1'b1;
-                        con_mem_signed_extend <= 1'b0;
                     end
                 endcase
             end
