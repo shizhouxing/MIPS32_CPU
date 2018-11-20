@@ -93,6 +93,7 @@ clock_frac _clock_frac(
 
 // main clock
 wire clock;
+//assign clock = clk_11M0592;
 assign clock = clk_slow;
 //assign clock = clock_btn;
 
