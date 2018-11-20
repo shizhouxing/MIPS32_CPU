@@ -93,8 +93,8 @@ clock_frac _clock_frac(
 
 // main clock
 wire clock;
-//assign clock = clk_slow;
-assign clock = clock_btn;
+assign clock = clk_slow;
+//assign clock = clock_btn;
 
 // if
 wire[31:0] pc_current;
@@ -417,7 +417,7 @@ mem _mem(
     .mem_write(con_mem_write),
     .ram_en(mem_ram_en),
     .uart_en(mem_uart_en),
-    .read_data(mem_read_data),
+    .read_data(mem_read_data)
 );
 
 mem_wb _mem_wb(

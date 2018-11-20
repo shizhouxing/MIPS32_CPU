@@ -14,7 +14,7 @@ always @(posedge clk_in or posedge rst) begin
         clk_out <= 1'b0;
     end
     else begin
-        if (count == 50000) begin
+        if (count == 250) begin
             count = 0;
             clk_out <= ~clk_out;
         end
