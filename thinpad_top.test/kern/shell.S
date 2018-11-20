@@ -29,13 +29,6 @@ SHELL:
     jal READSERIAL                  // 读操作符
     nop
 
-
-
-DEBUG:
-    ori $30, v0, 0xf000
-    j DEBUG
-    nop
-
     ori t0, zero, SH_OP_R
     beq v0, t0, .OP_R
     nop
