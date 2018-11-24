@@ -91,11 +91,12 @@ clock_frac _clock_frac(
     .clk_out(clk_slow)
 );
 
-// main clock
 wire clock;
-//assign clock = clk_11M0592;
-assign clock = clk_slow;
-//assign clock = clock_btn;
+pll_example clock_gen(
+    .clk_out1(clock),
+    .reset(reset),
+    .clk_in1(clk_50M)
+);
 
 // if
 wire[31:0] pc_current;

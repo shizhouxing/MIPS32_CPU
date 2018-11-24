@@ -97,6 +97,7 @@ always @(*) begin
                             end
                             6'b001010: begin // MOVZ 000000ssssstttttddddd00000001010
                                 con_alu_op <= `ALU_OP_B;
+                                con_wb_src <= `WB_SRC_MOV;
                             end
                         endcase
                     end
@@ -104,7 +105,7 @@ always @(*) begin
                         con_reg_write <= 1'b1;
                         con_wb_src <= `WB_SRC_PC_PLUS_8;
                     end
-                    default: begin // branch or j or jr
+                    default: begin // branch or j
                         con_reg_write <= 1'b0;
                     end
                 endcase
