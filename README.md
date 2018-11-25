@@ -17,3 +17,4 @@ You may put a short MIPS32 program at `thinpad_top.test/kern_debug/init.S` for d
 
 Please run `make debug=y` to compile the kernel in this case.
 
+And note that currently the lowest 16 bits of register $30 are binded to the LEDs for debugging.
