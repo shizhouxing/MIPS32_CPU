@@ -12,14 +12,22 @@ CC	:= $(GCCPREFIX)gcc
 MODULE	:= init
 OBJDIR	:= obj
 INCLUDE	:= include
-SRCDIR	:= kern
+
+override debug ?= n
+
+ifeq ($(debug), y)
+	SRCDIR	:= kern_debug
+else
+   	SRCDIR	:= kern
+endif
+
 LDSCRIPT	:= kern/kernel.ld
 SRC	:= $(foreach sdir, $(SRCDIR), $(wildcard $(sdir)/*.S))
 OBJ	:= $(patsubst $(SRCDIR)/%.S, $(OBJDIR)/%.o, $(SRC))
 TARGET	:= kernel.elf
 ASFLAG	:= -D__ASSEMBLY__ -EL -g -mips32r2 -mno-abicalls -mno-shared
 
-override ON_FPGA ?= n
+override ON_FPGA ?= y
 
 ifeq ($(ON_FPGA), y)
 	MACH_DEF = -DMACH_FPGA

@@ -11,3 +11,9 @@
 
 The terminal should display "MONITOR for MIPS32 - initialized" after these steps.
 
+### Debug
+
+You may put a short MIPS32 program at `thinpad_top.test/kern_debug/init.S` for debugging.
+
+Please run `make debug=y` to compile the kernel in this case.
+

@@ -84,16 +84,9 @@ module thinpad_top(
 wire reset;
 assign reset = reset_btn;
 
-wire clk_slow; 
-clock_frac _clock_frac(
-    .rst(reset),
-    .clk_in(clk_50M),
-    .clk_out(clk_slow)
-);
-
 wire clock;
 pll_example clock_gen(
-    .clk_out1(clock),
+    .clk_out2(clock),
     .reset(reset),
     .clk_in1(clk_50M)
 );
