@@ -15,6 +15,13 @@ module mem_wb(
     input wire[1:0] con_wb_src,
     input wire con_mem_byte,
 
+    input wire mem_cp0_we,
+    input wire[4:0] mem_cp0_write_addr,
+    input wire[31:0] mem_cp0_data,
+    output reg wb_cp0_we,
+    output reg[4:0] wb_cp0_write_addr,
+    output reg[31:0] wb_cp0_data,
+
     output reg reg_write_out,
     output reg[4:0] reg_write_address_out,
     output reg[31:0] reg_write_data
@@ -23,10 +30,18 @@ module mem_wb(
 always @(posedge clk or posedge rst) begin
     if (rst) begin
         reg_write_out <= 1'b0;
+        wb_cp0_we <= 1'b0;
+        wb_cp0_write_addr <= 4'b0;
+        wb_cp0_data <= 32'b0;
     end
     else begin
         reg_write_out <= reg_write_in;
         reg_write_address_out <= reg_write_address_in;
+        
+        wb_cp0_we <= mem_cp0_we;
+        wb_cp0_write_addr <= mem_cp0_write_addr;
+        wb_cp0_data <= mem_cp0_data;
+        
         case (con_wb_src)
             `WB_SRC_PC_PLUS_8:
                 reg_write_data <= pc_plus_8;

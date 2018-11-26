@@ -4,53 +4,53 @@ module thinpad_top(
     input wire clk_50M,           //50MHz 时钟输入
     input wire clk_11M0592,       //11.0592MHz 时钟输入
 
-    input wire clock_btn,         //BTN5手动时钟按钮开关，带消抖电路，按下时为1
-    input wire reset_btn,         //BTN6手动复位按钮开关，带消抖电路，按下时为1
+    input wire clock_btn,         //BTN5手动时钟按钮�?关，带消抖电路，按下时为1
+    input wire reset_btn,         //BTN6手动复位按钮�?关，带消抖电路，按下时为1
 
     input  wire[3:0]  touch_btn,  //BTN1~BTN4，按钮开关，按下时为1
-    input  wire[31:0] dip_sw,     //32位拨码开关，拨到“ON”时为1
+    input  wire[31:0] dip_sw,     //32位拨码开关，拨到“ON”时�?1
     output wire[15:0] leds,       //16位LED，输出时1点亮
     output wire[7:0]  dpy0,       //数码管低位信号，包括小数点，输出1点亮
     output wire[7:0]  dpy1,       //数码管高位信号，包括小数点，输出1点亮
 
-    //CPLD串口控制器信号
-    output wire uart_rdn,         //读串口信号，低有效
-    output wire uart_wrn,         //写串口信号，低有效
-    input wire uart_dataready,    //串口数据准备好
-    input wire uart_tbre,         //发送数据标志
-    input wire uart_tsre,         //数据发送完毕标志
+    //CPLD串口控制器信�?
+    output wire uart_rdn,         //读串口信号，低有�?
+    output wire uart_wrn,         //写串口信号，低有�?
+    input wire uart_dataready,    //串口数据准备�?
+    input wire uart_tbre,         //发�?�数据标�?
+    input wire uart_tsre,         //数据发�?�完毕标�?
 
     //BaseRAM信号
-    inout wire[31:0] base_ram_data,  //BaseRAM数据，低8位与CPLD串口控制器共享
+    inout wire[31:0] base_ram_data,  //BaseRAM数据，低8位与CPLD串口控制器共�?
     output wire[19:0] base_ram_addr, //BaseRAM地址
-    output wire[3:0] base_ram_be_n,  //BaseRAM字节使能，低有效。如果不使用字节使能，请保持为0
-    output wire base_ram_ce_n,       //BaseRAM片选，低有效
-    output wire base_ram_oe_n,       //BaseRAM读使能，低有效
-    output wire base_ram_we_n,       //BaseRAM写使能，低有效
+    output wire[3:0] base_ram_be_n,  //BaseRAM字节使能，低有效。如果不使用字节使能，请保持�?0
+    output wire base_ram_ce_n,       //BaseRAM片�?�，低有�?
+    output wire base_ram_oe_n,       //BaseRAM读使能，低有�?
+    output wire base_ram_we_n,       //BaseRAM写使能，低有�?
 
     //ExtRAM信号
     inout wire[31:0] ext_ram_data,  //ExtRAM数据
     output wire[19:0] ext_ram_addr, //ExtRAM地址
-    output wire[3:0] ext_ram_be_n,  //ExtRAM字节使能，低有效。如果不使用字节使能，请保持为0
-    output wire ext_ram_ce_n,       //ExtRAM片选，低有效
-    output wire ext_ram_oe_n,       //ExtRAM读使能，低有效
-    output wire ext_ram_we_n,       //ExtRAM写使能，低有效
+    output wire[3:0] ext_ram_be_n,  //ExtRAM字节使能，低有效。如果不使用字节使能，请保持�?0
+    output wire ext_ram_ce_n,       //ExtRAM片�?�，低有�?
+    output wire ext_ram_oe_n,       //ExtRAM读使能，低有�?
+    output wire ext_ram_we_n,       //ExtRAM写使能，低有�?
 
     //直连串口信号
-    output wire txd,  //直连串口发送端
-    input  wire rxd,  //直连串口接收端
+    output wire txd,  //直连串口发�?�端
+    input  wire rxd,  //直连串口接收�?
 
-    //Flash存储器信号，参考 JS28F640 芯片手册
-    output wire [22:0]flash_a,      //Flash地址，a0仅在8bit模式有效，16bit模式无意义
+    //Flash存储器信号，参�?? JS28F640 芯片手册
+    output wire [22:0]flash_a,      //Flash地址，a0仅在8bit模式有效�?16bit模式无意�?
     inout  wire [15:0]flash_d,      //Flash数据
     output wire flash_rp_n,         //Flash复位信号，低有效
-    output wire flash_vpen,         //Flash写保护信号，低电平时不能擦除、烧写
-    output wire flash_ce_n,         //Flash片选信号，低有效
-    output wire flash_oe_n,         //Flash读使能信号，低有效
-    output wire flash_we_n,         //Flash写使能信号，低有效
-    output wire flash_byte_n,       //Flash 8bit模式选择，低有效。在使用flash的16位模式时请设为1
+    output wire flash_vpen,         //Flash写保护信号，低电平时不能擦除、烧�?
+    output wire flash_ce_n,         //Flash片�?�信号，低有�?
+    output wire flash_oe_n,         //Flash读使能信号，低有�?
+    output wire flash_we_n,         //Flash写使能信号，低有�?
+    output wire flash_byte_n,       //Flash 8bit模式选择，低有效。在使用flash�?16位模式时请设�?1
 
-    //USB 控制器信号，参考 SL811 芯片手册
+    //USB 控制器信号，参�?? SL811 芯片手册
     output wire sl811_a0,
     //inout  wire[7:0] sl811_d,     //USB数据线与网络控制器的dm9k_sd[7:0]共享
     output wire sl811_wr_n,
@@ -61,7 +61,7 @@ module thinpad_top(
     input  wire sl811_intrq,
     input  wire sl811_drq_n,
 
-    //网络控制器信号，参考 DM9000A 芯片手册
+    //网络控制器信号，参�?? DM9000A 芯片手册
     output wire dm9k_cmd,
     inout  wire[15:0] dm9k_sd,
     output wire dm9k_iow_n,
@@ -71,13 +71,13 @@ module thinpad_top(
     input  wire dm9k_int,
 
     //图像输出信号
-    output wire[2:0] video_red,    //红色像素，3位
-    output wire[2:0] video_green,  //绿色像素，3位
-    output wire[1:0] video_blue,   //蓝色像素，2位
-    output wire video_hsync,       //行同步（水平同步）信号
-    output wire video_vsync,       //场同步（垂直同步）信号
+    output wire[2:0] video_red,    //红色像素�?3�?
+    output wire[2:0] video_green,  //绿色像素�?3�?
+    output wire[1:0] video_blue,   //蓝色像素�?2�?
+    output wire video_hsync,       //行同步（水平同步）信�?
+    output wire video_vsync,       //场同步（垂直同步）信�?
     output wire video_clk,         //像素时钟输出
-    output wire video_de           //行数据有效信号，用于区分消隐区
+    output wire video_de           //行数据有效信号，用于区分消隐�?
 );
 
 // reset
@@ -102,6 +102,7 @@ wire[31:0] pc_jump;
 wire[31:0] inst_id, pc_plus_4_id;
 wire con_alu_immediate, con_alu_signed, con_alu_sa;
 wire con_jal;
+wire con_mfc0;
 wire con_reg_write;
 wire[4:0] reg_write_address;
 wire[31:0] reg_write_data;
@@ -122,6 +123,10 @@ wire[31:0] alu_res;
 wire alu_z;
 wire alu_s, alu_c, alu_v; // unused
 
+wire exe_cp0_we_out;
+wire[4:0] exe_cp0_write_addr_out;
+wire[31:0] exe_cp0_data_out;
+
 // mem
 wire con_mem_read_id, con_mem_read_exe, con_mem_read;
 wire con_mem_write_id, con_mem_write_exe, con_mem_write;
@@ -137,10 +142,26 @@ wire con_reg_write_mem;
 wire[31:0] alu_res_mem, mov_data_mem;
 wire[31:0] mem_read_data, uart_read_data;
 
+wire mem_cp0_we_in;
+wire[4:0] mem_cp0_write_addr_in;
+wire[31:0] mem_cp0_data_in;
+
+wire mem_cp0_we_out;
+wire[4:0] mem_cp0_write_addr_out;
+wire[31:0] mem_cp0_data_out;
+
 // end
 wire[4:0] reg_write_address_end;
 wire reg_write_end;
 wire[31:0] reg_write_data_end;
+
+wire wb_cp0_we_in;
+wire[4:0] wb_cp0_write_addr_in;
+wire[31:0] wb_cp0_data_in;
+
+// cp0
+wire[31:0] cp0_data_out;
+wire[4:0] cp0_raddr_in;
 
 // hazard
 wire[0:2] stall, nop;
@@ -275,6 +296,7 @@ control _control(
     .con_alu_signed(con_alu_signed),
     .con_alu_sa(con_alu_sa),
     .con_jal(con_jal),
+    .con_mfc0(con_mfc0),
 
     .con_alu_op(con_alu_op_id),
     .con_reg_write(con_reg_write_id),
@@ -326,6 +348,7 @@ id_exe _id_exe(
     .con_alu_signed(con_alu_signed),
     .con_alu_sa(con_alu_sa),
     .con_jal(con_jal),
+    .con_mfc0(con_mfc0),
     
     .con_alu_op_in(con_alu_op_id),
     .con_reg_write_in(con_reg_write_id),
@@ -356,6 +379,23 @@ alu _alu(
     .op(con_alu_op),
     .A(alu_a),
     .B(alu_b),
+    
+    .inst_in(inst_exe),
+    .mem_cp0_we(mem_cp0_we_out),
+    .mem_cp0_write_addr(mem_cp0_write_addr_out),
+    .mem_cp0_data(mem_cp0_data_out),
+    
+    .wb_cp0_we(wb_cp0_we_in),
+    .wb_cp0_write_addr(wb_cp0_write_addr_in),
+    .wb_cp0_data(wb_cp0_data_in),
+    
+    .cp0_data_in(cp0_data_out),
+    .cp0_read_addr(cp0_raddr_in),
+    
+    .cp0_we_out(exe_cp0_we_out),
+    .cp0_write_addr_out(exe_cp0_write_addr_out),
+    .cp0_data_out(exe_cp0_data_out),
+    
     .res(alu_res),
     .S(alu_s),
     .Z(alu_z),
@@ -370,6 +410,14 @@ exe_mem _exe_mem(
     .inst_in(inst_exe),
     .alu_z(alu_z),
     .alu_res(alu_res),
+    
+    .exe_cp0_we(exe_cp0_we_out),
+    .exe_cp0_write_addr(exe_cp0_write_addr_out),
+    .exe_cp0_data(exe_cp0_data_out),
+    .mem_cp0_we(mem_cp0_we_in),
+    .mem_cp0_write_addr(mem_cp0_write_addr_in),
+    .mem_cp0_data(mem_cp0_data_in),
+    
     .pc_plus_8_in(pc_plus_8_exe),
     .reg_write_address_in(reg_write_address_exe),
     .mem_write_data_in(mem_write_data_exe),
@@ -410,6 +458,14 @@ mem _mem(
     .uart_read_data(mem_uart_read_data),
     .mem_read(con_mem_read),
     .mem_write(con_mem_write),
+    
+    .cp0_we_in(mem_cp0_we_in),
+    .cp0_write_addr_in(mem_cp0_write_addr_in),
+    .cp0_data_in(mem_cp0_data_in),
+    .cp0_we_out(mem_cp0_we_out),
+    .cp0_write_addr_out(mem_cp0_write_addr_out),
+    .cp0_data_out(mem_cp0_data_out),
+    
     .ram_en(mem_ram_en),
     .uart_en(mem_uart_en),
     .read_data(mem_read_data)
@@ -425,6 +481,14 @@ mem_wb _mem_wb(
     .mem_read_data(mem_read_data),
     .alu_res(alu_res_mem),
     .con_wb_src(con_wb_src),
+    
+    .mem_cp0_we(mem_cp0_we_out),
+    .mem_cp0_write_addr(mem_cp0_write_addr_out),
+    .mem_cp0_data(mem_cp0_data_out),
+    
+    .wb_cp0_we(wb_cp0_we_in),
+    .wb_cp0_write_addr(wb_cp0_write_addr_in),
+    .wb_cp0_data(wb_cp0_data_in),
 
     .con_mem_byte(con_mem_byte),
     .reg_write_out(con_reg_write),
@@ -441,6 +505,16 @@ wb_end _wb_end(
     .reg_write_address_out(reg_write_address_end),
     .reg_write_data_out(reg_write_data_end),
     .reg_write_out(reg_write_end)
+);
+
+cp0_reg _cp0_reg(
+    .clk(clock),
+    .rst(reset),
+    .w_in(wb_cp0_we_in),
+    .waddr_in(wb_cp0_write_addr_in),
+    .raddr_in(cp0_raddr_in),
+    .data_in(wb_cp0_data_in),
+    .data_out(cp0_data_out)
 );
 
 endmodule

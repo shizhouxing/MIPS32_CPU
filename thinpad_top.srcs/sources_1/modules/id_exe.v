@@ -25,6 +25,7 @@ module id_exe(
     input wire con_alu_signed,
     input wire con_alu_sa,
     input wire con_jal,
+    input wire con_mfc0,
  
     // for exe
     input wire[3:0] con_alu_op_in,
@@ -131,7 +132,7 @@ always @(posedge clk or posedge rst) begin
                 if (con_jal)
                     reg_write_address <= 5'b11111; // save $31 for jal
                 else
-                    reg_write_address <= con_alu_immediate ? inst_in[20:16] : inst_in[15:11];
+                    reg_write_address <= con_mfc0 ? inst_in[20:16] : (con_alu_immediate ? inst_in[20:16] : inst_in[15:11]);
 
                 mem_write_data <= data_2;
             end

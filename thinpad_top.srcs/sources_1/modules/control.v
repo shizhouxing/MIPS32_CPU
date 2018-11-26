@@ -11,6 +11,7 @@ module control(
     output reg con_alu_signed,
     output reg con_alu_sa, // for SLL and SRL
     output reg con_jal, // for JAL
+    output reg con_mfc0,
 
     // exe
     output reg[3:0] con_alu_op,
@@ -35,6 +36,21 @@ always @(*) begin
         con_jal <= inst[31:26] == 6'b000011;
         con_mem_read <= inst[31:29] == 3'b100;
         con_mem_write <= inst[31:29] == 3'b101;
+        con_mfc0 <= 1'b0;
+        
+        if (inst[31:21] == 11'b01000000000 && inst[10:0] == 11'b0) begin // mfc0
+            // GPR[rt] <- CPR[0, rd]
+            { con_alu_immediate, con_reg_write, con_alu_signed } <= 3'b010;
+            con_mfc0 <= 1'b1;
+            con_wb_src <= `WB_SRC_ALU;
+            con_alu_op <= `ALU_OP_MFC0;
+        end
+        
+        if (inst[31:21] == 11'b01000000100 && inst[10:0] == 11'b0) begin // mtc0
+            // CPR[0, rd] <- GPR[rt]
+            { con_alu_immediate, con_reg_write, con_alu_signed } <= 3'b000;
+            con_alu_op <= `ALU_OP_MTC0;
+        end
 
         case (inst[31:29])
             3'b001: begin // alu-based operations with an immediate number
