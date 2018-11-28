@@ -5,15 +5,25 @@
 // generate control signals
 module control(
     input wire[31:0] inst,
+    input wire[31:0] pc,
+    
+    /*
+       [8]   syscall
+       [9]   instruction valid
+       [12]  eret
+    */
+    output reg[31:0] exception_out,
+    output reg[31:0] exception_address_out,
 
     // id
     output reg con_alu_immediate,
     output reg con_alu_signed,
     output reg con_alu_sa, // for SLL and SRL
     output reg con_jal, // for JAL
+    output reg con_mfc0,
 
     // exe
-    output reg[3:0] con_alu_op,
+    output reg[4:0] con_alu_op,
     output reg con_reg_write,    
     output reg con_mov_cond, // conditional mov
 
@@ -24,9 +34,13 @@ module control(
     output reg[1:0] con_wb_src
 );
 
+reg valid;
+
 always @(*) begin
     if (inst == 32'b0) begin // NOP
-        { con_reg_write, con_mem_read, con_mem_write } = 3'b000;
+        { con_reg_write, con_mem_read, con_mem_write } <= 3'b000;
+        exception_out <= 32'b0;
+        exception_address_out <= 32'b0;
     end
     else begin
         con_alu_sa <= (inst[31:26] == 6'b000000) && (
@@ -35,7 +49,51 @@ always @(*) begin
         con_jal <= inst[31:26] == 6'b000011;
         con_mem_read <= inst[31:29] == 3'b100;
         con_mem_write <= inst[31:29] == 3'b101;
-
+        con_mfc0 <= 1'b0;
+        
+        exception_out <= 32'b0;
+        exception_out[9] <= 1'b1;
+        exception_address_out <= pc;
+        
+        if (inst[31:21] == 11'b01000000000 && inst[10:0] == 11'b0) begin // mfc0
+            // GPR[rt] <- CPR[0, rd]
+            { con_alu_immediate, con_reg_write, con_alu_signed } <= 3'b010;
+            con_mfc0 <= 1'b1;
+            con_wb_src <= `WB_SRC_ALU;
+            con_alu_op <= `ALU_OP_MFC0;
+            exception_out[9] <= 1'b0;
+        end
+        
+        if (inst[31:21] == 11'b01000000100 && inst[10:0] == 11'b0) begin // mtc0
+            // CPR[0, rd] <- GPR[rt]
+            { con_alu_immediate, con_reg_write, con_alu_signed } <= 3'b000;
+            con_alu_op <= `ALU_OP_MTC0;
+            exception_out[9] <= 1'b0;
+        end
+        
+        if (inst == 32'b01000010000000000000000000011000) begin // eret
+            { con_alu_immediate, con_reg_write, con_mem_write} <= 3'b000;
+            con_wb_src <= `WB_SRC_ALU;
+            con_alu_op <= `ALU_OP_ERET;
+            exception_out[9] <= 1'b0;
+            exception_out[12] <= 1'b1;
+        end
+        
+        
+        case (inst[31:26])
+            6'b000000: begin
+                case (inst[5:0])
+                    6'b001100: begin // syscall
+                        { con_alu_immediate, con_reg_write, con_alu_signed } <= 3'b000;
+                        con_alu_op <= `ALU_OP_SYSCALL;
+                        exception_out[9] <= 1'b0;
+                        exception_out[8] <= 1'b1;
+                    end
+                endcase
+            end
+        endcase
+        
+        
         case (inst[31:29])
             3'b001: begin // alu-based operations with an immediate number
                 { con_alu_immediate, con_reg_write }  <= 2'b11;
@@ -44,22 +102,27 @@ always @(*) begin
                     3'b001: begin // ADDIU 001001ssssstttttiiiiiiiiiiiiiiii
                         con_alu_op <= `ALU_OP_ADD;
                         con_alu_signed <= 1'b1;
+                        exception_out[9] <= 1'b0;
                     end
                     3'b100: begin // ANDI 001100ssssstttttiiiiiiiiiiiiiiii
                         con_alu_op <= `ALU_OP_AND;
                         con_alu_signed <= 1'b0;
+                        exception_out[9] <= 1'b0;
                     end
                     3'b101: begin // ORI 001101ssssstttttiiiiiiiiiiiiiiii
                         con_alu_op <= `ALU_OP_OR;
                         con_alu_signed <= 1'b0;
+                        exception_out[9] <= 1'b0;
                     end
                     3'b110: begin // XORI 001110ssssstttttiiiiiiiiiiiiiiii
                         con_alu_op <= `ALU_OP_XOR;
                         con_alu_signed <= 1'b0;
+                        exception_out[9] <= 1'b0;
                     end
                     3'b111: begin
                         con_alu_op <= `ALU_OP_LUI;
                         con_alu_signed <= 1'b0;
+                        exception_out[9] <= 1'b0;
                     end
                 endcase
             end
@@ -73,37 +136,47 @@ always @(*) begin
                         case (inst[5:0])
                             6'b000000: begin // SLL 00000000000tttttdddddaaaaa000000
                                 con_alu_op <= `ALU_OP_SLL;
+                                exception_out[9] <= 1'b0;
                             end     
                             6'b000010: begin // SRL 00000000000tttttdddddaaaaa000010
                                 con_alu_op <= `ALU_OP_SRL;
+                                exception_out[9] <= 1'b0;
                             end                                                     
                             6'b100001: begin // ADDU 000000ssssstttttddddd00000100001
                                 con_alu_op <= `ALU_OP_ADD;
+                                exception_out[9] <= 1'b0;
                             end
                             6'b100010: begin // SUB 0000 00ss ssst tttt dddd d000 0010 0010
                                 con_alu_op <= `ALU_OP_SUB;
+                                exception_out[9] <= 1'b0;
                             end
                             6'b100100: begin // AND 000000ssssstttttddddd00000100100
                                 con_alu_op <= `ALU_OP_AND;
+                                exception_out[9] <= 1'b0;
                             end
                             6'b100101: begin // OR 000000ssssstttttddddd00000100101
                                 con_alu_op <= `ALU_OP_OR;
+                                exception_out[9] <= 1'b0;
                             end
                             6'b100110: begin // XOR 000000ssssstttttddddd00000100110
                                 con_alu_op <= `ALU_OP_XOR;
+                                exception_out[9] <= 1'b0;
                             end
                             6'b000110: begin // SRLV 000000ssssstttttddddd00000000110
                                 con_alu_op <= `ALU_OP_SRL;
+                                exception_out[9] <= 1'b0;
                             end
                             6'b001010: begin // MOVZ 000000ssssstttttddddd00000001010
                                 con_alu_op <= `ALU_OP_B;
                                 con_wb_src <= `WB_SRC_MOV;
+                                exception_out[9] <= 1'b0;
                             end
                         endcase
                     end
                     3'b011: begin // JAL
                         con_reg_write <= 1'b1;
                         con_wb_src <= `WB_SRC_PC_PLUS_8;
+                        exception_out[9] <= 1'b0;
                     end
                     default: begin // branch or j
                         con_reg_write <= 1'b0;
@@ -118,12 +191,15 @@ always @(*) begin
                 case (inst[28:26])
                     3'b000: begin // LB
                         con_mem_byte <= 1'b1;
+                        exception_out[9] <= 1'b0;
                     end
                     3'b011: begin // LW
                         con_mem_byte <= 1'b0;
+                        exception_out[9] <= 1'b0;
                     end
                     3'b100: begin // LBU
                         con_mem_byte <= 1'b1;
+                        exception_out[9] <= 1'b0;
                     end
                 endcase
             end
@@ -134,9 +210,11 @@ always @(*) begin
                 case (inst[28:26])
                     3'b000: begin // SB
                         con_mem_byte <= 1'b1;
+                        exception_out[9] <= 1'b0;
                     end
                     3'b011: begin // SW
                         con_mem_byte <= 1'b0;
+                        exception_out[9] <= 1'b0;
                     end
                 endcase
             end
@@ -145,8 +223,8 @@ always @(*) begin
                 { con_alu_immediate, con_reg_write, con_mem_write} <= 3'b010;
                 con_wb_src <= `WB_SRC_ALU;
                 con_alu_op <= `ALU_OP_CLZ;
+                exception_out[9] <= 1'b0;
             end
-
         endcase
     end
 end

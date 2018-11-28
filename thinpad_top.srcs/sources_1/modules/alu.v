@@ -3,17 +3,76 @@
 `include "constants.v"
 
 module alu( 
-    input wire[3:0] op,
+    input wire[4:0] op,
     input wire[31:0] A,
     input wire[31:0] B,
     output reg[31:0] res,
+    
+    input wire[31:0] inst_in,
+    
+    // cp0
+    input wire mem_cp0_we,
+    input wire[4:0] mem_cp0_write_addr,
+    input wire[31:0] mem_cp0_data,
+    input wire wb_cp0_we,
+    input wire[4:0] wb_cp0_write_addr,
+    input wire[31:0] wb_cp0_data,
+    input wire[31:0] cp0_data_in,
+    output reg[4:0] cp0_read_addr,
+    output reg cp0_we_out,
+    output reg[4:0] cp0_write_addr_out,
+    output reg[31:0] cp0_data_out,
+    
+    // exception
+    input wire[31:0] exception_in,
+    input wire[31:0] exception_address_in,
+    /*
+        [10:10] trap
+        [11:11] overflow
+    */
+    output reg[31:0] exception_out,
+    output reg[31:0] exception_address_out,
+    
+    // delayslot
+    input wire this_delayslot_in,
+    output reg this_delayslot_out,
+    
     output reg C, S, Z, V
 );
 
+wire[31:0] B_complement;
+
+assign B_complement = op == `ALU_OP_SUB ? ((~B) + 1) : B;
+
 always @(*) begin
+    cp0_we_out <= 1'b0;
+    exception_out <= exception_in;
+    exception_address_out <= exception_address_in;
+    this_delayslot_out <= this_delayslot_in;
     case (op)
-         `ALU_OP_ADD: {C, res} = {1'b0, A} + {1'b0, B};
-         `ALU_OP_SUB: {C, res} = {1'b0, A} - {1'b1, B};
+         `ALU_OP_MFC0: begin
+             cp0_read_addr <= inst_in[15:11];
+             res <= cp0_data_in;
+             if (mem_cp0_we == 1'b1 && mem_cp0_write_addr == inst_in[15:11]) begin
+                 res <= mem_cp0_data;
+             end
+             else if (wb_cp0_we == 1'b1 && wb_cp0_write_addr == inst_in[15:11]) begin
+                 res <= wb_cp0_data;
+             end
+         end
+         `ALU_OP_MTC0: begin
+             cp0_we_out <= 1'b1;
+             cp0_write_addr_out <= inst_in[15:11];
+             cp0_data_out <= B;
+         end
+         `ALU_OP_ADD: begin
+             {C, res} = {1'b0, A} + {1'b0, B};
+             exception_out[11] <= (!A[31] && !B_complement[31] && res[31]) || (A[31] && B_complement[31] && !res[31]);
+         end
+         `ALU_OP_SUB: begin
+             {C, res} = {1'b0, A} - {1'b1, B};
+             exception_out[11] <= (!A[31] && !B_complement[31] && res[31]) || (A[31] && B_complement[31] && !res[31]);
+         end
          `ALU_OP_AND: res = A & B;
          `ALU_OP_OR:  res = A | B;
          `ALU_OP_XOR: res = A ^ B;

@@ -1,18 +1,22 @@
 `ifndef CONSTANTS
 `define CONSTANTS 0
-    `define ALU_OP_ADD 4'h0 
-    `define ALU_OP_SUB 4'h1 
-    `define ALU_OP_AND 4'h2 
-    `define ALU_OP_OR  4'h3 
-    `define ALU_OP_XOR 4'h4 
-    `define ALU_OP_NOT 4'h5 
-    `define ALU_OP_SLL 4'h6 
-    `define ALU_OP_SRL 4'h7 
-    `define ALU_OP_SRA 4'h8 
-    `define ALU_OP_ROL 4'h9 
-    `define ALU_OP_LUI 4'ha 
-    `define ALU_OP_CLZ 4'hb 
-    `define ALU_OP_B 4'hc
+    `define ALU_OP_ADD 5'b00000
+    `define ALU_OP_SUB 5'b00001
+    `define ALU_OP_AND 5'b00010
+    `define ALU_OP_OR  5'b00011
+    `define ALU_OP_XOR 5'b00100 
+    `define ALU_OP_NOT 5'b00101
+    `define ALU_OP_SLL 5'b00110
+    `define ALU_OP_SRL 5'b00111
+    `define ALU_OP_SRA 5'b01000
+    `define ALU_OP_ROL 5'b01001
+    `define ALU_OP_LUI 5'b01010
+    `define ALU_OP_CLZ 5'b01011
+    `define ALU_OP_B 5'b01100
+    `define ALU_OP_MFC0 5'b01101
+    `define ALU_OP_MTC0 5'b01110
+    `define ALU_OP_SYSCALL 5'b01111
+    `define ALU_OP_ERET 5'b10000
 
     `define WB_SRC_PC_PLUS_8 2'b00 
     `define WB_SRC_MOV 2'b01 

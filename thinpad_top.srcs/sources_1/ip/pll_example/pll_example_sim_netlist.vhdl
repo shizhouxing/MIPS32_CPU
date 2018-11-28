@@ -1,10 +1,10 @@
 -- Copyright 1986-2018 Xilinx, Inc. All Rights Reserved.
 -- --------------------------------------------------------------------------------
 -- Tool Version: Vivado v.2018.2 (win64) Build 2258646 Thu Jun 14 20:03:12 MDT 2018
--- Date        : Fri Oct 12 15:40:24 2018
--- Host        : WIN-EP88M58C7HK running 64-bit Service Pack 1  (build 7601)
+-- Date        : Sun Nov 25 20:23:52 2018
+-- Host        : DESKTOP-FHA49RP running 64-bit major release  (build 9200)
 -- Command     : write_vhdl -force -mode funcsim
---               C:/Users/__Shi/Desktop/thinpad_top/thinpad_top.srcs/sources_1/ip/pll_example/pll_example_sim_netlist.vhdl
+--               C:/Users/Tinaht/Desktop/MIPS32_CPU/thinpad_top.srcs/sources_1/ip/pll_example/pll_example_sim_netlist.vhdl
 -- Design      : pll_example
 -- Purpose     : This VHDL netlist is a functional simulation representation of the design and should not be modified or
 --               synthesized. This netlist cannot be used for SDF annotated simulation.
@@ -86,16 +86,16 @@ clkout2_buf: unisim.vcomponents.BUFG
 mmcm_adv_inst: unisim.vcomponents.MMCME2_ADV
     generic map(
       BANDWIDTH => "OPTIMIZED",
-      CLKFBOUT_MULT_F => 20.000000,
+      CLKFBOUT_MULT_F => 64.000000,
       CLKFBOUT_PHASE => 0.000000,
       CLKFBOUT_USE_FINE_PS => false,
       CLKIN1_PERIOD => 20.000000,
       CLKIN2_PERIOD => 0.000000,
-      CLKOUT0_DIVIDE_F => 100.000000,
+      CLKOUT0_DIVIDE_F => 64.000000,
       CLKOUT0_DUTY_CYCLE => 0.500000,
       CLKOUT0_PHASE => 0.000000,
       CLKOUT0_USE_FINE_PS => false,
-      CLKOUT1_DIVIDE => 50,
+      CLKOUT1_DIVIDE => 128,
       CLKOUT1_DUTY_CYCLE => 0.500000,
       CLKOUT1_PHASE => 0.000000,
       CLKOUT1_USE_FINE_PS => false,
@@ -121,7 +121,7 @@ mmcm_adv_inst: unisim.vcomponents.MMCME2_ADV
       CLKOUT6_PHASE => 0.000000,
       CLKOUT6_USE_FINE_PS => false,
       COMPENSATION => "ZHOLD",
-      DIVCLK_DIVIDE => 1,
+      DIVCLK_DIVIDE => 5,
       IS_CLKINSEL_INVERTED => '0',
       IS_PSEN_INVERTED => '0',
       IS_PSINCDEC_INVERTED => '0',

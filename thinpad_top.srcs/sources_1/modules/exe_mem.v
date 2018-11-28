@@ -3,6 +3,7 @@
 module exe_mem(
     input wire clk,
     input wire rst,
+    input wire flush,
     input wire nop,
     input wire[31:0] inst_in,
     input wire alu_z,
@@ -35,6 +36,25 @@ module exe_mem(
     input wire[1:0] con_wb_src_in,
     output reg[1:0] con_wb_src_out,    
 
+    // cp0
+    input wire exe_cp0_we,
+    input wire[4:0] exe_cp0_write_addr,
+    input wire[31:0] exe_cp0_data,
+    output reg mem_cp0_we,
+    output reg[4:0] mem_cp0_write_addr,
+    output reg[31:0] mem_cp0_data,
+    
+    // exception
+    input wire[31:0] exe_exception,
+    input wire[31:0] exe_exception_address,
+    output reg[31:0] mem_exception,
+    output reg[31:0] mem_exception_address,
+    
+    // delayslot
+    input wire exe_this_delayslot,
+    output reg mem_this_delayslot,
+    
+    
     output reg[31:0] pc_plus_8_out,
     output reg[31:0] mem_address,
     output reg[4:0] reg_write_address,
@@ -76,15 +96,45 @@ forward _forward_B(
 always @(posedge clk or posedge rst) begin
     if (rst) begin
         { reg_write, con_mem_read_out, con_mem_write_out } = 3'b000;
+        mem_cp0_we <= 1'b0;
+        mem_cp0_write_addr <= 4'b0;
+        mem_cp0_data <= 31'b0;
+        
+        mem_exception <= 32'b0;
+        mem_exception_address <= 32'b0;
+        mem_this_delayslot <= 1'b0;
     end
-    else begin
+    else if (flush == 1'b1) begin
+        { reg_write, con_mem_read_out, con_mem_write_out } = 3'b000;
+        mem_cp0_we <= 1'b0;
+        mem_cp0_write_addr <= 4'b0;
+        mem_cp0_data <= 31'b0;
+        
+        mem_exception <= 32'b0;
+        mem_exception_address <= 32'b0;
+        mem_this_delayslot <= 1'b0;
+    end else begin
         if (nop) begin
             { con_mem_read_out, con_mem_write_out, reg_write } <= 3'b000;
+            mem_cp0_we <= 1'b0;
+            mem_cp0_write_addr <= 4'b0;
+            mem_cp0_data <= 31'b0;
+            mem_exception <= 32'b0;
+            mem_exception_address <= 32'b0;
+            mem_this_delayslot <= 1'b0;
         end
         else begin
             read_address_1 <= inst_in[25:21];
             read_address_2 <= inst_in[20:16];
 
+            mem_cp0_we <= exe_cp0_we;
+            mem_cp0_write_addr <= exe_cp0_write_addr;
+            mem_cp0_data <= exe_cp0_data;
+            
+            mem_exception <= exe_exception;
+            mem_exception_address <= exe_exception_address;
+            mem_this_delayslot <= exe_this_delayslot;
+            
             con_mem_byte_out <= con_mem_byte_in;
             con_mem_read_out <= con_mem_read_in;
             con_mem_write_out <= con_mem_write_in;

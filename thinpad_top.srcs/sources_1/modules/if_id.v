@@ -7,6 +7,7 @@ module if_id(
     input wire nop,
     input wire[31:0] inst_in,
     input wire[31:0] pc_plus_4_in,
+    input wire flush,
     output reg[31:0] inst_out,
     output reg[31:0] pc_plus_4_out
 );
@@ -16,7 +17,10 @@ always @(posedge clk or posedge rst) begin
         inst_out <= 32'b0;
         pc_plus_4_out <= 32'b0;
     end
-    else begin
+    else if (flush == 1'b1) begin
+        inst_out <= 32'b0;
+        pc_plus_4_out <= 32'b0;
+    end else begin
         if (~stall) begin
             if (nop) begin
                 inst_out <= 32'b0;

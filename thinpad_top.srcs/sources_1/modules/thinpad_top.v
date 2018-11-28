@@ -4,53 +4,53 @@ module thinpad_top(
     input wire clk_50M,           //50MHz 时钟输入
     input wire clk_11M0592,       //11.0592MHz 时钟输入
 
-    input wire clock_btn,         //BTN5手动时钟按钮开关，带消抖电路，按下时为1
-    input wire reset_btn,         //BTN6手动复位按钮开关，带消抖电路，按下时为1
+    input wire clock_btn,         //BTN5手动时钟按钮�?关，带消抖电路，按下时为1
+    input wire reset_btn,         //BTN6手动复位按钮�?关，带消抖电路，按下时为1
 
     input  wire[3:0]  touch_btn,  //BTN1~BTN4，按钮开关，按下时为1
-    input  wire[31:0] dip_sw,     //32位拨码开关，拨到“ON”时为1
+    input  wire[31:0] dip_sw,     //32位拨码开关，拨到“ON”时�?1
     output wire[15:0] leds,       //16位LED，输出时1点亮
     output wire[7:0]  dpy0,       //数码管低位信号，包括小数点，输出1点亮
     output wire[7:0]  dpy1,       //数码管高位信号，包括小数点，输出1点亮
 
-    //CPLD串口控制器信号
-    output wire uart_rdn,         //读串口信号，低有效
-    output wire uart_wrn,         //写串口信号，低有效
-    input wire uart_dataready,    //串口数据准备好
-    input wire uart_tbre,         //发送数据标志
-    input wire uart_tsre,         //数据发送完毕标志
+    //CPLD串口控制器信�?
+    output wire uart_rdn,         //读串口信号，低有�?
+    output wire uart_wrn,         //写串口信号，低有�?
+    input wire uart_dataready,    //串口数据准备�?
+    input wire uart_tbre,         //发�?�数据标�?
+    input wire uart_tsre,         //数据发�?�完毕标�?
 
     //BaseRAM信号
-    inout wire[31:0] base_ram_data,  //BaseRAM数据，低8位与CPLD串口控制器共享
+    inout wire[31:0] base_ram_data,  //BaseRAM数据，低8位与CPLD串口控制器共�?
     output wire[19:0] base_ram_addr, //BaseRAM地址
-    output wire[3:0] base_ram_be_n,  //BaseRAM字节使能，低有效。如果不使用字节使能，请保持为0
-    output wire base_ram_ce_n,       //BaseRAM片选，低有效
-    output wire base_ram_oe_n,       //BaseRAM读使能，低有效
-    output wire base_ram_we_n,       //BaseRAM写使能，低有效
+    output wire[3:0] base_ram_be_n,  //BaseRAM字节使能，低有效。如果不使用字节使能，请保持�?0
+    output wire base_ram_ce_n,       //BaseRAM片�?�，低有�?
+    output wire base_ram_oe_n,       //BaseRAM读使能，低有�?
+    output wire base_ram_we_n,       //BaseRAM写使能，低有�?
 
     //ExtRAM信号
     inout wire[31:0] ext_ram_data,  //ExtRAM数据
     output wire[19:0] ext_ram_addr, //ExtRAM地址
-    output wire[3:0] ext_ram_be_n,  //ExtRAM字节使能，低有效。如果不使用字节使能，请保持为0
-    output wire ext_ram_ce_n,       //ExtRAM片选，低有效
-    output wire ext_ram_oe_n,       //ExtRAM读使能，低有效
-    output wire ext_ram_we_n,       //ExtRAM写使能，低有效
+    output wire[3:0] ext_ram_be_n,  //ExtRAM字节使能，低有效。如果不使用字节使能，请保持�?0
+    output wire ext_ram_ce_n,       //ExtRAM片�?�，低有�?
+    output wire ext_ram_oe_n,       //ExtRAM读使能，低有�?
+    output wire ext_ram_we_n,       //ExtRAM写使能，低有�?
 
     //直连串口信号
-    output wire txd,  //直连串口发送端
-    input  wire rxd,  //直连串口接收端
+    output wire txd,  //直连串口发�?�端
+    input  wire rxd,  //直连串口接收�?
 
-    //Flash存储器信号，参考 JS28F640 芯片手册
-    output wire [22:0]flash_a,      //Flash地址，a0仅在8bit模式有效，16bit模式无意义
+    //Flash存储器信号，参�?? JS28F640 芯片手册
+    output wire [22:0]flash_a,      //Flash地址，a0仅在8bit模式有效�?16bit模式无意�?
     inout  wire [15:0]flash_d,      //Flash数据
     output wire flash_rp_n,         //Flash复位信号，低有效
-    output wire flash_vpen,         //Flash写保护信号，低电平时不能擦除、烧写
-    output wire flash_ce_n,         //Flash片选信号，低有效
-    output wire flash_oe_n,         //Flash读使能信号，低有效
-    output wire flash_we_n,         //Flash写使能信号，低有效
-    output wire flash_byte_n,       //Flash 8bit模式选择，低有效。在使用flash的16位模式时请设为1
+    output wire flash_vpen,         //Flash写保护信号，低电平时不能擦除、烧�?
+    output wire flash_ce_n,         //Flash片�?�信号，低有�?
+    output wire flash_oe_n,         //Flash读使能信号，低有�?
+    output wire flash_we_n,         //Flash写使能信号，低有�?
+    output wire flash_byte_n,       //Flash 8bit模式选择，低有效。在使用flash�?16位模式时请设�?1
 
-    //USB 控制器信号，参考 SL811 芯片手册
+    //USB 控制器信号，参�?? SL811 芯片手册
     output wire sl811_a0,
     //inout  wire[7:0] sl811_d,     //USB数据线与网络控制器的dm9k_sd[7:0]共享
     output wire sl811_wr_n,
@@ -61,7 +61,7 @@ module thinpad_top(
     input  wire sl811_intrq,
     input  wire sl811_drq_n,
 
-    //网络控制器信号，参考 DM9000A 芯片手册
+    //网络控制器信号，参�?? DM9000A 芯片手册
     output wire dm9k_cmd,
     inout  wire[15:0] dm9k_sd,
     output wire dm9k_iow_n,
@@ -71,13 +71,13 @@ module thinpad_top(
     input  wire dm9k_int,
 
     //图像输出信号
-    output wire[2:0] video_red,    //红色像素，3位
-    output wire[2:0] video_green,  //绿色像素，3位
-    output wire[1:0] video_blue,   //蓝色像素，2位
-    output wire video_hsync,       //行同步（水平同步）信号
-    output wire video_vsync,       //场同步（垂直同步）信号
+    output wire[2:0] video_red,    //红色像素�?3�?
+    output wire[2:0] video_green,  //绿色像素�?3�?
+    output wire[1:0] video_blue,   //蓝色像素�?2�?
+    output wire video_hsync,       //行同步（水平同步）信�?
+    output wire video_vsync,       //场同步（垂直同步）信�?
     output wire video_clk,         //像素时钟输出
-    output wire video_de           //行数据有效信号，用于区分消隐区
+    output wire video_de           //行数据有效信号，用于区分消隐�?
 );
 
 // reset
@@ -91,10 +91,13 @@ pll_example clock_gen(
     .clk_in1(clk_50M)
 );
 
+wire flush;
+
 // if
 wire[31:0] pc_current;
 wire[31:0] pc_plus_4_if;
 wire[31:0] inst_if;
+wire[31:0] pc_flush;
 wire con_pc_jump;
 wire[31:0] pc_jump;
 
@@ -102,6 +105,7 @@ wire[31:0] pc_jump;
 wire[31:0] inst_id, pc_plus_4_id;
 wire con_alu_immediate, con_alu_signed, con_alu_sa;
 wire con_jal;
+wire con_mfc0;
 wire con_reg_write;
 wire[4:0] reg_write_address;
 wire[31:0] reg_write_data;
@@ -109,8 +113,8 @@ wire[31:0] reg_read_data_1, reg_read_data_2;
 wire[31:0] result;
 
 // exe
-wire[3:0] con_alu_op_id;
-wire[3:0] con_alu_op;
+wire[4:0] con_alu_op_id;
+wire[4:0] con_alu_op;
 wire con_reg_write_id, con_mov_cond_id;
 wire con_reg_write_exe, con_mov_cond;
 wire[31:0] alu_a, alu_b;
@@ -121,6 +125,10 @@ wire[31:0] inst_exe;
 wire[31:0] alu_res;
 wire alu_z;
 wire alu_s, alu_c, alu_v; // unused
+
+wire exe_cp0_we_out;
+wire[4:0] exe_cp0_write_addr_out;
+wire[31:0] exe_cp0_data_out;
 
 // mem
 wire con_mem_read_id, con_mem_read_exe, con_mem_read;
@@ -137,10 +145,54 @@ wire con_reg_write_mem;
 wire[31:0] alu_res_mem, mov_data_mem;
 wire[31:0] mem_read_data, uart_read_data;
 
+wire mem_cp0_we_in;
+wire[4:0] mem_cp0_write_addr_in;
+wire[31:0] mem_cp0_data_in;
+
+wire mem_cp0_we_out;
+wire[4:0] mem_cp0_write_addr_out;
+wire[31:0] mem_cp0_data_out;
+
 // end
 wire[4:0] reg_write_address_end;
 wire reg_write_end;
 wire[31:0] reg_write_data_end;
+
+wire wb_cp0_we_in;
+wire[4:0] wb_cp0_write_addr_in;
+wire[31:0] wb_cp0_data_in;
+
+// cp0
+wire[31:0] cp0_data_out;
+wire[4:0] cp0_raddr_in;
+wire[31:0] cp0_count;
+wire[31:0] cp0_compare;
+wire[31:0] cp0_status;
+wire[31:0] cp0_cause;
+wire[31:0] cp0_epc;
+
+// exception
+wire[31:0] id_exception_out;
+wire[31:0] id_exception_address_out;
+wire[31:0] exe_exception_in;
+wire[31:0] exe_exception_address_in;
+wire[31:0] exe_exception_out;
+wire[31:0] exe_exception_address_out;
+wire[31:0] mem_exception_in;
+wire[31:0] mem_exception_address_in;
+wire[31:0] mem_exception_out;
+wire[31:0] mem_exception_address_out;
+wire[31:0] mem_epc_out;
+wire reg_write_disable;
+
+// delayslot
+wire this_delayslot_in;
+wire this_delayslot_out;
+wire next_delayslot_out;
+wire exe_this_delayslot_in;
+wire exe_this_delayslot_out;
+wire mem_this_delayslot_in;
+wire mem_this_delayslot_out;
 
 // hazard
 wire[0:2] stall, nop;
@@ -152,6 +204,8 @@ wire[31:0] mem_ram_read_data, mem_uart_read_data;
 pc _pc(
     .clk(clock),
     .rst(reset),
+    .flush(flush),
+    .pc_flush(pc_flush),
     .stall(stall[0]),
     .inst(inst_if),  
     .pc_jump(pc_jump),
@@ -210,6 +264,7 @@ uart_controller _uart_controller(
 if_id _if_id(
     .clk(clock),
     .rst(reset),
+    .flush(flush),
     .stall(stall[1]),
     .nop(nop[0]),
     .inst_in(inst_if),
@@ -264,18 +319,27 @@ jump_control _jump_control(
     .pc_plus_4(pc_plus_4_id),
     .data_a(reg_read_data_1_forw),
     .data_b(reg_read_data_2_forw),
+    .this_delayslot_in(this_delayslot_in),
+    .this_delayslot_out(this_delayslot_out),
+    .next_delayslot_out(next_delayslot_out),
     .con_pc_jump(con_pc_jump),
     .pc_jump(pc_jump)
 );
 
 control _control(
     .inst(inst_id),
+    .pc(pc_plus_4_id),
 
     .con_alu_immediate(con_alu_immediate),
     .con_alu_signed(con_alu_signed),
     .con_alu_sa(con_alu_sa),
     .con_jal(con_jal),
-
+    .con_mfc0(con_mfc0),
+    
+    // exception
+    .exception_out(id_exception_out),
+    .exception_address_out(id_exception_address_out),
+    
     .con_alu_op(con_alu_op_id),
     .con_reg_write(con_reg_write_id),
     .con_mov_cond(con_mov_cond_id),
@@ -305,12 +369,19 @@ hazard_detector _hazard_detector(
 id_exe _id_exe(
     .clk(clock),
     .rst(reset),
+    .flush(flush),
     .stall(stall[2]),
     .nop(nop[1]),
     .data_1(reg_read_data_1),
     .data_2(reg_read_data_2),
     .inst_in(inst_id),
     .pc_plus_4(pc_plus_4_id),
+    
+    // exception
+    .id_exception(id_exception_out),
+    .id_exception_address(id_exception_address_out),
+    .exe_exception(exe_exception_in),
+    .exe_exception_address(exe_exception_address_in),
 
     // for forwarding
     .forw_reg_write_address_mem(reg_write_address_mem),
@@ -326,6 +397,7 @@ id_exe _id_exe(
     .con_alu_signed(con_alu_signed),
     .con_alu_sa(con_alu_sa),
     .con_jal(con_jal),
+    .con_mfc0(con_mfc0),
     
     .con_alu_op_in(con_alu_op_id),
     .con_reg_write_in(con_reg_write_id),
@@ -344,6 +416,13 @@ id_exe _id_exe(
     .con_wb_src_in(con_wb_src_id),
     .con_wb_src_out(con_wb_src_exe),
     
+    // delayslot
+    .id_this_delayslot(this_delayslot_out),
+    .id_next_delayslot(next_delayslot_out),
+    .this_delayslot_out(this_delayslot_in),
+    .exe_this_delayslot(exe_this_delayslot_in),
+    
+    
     .data_A(alu_a),
     .data_B(alu_b),
     .reg_write_address(reg_write_address_exe),
@@ -356,6 +435,34 @@ alu _alu(
     .op(con_alu_op),
     .A(alu_a),
     .B(alu_b),
+    
+    .inst_in(inst_exe),
+    
+    // delayslot
+    .this_delayslot_in(exe_this_delayslot_in),
+    .this_delayslot_out(exe_this_delayslot_out),
+    
+    .mem_cp0_we(mem_cp0_we_out),
+    .mem_cp0_write_addr(mem_cp0_write_addr_out),
+    .mem_cp0_data(mem_cp0_data_out),
+    
+    .wb_cp0_we(wb_cp0_we_in),
+    .wb_cp0_write_addr(wb_cp0_write_addr_in),
+    .wb_cp0_data(wb_cp0_data_in),
+    
+    .cp0_data_in(cp0_data_out),
+    .cp0_read_addr(cp0_raddr_in),
+    
+    .cp0_we_out(exe_cp0_we_out),
+    .cp0_write_addr_out(exe_cp0_write_addr_out),
+    .cp0_data_out(exe_cp0_data_out),
+    
+    // exception
+    .exception_in(exe_exception_in),
+    .exception_address_in(exe_exception_address_in),
+    .exception_out(exe_exception_out),
+    .exception_address_out(exe_exception_address_out),
+    
     .res(alu_res),
     .S(alu_s),
     .Z(alu_z),
@@ -366,10 +473,30 @@ alu _alu(
 exe_mem _exe_mem(
     .clk(clock),
     .rst(reset),
+    .flush(flush),
     .nop(nop[2]),    
     .inst_in(inst_exe),
     .alu_z(alu_z),
     .alu_res(alu_res),
+    
+    .exe_cp0_we(exe_cp0_we_out),
+    .exe_cp0_write_addr(exe_cp0_write_addr_out),
+    .exe_cp0_data(exe_cp0_data_out),
+    .mem_cp0_we(mem_cp0_we_in),
+    .mem_cp0_write_addr(mem_cp0_write_addr_in),
+    .mem_cp0_data(mem_cp0_data_in),
+    
+    // exception
+    .exe_exception(exe_exception_out),
+    .exe_exception_address(exe_exception_address_out),
+    .mem_exception(mem_exception_in),
+    .mem_exception_address(mem_exception_address_in),
+    
+    //delayslot
+    .exe_this_delayslot(exe_this_delayslot_out),
+    .mem_this_delayslot(mem_this_delayslot_in),
+        
+    
     .pc_plus_8_in(pc_plus_8_exe),
     .reg_write_address_in(reg_write_address_exe),
     .mem_write_data_in(mem_write_data_exe),
@@ -410,6 +537,33 @@ mem _mem(
     .uart_read_data(mem_uart_read_data),
     .mem_read(con_mem_read),
     .mem_write(con_mem_write),
+    
+    // exception
+    .exception_in(mem_exception_in),
+    .exception_address_in(mem_exception_address_in),
+    .cp0_status_in(cp0_status),
+    .cp0_cause_in(cp0_cause),
+    .cp0_epc_in(cp0_epc),
+    .wb_cp0_we(wb_cp0_we_in),
+    .wb_cp0_write_address(wb_cp0_write_addr_in),
+    .wb_cp0_data(wb_cp0_data_in),
+    .exception_out(mem_exception_out),
+    .exception_address_out(mem_exception_address_out),
+    .cp0_epc_out(mem_epc_out),
+    .reg_write_disable_out(reg_write_disable),
+    
+    // cp0
+    .cp0_we_in(mem_cp0_we_in),
+    .cp0_write_addr_in(mem_cp0_write_addr_in),
+    .cp0_data_in(mem_cp0_data_in),
+    .cp0_we_out(mem_cp0_we_out),
+    .cp0_write_addr_out(mem_cp0_write_addr_out),
+    .cp0_data_out(mem_cp0_data_out),
+    
+    //delayslot
+    .this_delayslot_in(mem_this_delayslot_in),
+    .this_delayslot_out(mem_this_delayslot_out),
+    
     .ram_en(mem_ram_en),
     .uart_en(mem_uart_en),
     .read_data(mem_read_data)
@@ -418,6 +572,7 @@ mem _mem(
 mem_wb _mem_wb(
     .clk(clock),
     .rst(reset),
+    .flush(flush),
     .reg_write_in(con_reg_write_mem),
     .reg_write_address_in(reg_write_address_mem),
     .pc_plus_8(pc_plus_8_mem),
@@ -425,6 +580,17 @@ mem_wb _mem_wb(
     .mem_read_data(mem_read_data),
     .alu_res(alu_res_mem),
     .con_wb_src(con_wb_src),
+    
+    // exception
+    .reg_write_disable_in(reg_write_disable),
+    
+    .mem_cp0_we(mem_cp0_we_out),
+    .mem_cp0_write_addr(mem_cp0_write_addr_out),
+    .mem_cp0_data(mem_cp0_data_out),
+    
+    .wb_cp0_we(wb_cp0_we_in),
+    .wb_cp0_write_addr(wb_cp0_write_addr_in),
+    .wb_cp0_data(wb_cp0_data_in),
 
     .con_mem_byte(con_mem_byte),
     .reg_write_out(con_reg_write),
@@ -441,6 +607,38 @@ wb_end _wb_end(
     .reg_write_address_out(reg_write_address_end),
     .reg_write_data_out(reg_write_data_end),
     .reg_write_out(reg_write_end)
+);
+
+cp0_reg _cp0_reg(
+    .clk(clock),
+    .rst(reset),
+    .w_in(wb_cp0_we_in),
+    .waddr_in(wb_cp0_write_addr_in),
+    .raddr_in(cp0_raddr_in),
+    .data_in(wb_cp0_data_in),
+    
+    // exception
+    .exception_in(mem_exception_out),
+    .exception_address_in(mem_exception_address_out),
+    
+    // delayslot
+    .this_delayslot_in(mem_this_delayslot_out),
+    
+    .count_out(cp0_count),
+    .compare_out(cp0_compare),
+    .status_out(cp0_status),
+    .cause_out(cp0_cause),
+    .epc_out(cp0_epc),
+    .data_out(cp0_data_out)
+);
+
+flush_controller _flush_controller(
+    .rst(reset),
+    .exception_in(mem_exception_out),
+    .cp0_epc_in(mem_epc_out),
+    .flush(flush),
+    .pc_flush(pc_flush)
+    
 );
 
 endmodule
