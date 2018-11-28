@@ -6,6 +6,10 @@ module jump_control(
 
     input wire[31:0] data_a,
     input wire[31:0] data_b,
+    
+    input wire this_delayslot_in,
+    output reg this_delayslot_out,
+    output reg next_delayslot_out,
 
     output reg con_pc_jump,
     output reg[31:0] pc_jump
@@ -21,20 +25,40 @@ module jump_control(
 
 always @(*) begin
     case (inst[31:26])
-        6'b000100: // BEQ
-            con_pc_jump <= data_a == data_b;
-        6'b000111: // BGTZ
-            con_pc_jump <= ~data_a[31] & (data_a != 32'b0);
-        6'b000101: // BNE
-            con_pc_jump <= data_a != data_b;
-        6'b000010: // J
+        6'b000100: begin // BEQ
+            if (data_a == data_b) begin
+                con_pc_jump <= 1'b1;
+                next_delayslot_out <= 1'b1;
+            end
+        end
+        6'b000111: begin // BGTZ
+            if (~data_a[31] & (data_a != 32'b0)) begin
+                con_pc_jump <= 1'b1;
+                next_delayslot_out <= 1'b1;
+            end
+        end
+        6'b000101: begin // BNE
+            if (data_a != data_b) begin
+                con_pc_jump <= 1'b1;
+                next_delayslot_out <= 1'b1;
+            end
+        end
+        6'b000010: begin // J
             con_pc_jump <= 1'b1;
-        6'b000011: // JAL
+            next_delayslot_out <= 1'b1;
+        end
+        6'b000011: begin // JAL
             con_pc_jump <= 1'b1;
-        6'b000000:
+            next_delayslot_out <= 1'b1;
+        end
+        6'b000000: begin
             con_pc_jump <= inst[5:0] == 6'b001000;  // JR
-        default:
+            next_delayslot_out <= 1'b1;
+        end
+        default: begin
             con_pc_jump <= 1'b0;
+            next_delayslot_out <= 1'b0;
+        end
     endcase
 
     // branch
@@ -46,6 +70,10 @@ always @(*) begin
     // JR
     else
         pc_jump <= data_a;
+end
+
+always @(*) begin
+    this_delayslot_out <= this_delayslot_in;
 end
 
 endmodule

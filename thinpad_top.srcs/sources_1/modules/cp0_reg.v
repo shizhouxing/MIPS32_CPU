@@ -41,6 +41,13 @@ module cp0_reg(
     output reg[31:0] status_out, // Status寄存器的�?
     output reg[31:0] cause_out, // Cause寄存器的�?
     output reg[31:0] epc_out, // EPC寄存器的�?
+    
+    // exception
+    input wire[31:0] exception_in,
+    input wire[31:0] exception_address_in,
+    
+    // delayslot
+    input wire this_delayslot_in,
 
     output reg timer_inter_out // 是否有定时中�?
 );
@@ -64,7 +71,7 @@ always @ (posedge clk) begin
 
         // 保存外部硬件中断
         cause_out[15:10] <= inter_in;
-
+        
         // 写入寄存�?
         if (w_in == 1'b1) begin
             case (waddr_in)
@@ -76,15 +83,56 @@ always @ (posedge clk) begin
                     timer_inter_out <= 1'b0;
                 end
                 5'b01100: begin // Status
-                    status_out <= data_out;
+                    status_out <= data_in;
                 end
                 5'b01101: begin // Cause
-                    cause_out <= data_out;
+                    cause_out[22] <= data_in[22];
+                    cause_out[23] <= data_in[23];
+                    cause_out[9:8] <= data_in[9:8];
+                end
+                5'b01110: begin // Epc
+                    epc_out <= data_in;
                 end
                 default: begin
                 end
             endcase
         end
+        
+        if (exception_in != 32'h0 && exception_in != 32'h0000000e) begin
+            if (this_delayslot_in == 1'b1) begin
+                epc_out <= exception_address_in - 4;
+                cause_out[31] <= 1'b1;
+            end else begin
+                epc_out <= exception_address_in;
+                cause_out[31] <= 1'b0;
+            end
+        end
+        
+        case (exception_in)
+            32'h00000001: begin // interrupt
+                status_out[1] <= 1'b1;
+                cause_out[6:2] <= 5'b00000;
+            end
+            32'h00000008: begin // syscall
+                status_out[1] <= 1'b1;
+                cause_out[6:2] <= 5'b01000;
+            end
+            32'h0000000a: begin // instruction invalid
+                status_out[1] <= 1'b1;
+                cause_out[6:2] <= 5'b01010;
+            end
+            32'h0000000d: begin // trap
+                status_out[1] <= 1'b1;
+                cause_out[6:2] <= 5'b01101;
+            end
+            32'h0000000c: begin // overflow
+                status_out[1] <= 1'b1;
+                cause_out[6:2] <= 5'b01100;
+            end
+            32'h0000000e: begin
+                status_out[1] <= 1'b0;
+            end
+        endcase
     end
 end
 
@@ -106,6 +154,9 @@ always @ (*) begin
             end
             5'b01101: begin // Cause
                 data_out <= cause_out;
+            end
+            5'b01110: begin // Epc
+                data_out <= epc_out;
             end
             default: begin
                 data_out <= 32'h0;

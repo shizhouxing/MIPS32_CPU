@@ -15,12 +15,17 @@ module mem_wb(
     input wire[1:0] con_wb_src,
     input wire con_mem_byte,
 
+    // cp0
     input wire mem_cp0_we,
     input wire[4:0] mem_cp0_write_addr,
     input wire[31:0] mem_cp0_data,
     output reg wb_cp0_we,
     output reg[4:0] wb_cp0_write_addr,
     output reg[31:0] wb_cp0_data,
+    
+    // exception
+    input wire flush,
+    input wire reg_write_disable_in,
 
     output reg reg_write_out,
     output reg[4:0] reg_write_address_out,
@@ -33,9 +38,17 @@ always @(posedge clk or posedge rst) begin
         wb_cp0_we <= 1'b0;
         wb_cp0_write_addr <= 4'b0;
         wb_cp0_data <= 32'b0;
-    end
-    else begin
-        reg_write_out <= reg_write_in;
+    end else if (flush == 1'b1) begin
+        reg_write_out <= 1'b0;
+        wb_cp0_we <= 1'b0;
+        wb_cp0_write_addr <= 4'b0;
+        wb_cp0_data <= 32'b0;
+    end else begin
+        if (reg_write_disable_in == 1'b1) begin
+            reg_write_out <= 1'b0;
+        end else begin
+            reg_write_out <= reg_write_in;
+        end
         reg_write_address_out <= reg_write_address_in;
         
         wb_cp0_we <= mem_cp0_we;
