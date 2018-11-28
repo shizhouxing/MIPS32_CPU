@@ -9,6 +9,7 @@ if not os.environ.has_key("CUDA_VISIBLE_DEVICES"):
 FLAGS = tf.flags.FLAGS
 
 tf.flags.DEFINE_boolean("is_train", False, "is training")
+tf.flags.DEFINE_boolean("run_valid", False, "run inference on valid")
 tf.flags.DEFINE_integer("display_interval", 100, "display interval")
 tf.flags.DEFINE_string("word_vector", "../../glove/glove.6B.50d.txt", "word vector")
 tf.flags.DEFINE_string("model_dir", "./model", "model directory")
@@ -22,14 +23,21 @@ tf.flags.DEFINE_integer("batch_size", 64, "batch size")
 tf.flags.DEFINE_float("learning_rate", 0.2, "learning rate")
 tf.flags.DEFINE_float("learning_rate_decay", 0.98, "learning rate decay factor")
 
+if not FLAGS.is_train:
+    import nltk
+
 def get_batches(data, batch_size, sort=True):
     batches = []
     for i in range((len(data) + batch_size - 1) / batch_size):
         batches.append(data[i * batch_size : (i + 1) * batch_size])
     return batches
 
-data_train = load_data("../data/train.json")
-data_valid = load_data("../data/valid.json")
+data_train_movie = load_data("../data/train_movie.json")
+data_valid_movie = load_data("../data/valid_movie.json")
+data_train_convai2 = load_data("../data/train_convai2.json")
+data_valid_convai2 = load_data("../data/valid_convai2.json")
+data_train = data_train_movie + data_train_convai2
+data_valid = data_valid_movie + data_valid_convai2
 vocab, embed = build_vocab(data_train)
 print "Dataset sizes: %d/%d" % (len(data_train), len(data_valid))
 
@@ -113,19 +121,23 @@ with sess.as_default():
             
             saver.save(sess, "%s/checkpoint-epoch" % FLAGS.model_dir, global_step=epoch.eval())                                            
     else:
-        for batch in valid_batches:
-            ops = seq2seq.step(sess, batch)
-            for i in range(len(batch)):
-                print " ".join(batch[i]["post"])
-                for w in batch[i]["resp"]:
-                    if w in vocab:
-                        sys.stdout.write(w + " ")
-                    else:
-                        sys.stdout.write("UNK ")
-                print
-                print " ".join(ops[1][i])
-                print
+        if FLAGS.run_valid:
+            for batch in valid_batches:
+                ops = seq2seq.step(sess, batch)
+                for i in range(len(batch)):
+                    print " ".join(batch[i]["post"])
+                    for w in batch[i]["resp"]:
+                        if w in vocab:
+                            sys.stdout.write(w + " ")
+                        else:
+                            sys.stdout.write("UNK ")
+                    print
+                    print " ".join(ops[1][i])
+                    print
 
-        #while True:
-        #    post = raw_input()
-        pass
+        while True:
+            post = nltk.word_tokenize(raw_input(">>").lower())
+            ops = seq2seq.step(sess, [{"post": post, "resp": []}], is_infer=True)
+            resp = " ".join(ops[0])
+            if resp.find("EOS") != -1: resp = resp[:resp.find("EOS")]
+            print resp

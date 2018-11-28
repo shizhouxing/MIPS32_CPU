@@ -51,7 +51,7 @@ class Seq2Seq():
 
             self.batch_size = tf.shape(self.response)[0]
             self.batch_len = tf.shape(self.response)[1]   
-            
+
             self.input_enc = tf.nn.embedding_lookup(self.embed, self.post)
             self.input_dec = tf.nn.embedding_lookup(self.embed, tf.concat([
                 tf.ones((self.batch_size, 1), dtype=tf.int64) * GO_ID,
@@ -156,7 +156,7 @@ class Seq2Seq():
             "response_len": np.array(response_len)
         }
     
-    def step(self, sess, data, is_train=False):
+    def step(self, sess, data, is_train=False, is_infer=False):
         data = self.format_data(data)
         input_feed = {
             self.post_string: data['post_string'],
@@ -164,8 +164,11 @@ class Seq2Seq():
             self.response_string: data['response_string'],
             self.response_len: data['response_len']
         }
-        if is_train:
-            output_feed = [self.loss, self.inference, self.train_op]
+        if is_infer:
+            output_feed = self.inference
         else:
-            output_feed = [self.loss, self.inference]
+            if is_train:
+                output_feed = [self.loss, self.inference, self.train_op]
+            else:
+                output_feed = [self.loss, self.inference]
         return sess.run(output_feed, input_feed)
