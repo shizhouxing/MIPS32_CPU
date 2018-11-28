@@ -8,4 +8,6 @@
 *.hw
 *.sim
 .vscode
+train.json
+valid.json
 
