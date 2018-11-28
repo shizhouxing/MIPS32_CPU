@@ -3,6 +3,8 @@ import numpy as np
 import os
 from tensorflow.python.layers.core import Dense
 
+UNK_ID, PAD_ID, EOS_ID, GO_ID = 0, 1, 2, 3
+
 class Seq2Seq():
     def __init__(self, sess, FLAGS, embed):
         self.sess = sess
@@ -10,6 +12,8 @@ class Seq2Seq():
         self.dim_embed_word = FLAGS.dim_embed_word
         self.num_units = FLAGS.num_units        
         self.learning_rate = tf.Variable(FLAGS.learning_rate, trainable=False, dtype=tf.float32)
+        self.learning_rate_decay_op = self.learning_rate.assign(
+            self.learning_rate * FLAGS.learning_rate_decay)        
         self.optimizer = tf.train.GradientDescentOptimizer(self.learning_rate)      
         
         with tf.variable_scope("seq2seq"):        
@@ -22,7 +26,7 @@ class Seq2Seq():
         self.symbol2index = tf.contrib.lookup.MutableHashTable(
             key_dtype=tf.string,
             value_dtype=tf.int64,
-            default_value=0,
+            default_value=UNK_ID,
             shared_name="in_table",
             name="in_table",
             checkpoint=True)
@@ -45,11 +49,14 @@ class Seq2Seq():
             self.response = self.symbol2index.lookup(self.response_string)
             self.response_len = tf.placeholder(tf.int32, (None,), 'response_len')
 
-            self.input_enc = tf.nn.embedding_lookup(self.embed, self.post)
-            self.input_dec = tf.nn.embedding_lookup(self.embed, self.response)
-
             self.batch_size = tf.shape(self.response)[0]
-            self.batch_len = tf.shape(self.response)[1]
+            self.batch_len = tf.shape(self.response)[1]   
+            
+            self.input_enc = tf.nn.embedding_lookup(self.embed, self.post)
+            self.input_dec = tf.nn.embedding_lookup(self.embed, tf.concat([
+                tf.ones((self.batch_size, 1), dtype=tf.int64) * GO_ID,
+                tf.split(self.response, [self.batch_len - 1, 1], axis=1)[0]
+            ], 1))
 
     def _build_cell(self):
         return tf.contrib.rnn.GRUCell(self.num_units)
@@ -95,29 +102,27 @@ class Seq2Seq():
             clipped_gradients, _ = tf.clip_by_global_norm(gradients, 5.0)
             self.train_op = self.optimizer.apply_gradients(zip(clipped_gradients, params))
             self.train_out = self.index2symbol.lookup(tf.cast(train_output.sample_id, tf.int64))
-
-        # with tf.variable_scope("decode", reuse=True):
-        #     cell = self._build_cell(self.enc_outputs, self.post_len)
-        #     init_state = dec_cell.zero_state(self.batch_size, tf.float32).clone(cell_state=dec_init_state)
-
-        #     start_tokens = tf.tile(tf.constant([GO_ID], dtype=tf.int32), [self.batch_size])
-        #     end_token = EOS_ID
-        #     infer_helper = tf.contrib.seq2seq.GreedyEmbeddingHelper(
-        #         self.emb_dec,
-        #         start_tokens,
-        #         end_token
-        #     )
-        #     infer_decoder = tf.contrib.seq2seq.BasicDecoder(
-        #         cell=dec_cell,
-        #         helper=infer_helper,
-        #         initial_state=init_state,
-        #         output_layer=self.output_layer
-        #     )
-        #     infer_output, _, _ = tf.contrib.seq2seq.dynamic_decode(
-        #         decoder=infer_decoder
-        #     )
-
-        #     self.inference = self.index2symbol.lookup(tf.cast(infer_output.sample_id, tf.int64))
+        
+        with tf.variable_scope("decoder", reuse=True):
+            cell = self._build_cell()
+            start_tokens = tf.tile(tf.constant([GO_ID], dtype=tf.int32), [self.batch_size])
+            end_token = EOS_ID
+            infer_helper = tf.contrib.seq2seq.GreedyEmbeddingHelper(
+                self.embed,
+                start_tokens,
+                end_token
+            )
+            infer_decoder = tf.contrib.seq2seq.BasicDecoder(
+                cell=cell,
+                helper=infer_helper,
+                initial_state=self.enc_post,
+                output_layer=self.output_layer
+            )
+            infer_output, _, _ = tf.contrib.seq2seq.dynamic_decode(
+                decoder=infer_decoder,
+                maximum_iterations=64
+            )
+            self.inference = self.index2symbol.lookup(tf.cast(infer_output.sample_id, tf.int64))
 
     def initialize(self, vocab):
         op_in = self.symbol2index.insert(
@@ -159,9 +164,8 @@ class Seq2Seq():
             self.response_string: data['response_string'],
             self.response_len: data['response_len']
         }
-
         if is_train:
-            output_feed = [self.loss, self.train_op]
+            output_feed = [self.loss, self.inference, self.train_op]
         else:
-            output_feed = [self.loss]
+            output_feed = [self.loss, self.inference]
         return sess.run(output_feed, input_feed)

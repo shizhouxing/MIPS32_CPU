@@ -1,6 +1,6 @@
 import tensorflow as tf
 import numpy as np
-import os, random, time
+import os, random, time, sys
 from Seq2Seq import Seq2Seq
 from utils import load_data, build_vocab
 
@@ -9,16 +9,17 @@ if not os.environ.has_key("CUDA_VISIBLE_DEVICES"):
 FLAGS = tf.flags.FLAGS
 
 tf.flags.DEFINE_boolean("is_train", False, "is training")
-tf.flags.DEFINE_integer("display_interval", 5, "display interval")
+tf.flags.DEFINE_integer("display_interval", 100, "display interval")
 tf.flags.DEFINE_string("word_vector", "../../glove/glove.6B.50d.txt", "word vector")
 tf.flags.DEFINE_string("model_dir", "./model", "model directory")
 tf.flags.DEFINE_string("log_dir", "./log", "log directory")
 tf.flags.DEFINE_integer("max_sent_len", 50, "max sentence length")
-tf.flags.DEFINE_integer("vocab_size", 1000, "vocabulary size")
+tf.flags.DEFINE_integer("vocab_size", 5000, "vocabulary size")
+tf.flags.DEFINE_integer("max_vocab_size", 20000, "vocabulary size")
 tf.flags.DEFINE_integer("dim_embed_word", 50, "dimension of word embedding")
 tf.flags.DEFINE_integer("num_units", 128, "number of hidden units")
 tf.flags.DEFINE_integer("batch_size", 64, "batch size")
-tf.flags.DEFINE_float("learning_rate", 0.1, "learning rate")
+tf.flags.DEFINE_float("learning_rate", 0.2, "learning rate")
 tf.flags.DEFINE_float("learning_rate_decay", 0.98, "learning rate decay factor")
 
 def get_batches(data, batch_size, sort=True):
@@ -50,26 +51,26 @@ with sess.as_default():
         keep_checkpoint_every_n_hours=1.0
     )        
 
-    if FLAGS.is_train:
-        if tf.train.get_checkpoint_state(FLAGS.model_dir):
-            print "Reading model parameters from %s" % FLAGS.model_dir
-            saver.restore(sess, tf.train.latest_checkpoint(FLAGS.model_dir))
-        else:
-            print "Created model with fresh parameters"
-            sess.run(tf.global_variables_initializer())  
-            seq2seq.initialize(vocab)          
-            
-        print "Trainable variables:"
-        for var in tf.trainable_variables():
-            print var
+    if tf.train.get_checkpoint_state(FLAGS.model_dir):
+        print "Reading model parameters from %s" % FLAGS.model_dir
+        saver.restore(sess, tf.train.latest_checkpoint(FLAGS.model_dir))
+    else:
+        print "Created model with fresh parameters"
+        sess.run(tf.global_variables_initializer())  
+        seq2seq.initialize(vocab)          
+        
+    print "Trainable variables:"
+    for var in tf.trainable_variables():
+        print var
 
+    train_batches = get_batches(data_train, FLAGS.batch_size)
+    valid_batches = get_batches(data_valid, FLAGS.batch_size)
+
+    if FLAGS.is_train:
         train_writer = tf.summary.FileWriter(os.path.join(FLAGS.log_dir, "train"))
         valid_writer = tf.summary.FileWriter(os.path.join(FLAGS.log_dir, "valid"))
-        summary_placeholders = tf.placeholder(tf.float32)
-        summary_op = tf.summary.scalar("ppl", summary_placeholders)
-        
-        train_batches = get_batches(data_train, FLAGS.batch_size)
-        valid_batches = get_batches(data_valid, FLAGS.batch_size)
+        summary_placeholder = tf.placeholder(tf.float32)
+        summary_op = tf.summary.scalar("ppl", summary_placeholder)
         
         while True:
             epoch_inc_op.eval()
@@ -90,11 +91,11 @@ with sess.as_default():
                         (time.time() - start_time) * 1. / summary_steps,
                         sum_ppl / summary_steps
                     )
+                    saver.save(sess, "%s/checkpoint-step" % FLAGS.model_dir, global_step=global_step_val) 
 
-            avg_ppl = sum_ppl / len(train_Batches)
-            summaries = sess.run(summary_op, { summary_placeholder: avg_ppl} )
-            for s in summaries:
-                train_writer.add_summary(summary=s, global_step=epoch.eval())
+            avg_ppl = sum_ppl / len(train_batches)
+            summary = sess.run(summary_op, { summary_placeholder: avg_ppl} )
+            train_writer.add_summary(summary, global_step=epoch.eval())
             print "epoch %d (learning rate %.5lf)" % \
                 (epoch.eval(), seq2seq.learning_rate.eval())
             print "  train ppl: %.5lf" % avg_ppl
@@ -102,13 +103,29 @@ with sess.as_default():
             sum_ppl = 0
             for batch in valid_batches:
                 ops = seq2seq.step(sess, batch)
-                summary_ppl += np.exp(ops[0])
+                sum_ppl += np.exp(ops[0])
             avg_ppl = sum_ppl / len(valid_batches)
-            summaries = sess.run(summary_op, { summary_placeholder: avg_ppl} )
-            for s in summaries:
-                valid_writer.add_summary(summary=s, global_step=epoch.eval())
-            print "  valid ppl: %.5lf" % avg_ppl         
+            summary = sess.run(summary_op, { summary_placeholder: avg_ppl} )
+            valid_writer.add_summary(summary, global_step=epoch.eval())
+            print "  valid ppl: %.5lf" % avg_ppl  
+
+            seq2seq.learning_rate_decay_op.eval()          
             
-            saver.save(sess, "%s/checkpoint" % FLAGS.model_dir, global_step=epoch.eval())                                            
+            saver.save(sess, "%s/checkpoint-epoch" % FLAGS.model_dir, global_step=epoch.eval())                                            
     else:
+        for batch in valid_batches:
+            ops = seq2seq.step(sess, batch)
+            for i in range(len(batch)):
+                print " ".join(batch[i]["post"])
+                for w in batch[i]["resp"]:
+                    if w in vocab:
+                        sys.stdout.write(w + " ")
+                    else:
+                        sys.stdout.write("UNK ")
+                print
+                print " ".join(ops[1][i])
+                print
+
+        #while True:
+        #    post = raw_input()
         pass

@@ -10,4 +10,6 @@
 .vscode
 train.json
 valid.json
+*.jou
+*.str
 

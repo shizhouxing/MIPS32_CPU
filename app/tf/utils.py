@@ -24,7 +24,7 @@ def build_vocab(data):
                     vocab[token] += 1
                 else:
                     vocab[token] = 1
-    vocab_list = ["UNK", "PAD", "EOS"] + sorted(vocab, key=vocab.get, reverse=True)
+    vocab_list = ["UNK", "PAD", "EOS", "GO"] + sorted(vocab, key=vocab.get, reverse=True)
 
     print("Loading word vectors...")
     vectors = {}
@@ -39,6 +39,8 @@ def build_vocab(data):
     for i, word in enumerate(vocab_list):
         if i > FLAGS.vocab_size and (not word in vectors):
             continue
+        if len(vocab_list_major) >= FLAGS.max_vocab_size:
+            break
         vocab_list_major.append(word)
         if word in vectors:
             embed.append(vectors[word])
