@@ -2,6 +2,7 @@ import tensorflow as tf
 import numpy as np
 import os
 from tensorflow.python.layers.core import Dense
+from helper import GreedyEmbeddingHelper
 
 UNK_ID, PAD_ID, EOS_ID, GO_ID = 0, 1, 2, 3
 
@@ -107,7 +108,7 @@ class Seq2Seq():
             cell = self._build_cell()
             start_tokens = tf.tile(tf.constant([GO_ID], dtype=tf.int32), [self.batch_size])
             end_token = EOS_ID
-            infer_helper = tf.contrib.seq2seq.GreedyEmbeddingHelper(
+            infer_helper = GreedyEmbeddingHelper(
                 self.embed,
                 start_tokens,
                 end_token
