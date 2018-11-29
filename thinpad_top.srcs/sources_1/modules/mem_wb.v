@@ -5,6 +5,7 @@
 module mem_wb(
     input wire clk,
     input wire rst,
+    input wire nop,
     input wire reg_write_in,
     input wire[4:0] reg_write_address_in,
     input wire[31:0] pc_plus_8,
@@ -44,31 +45,36 @@ always @(posedge clk or posedge rst) begin
         wb_cp0_write_addr <= 4'b0;
         wb_cp0_data <= 32'b0;
     end else begin
-        if (reg_write_disable_in == 1'b1) begin
+        if (nop) begin
             reg_write_out <= 1'b0;
-        end else begin
-            reg_write_out <= reg_write_in;
         end
-        reg_write_address_out <= reg_write_address_in;
-        
-        wb_cp0_we <= mem_cp0_we;
-        wb_cp0_write_addr <= mem_cp0_write_addr;
-        wb_cp0_data <= mem_cp0_data;
-        
-        case (con_wb_src)
-            `WB_SRC_PC_PLUS_8:
-                reg_write_data <= pc_plus_8;
-            `WB_SRC_MOV:
-                reg_write_data <= mov_data;
-            `WB_SRC_MEM: begin
-                if (con_mem_byte)
-                    reg_write_data <= $signed(mem_read_data[7:0]);
-                else
-                    reg_write_data <= mem_read_data;
+        else begin
+            if (reg_write_disable_in == 1'b1) begin
+                reg_write_out <= 1'b0;
+            end else begin
+                reg_write_out <= reg_write_in;
             end
-            `WB_SRC_ALU:
-                reg_write_data <= alu_res;
-        endcase
+            reg_write_address_out <= reg_write_address_in;
+            
+            wb_cp0_we <= mem_cp0_we;
+            wb_cp0_write_addr <= mem_cp0_write_addr;
+            wb_cp0_data <= mem_cp0_data;
+            
+            case (con_wb_src)
+                `WB_SRC_PC_PLUS_8:
+                    reg_write_data <= pc_plus_8;
+                `WB_SRC_MOV:
+                    reg_write_data <= mov_data;
+                `WB_SRC_MEM: begin
+                    if (con_mem_byte)
+                        reg_write_data <= $signed(mem_read_data[7:0]);
+                    else
+                        reg_write_data <= mem_read_data;
+                end
+                `WB_SRC_ALU:
+                    reg_write_data <= alu_res;
+            endcase
+        end
     end
 end
 

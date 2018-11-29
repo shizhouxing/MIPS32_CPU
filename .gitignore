@@ -12,4 +12,4 @@ train.json
 valid.json
 *.jou
 *.str
-
+*.ip_user_files

@@ -123,7 +123,6 @@ bss_init_done:
     mtc0 t0, CP0_STATUS
 #endif
 
-
     ori t0, zero, TF_SIZE / 4       // 计数器
 .LC0:
     addiu t0, t0, -1                // 滚动计数器
@@ -281,23 +280,21 @@ bss_init_done:
     j WELCOME                       // 进入主线程
     nop
 
-
-
 WELCOME:
     lui s0, %hi(monitor_version)    // 装入启动信息
     addiu s0, %lo(monitor_version)
     lb a0, 0(s0)
 .Loop0:
     addiu s0, s0, 0x1
+
     jal WRITESERIAL                 // 调用串口写函数
     nop
     lb a0, 0(s0)
     bne a0, zero, .Loop0            // 打印循环至0结束符
     nop
+
     j SHELL                         // 开始交互
     nop
-
-
 
 IDLELOOP:
     nop

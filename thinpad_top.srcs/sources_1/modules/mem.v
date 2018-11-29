@@ -1,6 +1,7 @@
 `timescale 1ns / 1ps
 
 module mem(
+    input wire clk,
     input wire rst,
 
     input wire[31:0] address,
@@ -37,7 +38,8 @@ module mem(
 
     output reg ram_en,
     output reg uart_en,
-    output reg[31:0] read_data
+    output reg[31:0] read_data,
+    output reg[1:0] uart_state
 );
 
 reg[31:0] cp0_status;
@@ -128,10 +130,13 @@ always @(*) begin
 end
 
 always @(*) begin
-    if (rst == 1'b1) begin
+    if (rst == 1'b1) begin // perhaps RSTs in this file are unnecessary?
         cp0_we_out <= 1'b0;
         cp0_write_addr_out <= 5'b0;
         cp0_data_out <= 32'b0;
+        ram_en <= 1'b1;
+        uart_en <= 1'b1;
+        read_data <= 32'b0;
     end else begin
         cp0_we_out <= cp0_we_in;
         cp0_write_addr_out <= cp0_write_addr_in;
@@ -151,8 +156,31 @@ always @(*) begin
             // uart 
             // 0xBFD003F8-0xBFD003FD
             ram_en <= 1'b1;
-            uart_en <= 1'b0;
+            if (mem_read | mem_write)
+                uart_en <= 1'b0;
+            else 
+                uart_en <= 1'b1;
             read_data <= uart_read_data;
+        end
+    end
+end
+
+// TODO: cp0 ?
+// state machine for uart I/O
+always @(posedge rst or posedge clk) begin
+    if (rst) begin
+        uart_state <= 2'b00;
+    end
+    else begin
+        if (uart_en) 
+            uart_state <= 2'b0;
+        else begin
+            case (uart_state) 
+                2'b00: uart_state <= 2'b01;
+                2'b01: uart_state <= 2'b10;
+                2'b10: uart_state <= 2'b11;
+                2'b11: uart_state <= 2'b11;
+            endcase
         end
     end
 end

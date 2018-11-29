@@ -132,7 +132,10 @@ with sess.as_default():
                         else:
                             sys.stdout.write("UNK ")
                     print
-                    print " ".join(ops[1][i])
+                    res = " ".join(ops[1][i])
+                    if res.find("EOS") != -1:
+                        res = res[:res.find("EOS")]
+                    print res
                     print
 
         while True:

@@ -26,22 +26,16 @@ module jump_control(
 always @(*) begin
     case (inst[31:26])
         6'b000100: begin // BEQ
-            if (data_a == data_b) begin
-                con_pc_jump <= 1'b1;
-                next_delayslot_out <= 1'b1;
-            end
+            con_pc_jump <= data_a == data_b;
+            next_delayslot_out <= data_a == data_b;
         end
         6'b000111: begin // BGTZ
-            if (~data_a[31] & (data_a != 32'b0)) begin
-                con_pc_jump <= 1'b1;
-                next_delayslot_out <= 1'b1;
-            end
+            con_pc_jump <= ~data_a[31] & (data_a != 32'b0);
+            next_delayslot_out <= ~data_a[31] & (data_a != 32'b0);
         end
         6'b000101: begin // BNE
-            if (data_a != data_b) begin
-                con_pc_jump <= 1'b1;
-                next_delayslot_out <= 1'b1;
-            end
+            con_pc_jump <= data_a != data_b;
+            next_delayslot_out <= data_a != data_b;
         end
         6'b000010: begin // J
             con_pc_jump <= 1'b1;
@@ -53,7 +47,7 @@ always @(*) begin
         end
         6'b000000: begin
             con_pc_jump <= inst[5:0] == 6'b001000;  // JR
-            next_delayslot_out <= 1'b1;
+            next_delayslot_out <= inst[5:0] == 6'b001000;
         end
         default: begin
             con_pc_jump <= 1'b0;

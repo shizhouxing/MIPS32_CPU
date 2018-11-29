@@ -28,7 +28,7 @@ always @(posedge clk or posedge rst) begin
             if (con_pc_jump) 
                 pc_current <= pc_jump;
             else
-                pc_current <= pc_current + 4'h4;
+                pc_current <= pc_plus_4;
 
             // if (con_pc_jump && pc_jump != pc_current) begin // the last prediction is incorrect
             //     pc_current <= pc_jump;

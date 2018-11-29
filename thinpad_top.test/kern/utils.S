@@ -25,6 +25,7 @@ WRITESERIAL:                        // 写串口：将a0的低八位写入串口
     sb a0, %lo(SerialData)(t1)      // 写入
     jr ra
     nop
+
 #else
     lui t1, %hi(COM1)
     sb a0, %lo(COM1)(t1)

@@ -145,13 +145,55 @@ SHELL:
     sw s0, 0(sp)
     sw s1, 4(sp)
 
+
+
+        jal READSERIAL
+        nop
+        jal READSERIAL
+        nop
+        jal READSERIAL
+        nop
+        jal READSERIAL
+        nop
+        or s0, v0, zero                 // 获得addr
+        # jal READSERIAL
+        # nop
+        # or s0, v0, zero                 // 获得addr
+        # jal READSERIAL
+        # nop
+        # or s0, v0, zero                 // 获得addr
+        # jal READSERIAL
+        # nop
+        # or s0, v0, zero                 // 获得addr
+        # jal READSERIAL
+        # nop
+        # or s0, v0, zero                 // 获得addr                                                
+
+
+
+        # jal READSERIAL                  // 读串口获得八个比特
+        # nop
+        # or s0, zero, v0                 // 结果存入s0
+
+
+
+
     jal READSERIALWORD
     nop
     or s0, v0, zero                 // 获得addr
+
+
+
     jal READSERIALWORD
     nop
     or s1, v0, zero                 // 获得num
+
+
+
+
+
     srl s1, s1, 2                   // num除4，获得字数
+
 .LC2:                               // 每次写入一字
     jal READSERIALWORD              // 从串口读入一字
     nop
@@ -164,6 +206,7 @@ SHELL:
     lw s0, 0(sp)                    // 恢复s0,s1
     lw s1, 4(sp)
     addiu sp, sp, 8
+
     j .DONE
     nop
 
