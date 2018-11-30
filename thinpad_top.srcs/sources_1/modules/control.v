@@ -7,11 +7,16 @@ module control(
     input wire[31:0] inst,
     input wire[31:0] pc,
     
+    // register
+    output reg[31:0] read_address_1,
+    output reg[31:0] read_address_2,
+    
     /*
        [8]   syscall
        [9]   instruction valid
        [12]  eret
     */
+    // exception
     output reg[31:0] exception_out,
     output reg[31:0] exception_address_out,
 
@@ -20,7 +25,8 @@ module control(
     output reg con_alu_signed,
     output reg con_alu_sa, // for SLL and SRL
     output reg con_jal, // for JAL
-    output reg con_mfc0,
+    output reg con_mfc0, // for mfc0
+    output reg con_muls, // for muls
 
     // exe
     output reg[4:0] con_alu_op,
@@ -41,6 +47,12 @@ always @(*) begin
         { con_reg_write, con_mem_read, con_mem_write } <= 3'b000;
         exception_out <= 32'b0;
         exception_address_out <= 32'b0;
+        
+        con_jal <= 1'b0;
+        con_muls <= 1'b0;
+        con_mfc0 <= 1'b0;
+        con_wb_src <= `WB_SRC_ALU;
+        con_alu_op <= `ALU_OP_ADD;
     end
     else begin
         con_alu_sa <= (inst[31:26] == 6'b000000) && (
@@ -50,6 +62,7 @@ always @(*) begin
         con_mem_read <= inst[31:29] == 3'b100;
         con_mem_write <= inst[31:29] == 3'b101;
         con_mfc0 <= 1'b0;
+        con_muls <= 1'b0;
         
         exception_out <= 32'b0;
         exception_out[9] <= 1'b1;
@@ -219,6 +232,27 @@ always @(*) begin
                 con_wb_src <= `WB_SRC_ALU;
                 con_alu_op <= `ALU_OP_CLZ;
                 exception_out[9] <= 1'b0;
+            end
+            
+            3'b010: begin
+                case (inst[5:0])
+                    6'b000010: begin // MUL.S
+                        { con_alu_immediate, con_reg_write, con_mem_write } <= 3'b010;
+                        con_wb_src <= `WB_SRC_ALU;
+                        con_alu_op <= `ALU_OP_MULS;
+                        con_muls <= 1'b1;
+                        exception_out[9] <= 1'b0;
+                        read_address_1 <= inst[20:16];
+                        read_address_2 <= inst[15:11];
+                    end
+                    6'b011000: begin // ERET
+                        { con_alu_immediate, con_reg_write, con_mem_write} <= 3'b000;
+                        con_wb_src <= `WB_SRC_ALU;
+                        con_alu_op <= `ALU_OP_ERET;
+                        exception_out[9] <= 1'b0;
+                        exception_out[12] <= 1'b1;
+                    end
+                endcase
             end
         endcase
     end

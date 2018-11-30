@@ -26,6 +26,7 @@ module exe_mem(
     // control signals
     input wire con_reg_write,
     input wire con_mov_cond,
+    input wire con_muls,
 
     // for mem
     input wire con_mem_byte_in,
@@ -126,8 +127,14 @@ always @(posedge clk or posedge rst) begin
                 mem_this_delayslot <= 1'b0;
             end
             else begin
-                read_address_1 <= inst_in[25:21];
-                read_address_2 <= inst_in[20:16];
+                if (con_muls == 1'b1) begin
+                    read_address_1 <= inst_in[20:16];
+                    read_address_2 <= inst_in[15:11];
+                end
+                else begin
+                    read_address_1 <= inst_in[25:21];
+                    read_address_2 <= inst_in[20:16];
+                end
 
                 mem_cp0_we <= exe_cp0_we;
                 mem_cp0_write_addr <= exe_cp0_write_addr;
