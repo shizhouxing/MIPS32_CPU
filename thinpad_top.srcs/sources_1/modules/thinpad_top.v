@@ -144,7 +144,7 @@ wire[31:0] reg_write_data_mem;
 wire con_reg_write_mem;
 wire[31:0] alu_res_mem, mov_data_mem;
 wire[31:0] mem_read_data, uart_read_data;
-wire[1:0] uart_state;
+wire[2:0] uart_state;
 
 wire mem_cp0_we_in;
 wire[4:0] mem_cp0_write_addr_in;
@@ -251,7 +251,6 @@ uart_controller _uart_controller(
     .en(mem_uart_en),
     .data_read(con_mem_read),
     .data_write(con_mem_write),
-    .uart_state(uart_state),
 
     .uart_data(base_ram_data[7:0]),
     .uart_rdn(uart_rdn),
@@ -260,7 +259,8 @@ uart_controller _uart_controller(
     .uart_tbre(uart_tbre),
     .uart_tsre(uart_tsre),
 
-    .result_data(mem_uart_read_data)
+    .result_data(mem_uart_read_data),
+    .uart_state(uart_state)
 );
 
 if_id _if_id(
@@ -573,8 +573,7 @@ mem _mem(
     
     .ram_en(mem_ram_en),
     .uart_en(mem_uart_en),
-    .read_data(mem_read_data),
-    .uart_state(uart_state)
+    .read_data(mem_read_data)
 );
 
 mem_wb _mem_wb(

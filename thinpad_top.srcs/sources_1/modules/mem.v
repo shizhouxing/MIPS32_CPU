@@ -38,8 +38,7 @@ module mem(
 
     output reg ram_en,
     output reg uart_en,
-    output reg[31:0] read_data,
-    output reg[1:0] uart_state
+    output reg[31:0] read_data
 );
 
 reg[31:0] cp0_status;
@@ -161,26 +160,6 @@ always @(*) begin
             else 
                 uart_en <= 1'b1;
             read_data <= uart_read_data;
-        end
-    end
-end
-
-// TODO: cp0 ?
-// state machine for uart I/O
-always @(posedge rst or posedge clk) begin
-    if (rst) begin
-        uart_state <= 2'b00;
-    end
-    else begin
-        if (uart_en) 
-            uart_state <= 2'b0;
-        else begin
-            case (uart_state) 
-                2'b00: uart_state <= 2'b01;
-                2'b01: uart_state <= 2'b10;
-                2'b10: uart_state <= 2'b11;
-                2'b11: uart_state <= 2'b11;
-            endcase
         end
     end
 end
