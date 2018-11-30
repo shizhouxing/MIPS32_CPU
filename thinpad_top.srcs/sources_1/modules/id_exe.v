@@ -27,6 +27,8 @@ module id_exe(
     input wire con_alu_sa,
     input wire con_jal,
     input wire con_mfc0,
+    input wire con_muls,
+    output reg con_muls_out,
  
     // for exe
     input wire[4:0] con_alu_op_in,
@@ -163,9 +165,15 @@ always @(posedge clk or posedge rst) begin
                 con_mem_write_out <= con_mem_write_in;
 
                 con_wb_src_out <= con_wb_src_in;
-
-                read_address_1 <= inst_in[25:21];
-                read_address_2 <= inst_in[20:16];
+                
+                if (con_muls) begin
+                    read_address_1 <= inst_in[20:16];
+                    read_address_2 <= inst_in[15:10];
+                end
+                else begin
+                    read_address_1 <= inst_in[25:21];
+                    read_address_2 <= inst_in[20:16];
+                end
 
                 data_A_no_forw <= con_alu_sa ? inst_in[10:6] : data_1;
                 data_B_no_forw <= con_alu_immediate ? immediate : data_2;
@@ -182,9 +190,20 @@ always @(posedge clk or posedge rst) begin
                 
                 if (con_jal)
                     reg_write_address <= 5'b11111; // save $31 for jal
-                else
-                    reg_write_address <= con_mfc0 ? inst_in[20:16] : (con_alu_immediate ? inst_in[20:16] : inst_in[15:11]);
-
+                else begin
+                    if (con_mfc0 == 1'b1) begin
+                        reg_write_address <= inst_in[20:16];
+                    end
+                    else if (con_muls == 1'b1) begin
+                        reg_write_address <= inst_in[10:6];
+                    end
+                    else if (con_alu_immediate) begin
+                        reg_write_address <= inst_in[20:16]; 
+                    end else begin
+                        reg_write_address <= inst_in[15:11];
+                    end
+                    //reg_write_address <= con_mfc0 ? inst_in[20:16] : (con_alu_immediate ? inst_in[20:16] : inst_in[15:11]);
+                end
                 mem_write_data <= data_2;
             end
         end

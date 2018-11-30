@@ -104,8 +104,12 @@ wire[31:0] pc_jump;
 // id
 wire[31:0] inst_id, pc_plus_4_id;
 wire con_alu_immediate, con_alu_signed, con_alu_sa;
+wire[31:0] read_address_1_out;
+wire[31:0] read_address_2_out;
 wire con_jal;
 wire con_mfc0;
+wire con_muls;
+wire con_muls_out;
 wire con_reg_write;
 wire[4:0] reg_write_address;
 wire[31:0] reg_write_data;
@@ -201,6 +205,12 @@ wire mem_conflict;
 wire mem_ram_en, mem_uart_en; 
 wire[31:0] mem_ram_read_data, mem_uart_read_data;
 
+
+// vga
+wire[6:0] letter_out;
+wire[2:0] letter_h_out;
+wire[3:0] letter_v_out;
+
 pc _pc(
     .clk(clock),
     .rst(reset),
@@ -276,8 +286,8 @@ if_id _if_id(
 registers _registers(
     .clk(clock),
     .rst(reset),
-    .read_address_1(inst_id[25:21]),
-    .read_address_2(inst_id[20:16]),
+    .read_address_1(read_address_1_out),
+    .read_address_2(read_address_2_out),
     .write_address(reg_write_address),
     .write_data(reg_write_data),
     .con_reg_write(con_reg_write),
@@ -335,10 +345,14 @@ control _control(
     .con_alu_sa(con_alu_sa),
     .con_jal(con_jal),
     .con_mfc0(con_mfc0),
+    .con_muls(con_muls),
     
     // exception
     .exception_out(id_exception_out),
     .exception_address_out(id_exception_address_out),
+    
+    .read_address_1(read_address_1_out),
+    .read_address_2(read_address_2_out),
     
     .con_alu_op(con_alu_op_id),
     .con_reg_write(con_reg_write_id),
@@ -398,6 +412,8 @@ id_exe _id_exe(
     .con_alu_sa(con_alu_sa),
     .con_jal(con_jal),
     .con_mfc0(con_mfc0),
+    .con_muls(con_muls),
+    .con_muls_out(con_muls_out),
     
     .con_alu_op_in(con_alu_op_id),
     .con_reg_write_in(con_reg_write_id),
@@ -521,6 +537,8 @@ exe_mem _exe_mem(
     .con_mem_write_out(con_mem_write),
     .con_wb_src_in(con_wb_src_exe),
     .con_wb_src_out(con_wb_src),
+    
+    .con_muls(con_muls_out),
 
     .pc_plus_8_out(pc_plus_8_mem),
     .mem_address(mem_address),
@@ -637,8 +655,32 @@ flush_controller _flush_controller(
     .exception_in(mem_exception_out),
     .cp0_epc_in(mem_epc_out),
     .flush(flush),
-    .pc_flush(pc_flush)
-    
+    .pc_flush(pc_flush)  
+);
+
+wire[11:0] hdata;
+assign video_clk = clk_50M;
+
+vga #(12, 800, 856, 976, 1040, 600, 637, 643, 666, 1, 1) vga800x600at75 (
+    .clk(clk_50M),
+    .hdata(hdata),
+    .vdata(),
+    .letter(letter_out),
+    .letter_h(letter_h_out),
+    .letter_v(letter_v_out),
+    .hsync(video_hsync),
+    .vsync(video_vsync),
+    .data_enable(video_de)
+);
+
+letter_rgb _letter_rgb(
+    .rst(reset),
+    .letter(letter_out),
+    .letter_h(letter_h_out),
+    .letter_v(letter_v_out),
+    .red(video_red),
+    .green(video_green),
+    .blue(video_blue)
 );
 
 endmodule

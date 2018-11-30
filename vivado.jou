@@ -505,3 +505,1260 @@ wait_on_run impl_1
 reset_run synth_1
 launch_runs impl_1 -to_step write_bitstream -jobs 4
 wait_on_run impl_1
+file mkdir C:/Users/Tinaht/Desktop/MIPS32_CPU/thinpad_top.srcs/sources_1/new
+close [ open C:/Users/Tinaht/Desktop/MIPS32_CPU/thinpad_top.srcs/sources_1/new/hilo_reg.v w ]
+add_files C:/Users/Tinaht/Desktop/MIPS32_CPU/thinpad_top.srcs/sources_1/new/hilo_reg.v
+reset_run synth_1
+launch_runs impl_1 -to_step write_bitstream -jobs 4
+wait_on_run impl_1
+launch_simulation
+source tb.tcl
+add_bp {C:/Users/Tinaht/Desktop/MIPS32_CPU/thinpad_top.srcs/sources_1/modules/id_exe.v} 188
+run all
+remove_bps -file {C:/Users/Tinaht/Desktop/MIPS32_CPU/thinpad_top.srcs/sources_1/modules/flush_controller.v} -line 25
+remove_bps -file {C:/Users/Tinaht/Desktop/MIPS32_CPU/thinpad_top.srcs/sources_1/modules/flush_controller.v} -line 38
+run all
+remove_bps -file {C:/Users/Tinaht/Desktop/MIPS32_CPU/thinpad_top.srcs/sources_1/modules/pc.v} -line 25
+run all
+add_bp {C:/Users/Tinaht/Desktop/MIPS32_CPU/thinpad_top.srcs/sources_1/modules/pc.v} 25
+run all
+restart
+run all
+run all
+add_bp {C:/Users/Tinaht/Desktop/MIPS32_CPU/thinpad_top.srcs/sources_1/modules/control.v} 232
+remove_bps -file {C:/Users/Tinaht/Desktop/MIPS32_CPU/thinpad_top.srcs/sources_1/modules/control.v} -line 232
+add_bp {C:/Users/Tinaht/Desktop/MIPS32_CPU/thinpad_top.srcs/sources_1/modules/control.v} 232
+run all
+restart
+run all
+run all
+restart
+add_bp {C:/Users/Tinaht/Desktop/MIPS32_CPU/thinpad_top.srcs/sources_1/modules/control.v} 80
+run all
+restart
+run all
+run all
+add_bp {C:/Users/Tinaht/Desktop/MIPS32_CPU/thinpad_top.srcs/sources_1/modules/pc.v} 28
+remove_bps -file {C:/Users/Tinaht/Desktop/MIPS32_CPU/thinpad_top.srcs/sources_1/modules/pc.v} -line 28
+add_bp {C:/Users/Tinaht/Desktop/MIPS32_CPU/thinpad_top.srcs/sources_1/modules/control.v} 47
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+restart
+run all
+run all
+run all
+run all
+run all
+restart
+close_sim
+launch_simulation
+source tb.tcl
+remove_bps -file {C:/Users/Tinaht/Desktop/MIPS32_CPU/thinpad_top.srcs/sources_1/modules/control.v} -line 80
+remove_bps -file {C:/Users/Tinaht/Desktop/MIPS32_CPU/thinpad_top.srcs/sources_1/modules/control.v} -line 232
+add_bp {C:/Users/Tinaht/Desktop/MIPS32_CPU/thinpad_top.srcs/sources_1/modules/control.v} 225
+run all
+remove_bps -file {C:/Users/Tinaht/Desktop/MIPS32_CPU/thinpad_top.srcs/sources_1/modules/control.v} -line 47
+run all
+restart
+add_bp {C:/Users/Tinaht/Desktop/MIPS32_CPU/thinpad_top.srcs/sources_1/modules/control.v} 47
+restart
+run all
+run all
+restart
+run all
+run all
+restart
+run all
+run all
+run all
+restart
+close_sim
+reset_run synth_1
+launch_runs impl_1 -to_step write_bitstream -jobs 4
+wait_on_run impl_1
+launch_simulation
+source tb.tcl
+run all
+remove_bps -file {C:/Users/Tinaht/Desktop/MIPS32_CPU/thinpad_top.srcs/sources_1/modules/control.v} -line 47
+run all
+restart
+add_bp {C:/Users/Tinaht/Desktop/MIPS32_CPU/thinpad_top.srcs/sources_1/modules/control.v} 52
+remove_bps -file {C:/Users/Tinaht/Desktop/MIPS32_CPU/thinpad_top.srcs/sources_1/modules/control.v} -line 225
+add_bp {C:/Users/Tinaht/Desktop/MIPS32_CPU/thinpad_top.srcs/sources_1/modules/control.v} 233
+run all
+run all
+run all
+add_bp {C:/Users/Tinaht/Desktop/MIPS32_CPU/thinpad_top.srcs/sources_1/modules/alu.v} 80
+run all
+restart
+run all
+run all
+run all
+add_bp {C:/Users/Tinaht/Desktop/MIPS32_CPU/thinpad_top.srcs/sources_1/modules/registers.v} 25
+run all
+restart
+run all
+run all
+run all
+run all
+restart
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+add_bp {C:/Users/Tinaht/Desktop/MIPS32_CPU/thinpad_top.srcs/sources_1/modules/id_exe.v} 191
+run all
+run all
+restart
+run all
+run all
+remove_bps -file {C:/Users/Tinaht/Desktop/MIPS32_CPU/thinpad_top.srcs/sources_1/modules/registers.v} -line 25
+run all
+run all
+run all
+run all
+add_bp {C:/Users/Tinaht/Desktop/MIPS32_CPU/thinpad_top.srcs/sources_1/modules/registers.v} 36
+remove_bps -file {C:/Users/Tinaht/Desktop/MIPS32_CPU/thinpad_top.srcs/sources_1/modules/registers.v} -line 36
+add_bp {C:/Users/Tinaht/Desktop/MIPS32_CPU/thinpad_top.srcs/sources_1/modules/registers.v} 36
+run all
+run all
+run all
+run all
+run all
+restart
+remove_bps -file {C:/Users/Tinaht/Desktop/MIPS32_CPU/thinpad_top.srcs/sources_1/modules/control.v} -line 233
+run all
+remove_bps -file {C:/Users/Tinaht/Desktop/MIPS32_CPU/thinpad_top.srcs/sources_1/modules/control.v} -line 52
+run all
+remove_bps -file {C:/Users/Tinaht/Desktop/MIPS32_CPU/thinpad_top.srcs/sources_1/modules/id_exe.v} -line 188
+remove_bps -file {C:/Users/Tinaht/Desktop/MIPS32_CPU/thinpad_top.srcs/sources_1/modules/id_exe.v} -line 191
+run all
+remove_bps -file {C:/Users/Tinaht/Desktop/MIPS32_CPU/thinpad_top.srcs/sources_1/modules/alu.v} -line 80
+run all
+run all
+restart
+run all
+restart
+add_bp {C:/Users/Tinaht/Desktop/MIPS32_CPU/thinpad_top.srcs/sources_1/modules/registers.v} 23
+run all
+run all
+run all
+restart
+run all
+run all
+run all
+restart
+add_bp {C:/Users/Tinaht/Desktop/MIPS32_CPU/thinpad_top.srcs/sources_1/modules/alu.v} 81
+restart
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+restart
+close_sim
+launch_simulation
+source tb.tcl
+run all
+remove_bps -file {C:/Users/Tinaht/Desktop/MIPS32_CPU/thinpad_top.srcs/sources_1/modules/registers.v} -line 23
+remove_bps -file {C:/Users/Tinaht/Desktop/MIPS32_CPU/thinpad_top.srcs/sources_1/modules/registers.v} -line 36
+run all
+restart
+add_bp {C:/Users/Tinaht/Desktop/MIPS32_CPU/thinpad_top.srcs/sources_1/modules/alu.v} 80
+remove_bps -file {C:/Users/Tinaht/Desktop/MIPS32_CPU/thinpad_top.srcs/sources_1/modules/alu.v} -line 81
+run all
+add_bp {C:/Users/Tinaht/Desktop/MIPS32_CPU/thinpad_top.srcs/sources_1/modules/registers.v} 36
+remove_bps -file {C:/Users/Tinaht/Desktop/MIPS32_CPU/thinpad_top.srcs/sources_1/modules/registers.v} -line 36
+add_bp {C:/Users/Tinaht/Desktop/MIPS32_CPU/thinpad_top.srcs/sources_1/modules/registers.v} 36
+remove_bps -file {C:/Users/Tinaht/Desktop/MIPS32_CPU/thinpad_top.srcs/sources_1/modules/registers.v} -line 36
+add_bp {C:/Users/Tinaht/Desktop/MIPS32_CPU/thinpad_top.srcs/sources_1/modules/registers.v} 36
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+restart
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+restart
+run all
+run all
+run all
+restart
+remove_bps -file {C:/Users/Tinaht/Desktop/MIPS32_CPU/thinpad_top.srcs/sources_1/modules/alu.v} -line 80
+add_bp {C:/Users/Tinaht/Desktop/MIPS32_CPU/thinpad_top.srcs/sources_1/modules/alu.v} 84
+run all
+run all
+add_bp {C:/Users/Tinaht/Desktop/MIPS32_CPU/thinpad_top.srcs/sources_1/modules/exe_mem.v} 128
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+restart
+restart
+run all
+remove_bps -file {C:/Users/Tinaht/Desktop/MIPS32_CPU/thinpad_top.srcs/sources_1/modules/exe_mem.v} -line 128
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+restart
+run all
+run all
+run all
+run all
+add_bp {C:/Users/Tinaht/Desktop/MIPS32_CPU/thinpad_top.srcs/sources_1/modules/exe_mem.v} 128
+run all
+run all
+add_bp {C:/Users/Tinaht/Desktop/MIPS32_CPU/thinpad_top.srcs/sources_1/modules/mem.v} 97
+add_bp {C:/Users/Tinaht/Desktop/MIPS32_CPU/thinpad_top.srcs/sources_1/modules/mem_wb.v} 47
+run all
+run all
+run all
+run all
+run all
+restart
+close_sim
+reset_run synth_1
+launch_runs impl_1 -to_step write_bitstream -jobs 4
+wait_on_run impl_1
+launch_simulation
+source tb.tcl
+remove_bps -file {C:/Users/Tinaht/Desktop/MIPS32_CPU/thinpad_top.srcs/sources_1/modules/exe_mem.v} -line 128
+add_bp {C:/Users/Tinaht/Desktop/MIPS32_CPU/thinpad_top.srcs/sources_1/modules/alu.v} 88
+run all
+remove_bps -file {C:/Users/Tinaht/Desktop/MIPS32_CPU/thinpad_top.srcs/sources_1/modules/mem_wb.v} -line 47
+run all
+remove_bps -file {C:/Users/Tinaht/Desktop/MIPS32_CPU/thinpad_top.srcs/sources_1/modules/mem.v} -line 97
+run all
+run all
+run all
+run all
+add_bp {C:/Users/Tinaht/Desktop/MIPS32_CPU/thinpad_top.srcs/sources_1/modules/registers.v} 25
+run all
+remove_bps -file {C:/Users/Tinaht/Desktop/MIPS32_CPU/thinpad_top.srcs/sources_1/modules/registers.v} -line 25
+run all
+restart
+run all
+run 10 ns
+run all
+restart
+run all
+run all
+run all
+run all
+restart
+add_bp {C:/Users/Tinaht/Desktop/MIPS32_CPU/thinpad_top.srcs/sources_1/modules/registers.v} 25
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+restart
+add_bp {C:/Users/Tinaht/Desktop/MIPS32_CPU/thinpad_top.srcs/sources_1/modules/control.v} 245
+run all
+run all
+run all
+run all
+restart
+run all
+run all
+run all
+run all
+run all
+restart
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+add_bp {C:/Users/Tinaht/Desktop/MIPS32_CPU/thinpad_top.srcs/sources_1/modules/id_exe.v} 156
+restart
+run all
+run all
+run all
+restart
+run all
+remove_bps -file {C:/Users/Tinaht/Desktop/MIPS32_CPU/thinpad_top.srcs/sources_1/modules/registers.v} -line 25
+run all
+run all
+run all
+run all
+run all
+restart
+run all
+run all
+run all
+run all
+remove_bps -file {C:/Users/Tinaht/Desktop/MIPS32_CPU/thinpad_top.srcs/sources_1/modules/id_exe.v} -line 156
+add_bp {C:/Users/Tinaht/Desktop/MIPS32_CPU/thinpad_top.srcs/sources_1/modules/id_exe.v} 156
+close_sim
+reset_run synth_1
+launch_runs impl_1 -to_step write_bitstream -jobs 4
+wait_on_run impl_1
+launch_simulation
+source tb.tcl
+run all
+run all
+run all
+run all
+restart
+run all
+run all
+run all
+restart
+restart
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+restart
+run all
+run all
+run all
+restart
+run all
+run all
+run all
+add_bp {C:/Users/Tinaht/Desktop/MIPS32_CPU/thinpad_top.srcs/sources_1/modules/exe_mem.v} 152
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+close_sim
+reset_run synth_1
+launch_runs impl_1 -to_step write_bitstream -jobs 4
+wait_on_run impl_1
+reset_run synth_1
+launch_runs impl_1 -to_step write_bitstream -jobs 4
+wait_on_run impl_1
+launch_simulation
+source tb.tcl
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+restart
+add_bp {C:/Users/Tinaht/Desktop/MIPS32_CPU/thinpad_top.srcs/sources_1/modules/registers.v} 23
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+restart
+restart
+close_sim
+reset_run synth_1
+launch_runs impl_1 -to_step write_bitstream -jobs 4
+wait_on_run impl_1
+reset_run synth_1
+launch_runs impl_1 -to_step write_bitstream -jobs 4
+wait_on_run impl_1
+reset_run synth_1
+launch_runs impl_1 -to_step write_bitstream -jobs 4
+wait_on_run impl_1
+reset_run synth_1
+launch_runs impl_1 -jobs 4
+wait_on_run impl_1
+launch_runs impl_1 -to_step write_bitstream -jobs 4
+wait_on_run impl_1
+reset_run synth_1
+launch_runs synth_1 -jobs 4
+wait_on_run synth_1
+reset_run synth_1
+launch_runs impl_1 -to_step write_bitstream -jobs 4
+wait_on_run impl_1
+reset_run synth_1
+launch_runs impl_1 -to_step write_bitstream -jobs 4
+wait_on_run impl_1
+reset_run synth_1
+launch_runs impl_1 -to_step write_bitstream -jobs 4
+wait_on_run impl_1
+reset_run synth_1
+launch_runs impl_1 -to_step write_bitstream -jobs 4
+wait_on_run impl_1
+reset_run synth_1
+launch_runs impl_1 -to_step write_bitstream -jobs 4
+wait_on_run impl_1
+reset_run synth_1
+launch_runs impl_1 -to_step write_bitstream -jobs 4
+wait_on_run impl_1
+close [ open C:/Users/Tinaht/Desktop/MIPS32_CPU/thinpad_top.srcs/sources_1/new/letter_rgb.v w ]
+add_files C:/Users/Tinaht/Desktop/MIPS32_CPU/thinpad_top.srcs/sources_1/new/letter_rgb.v
+reset_run synth_1
+launch_runs impl_1 -to_step write_bitstream -jobs 4
+wait_on_run impl_1
+reset_run synth_1
+launch_runs impl_1 -to_step write_bitstream -jobs 4
+wait_on_run impl_1
+reset_run synth_1
+launch_runs impl_1 -to_step write_bitstream -jobs 4
+wait_on_run impl_1
+reset_run synth_1
+launch_runs impl_1 -to_step write_bitstream -jobs 4
+wait_on_run impl_1
+launch_simulation
+source tb.tcl
+remove_bps -file {C:/Users/Tinaht/Desktop/MIPS32_CPU/thinpad_top.srcs/sources_1/modules/exe_mem.v} -line 152
+add_bp {C:/Users/Tinaht/Desktop/MIPS32_CPU/thinpad_top.srcs/sources_1/new/letter_rgb.v} 28
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+add_bp {C:/Users/Tinaht/Desktop/MIPS32_CPU/thinpad_top.srcs/sources_1/modules/vga.v} 57
+run all
+close_sim
+reset_run synth_1
+launch_runs impl_1 -to_step write_bitstream -jobs 4
+wait_on_run impl_1
+reset_run synth_1
+launch_runs impl_1 -to_step write_bitstream -jobs 4
+wait_on_run impl_1
+launch_simulation
+source tb.tcl
+add_bp {C:/Users/Tinaht/Desktop/MIPS32_CPU/thinpad_top.srcs/sources_1/new/letter_rgb.v} 30
+remove_bps -file {C:/Users/Tinaht/Desktop/MIPS32_CPU/thinpad_top.srcs/sources_1/new/letter_rgb.v} -line 30
+add_bp {C:/Users/Tinaht/Desktop/MIPS32_CPU/thinpad_top.srcs/sources_1/new/letter_rgb.v} 29
+remove_bps -file {C:/Users/Tinaht/Desktop/MIPS32_CPU/thinpad_top.srcs/sources_1/new/letter_rgb.v} -line 28
+remove_bps -file {C:/Users/Tinaht/Desktop/MIPS32_CPU/thinpad_top.srcs/sources_1/new/letter_rgb.v} -line 29
+add_bp {C:/Users/Tinaht/Desktop/MIPS32_CPU/thinpad_top.srcs/sources_1/new/letter_rgb.v} 29
+add_bp {C:/Users/Tinaht/Desktop/MIPS32_CPU/thinpad_top.srcs/sources_1/new/letter_rgb.v} 35
+remove_bps -file {C:/Users/Tinaht/Desktop/MIPS32_CPU/thinpad_top.srcs/sources_1/new/letter_rgb.v} -line 29
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+remove_bps -file {C:/Users/Tinaht/Desktop/MIPS32_CPU/thinpad_top.srcs/sources_1/modules/registers.v} -line 23
+run all
+remove_bps -file {C:/Users/Tinaht/Desktop/MIPS32_CPU/thinpad_top.srcs/sources_1/new/letter_rgb.v} -line 35
+add_bp {C:/Users/Tinaht/Desktop/MIPS32_CPU/thinpad_top.srcs/sources_1/new/letter_rgb.v} 35
+run all
+remove_bps -file {C:/Users/Tinaht/Desktop/MIPS32_CPU/thinpad_top.srcs/sources_1/new/letter_rgb.v} -line 35
+add_bp {C:/Users/Tinaht/Desktop/MIPS32_CPU/thinpad_top.srcs/sources_1/new/letter_rgb.v} 29
+remove_bps -file {C:/Users/Tinaht/Desktop/MIPS32_CPU/thinpad_top.srcs/sources_1/new/letter_rgb.v} -line 29
+add_bp {C:/Users/Tinaht/Desktop/MIPS32_CPU/thinpad_top.srcs/sources_1/new/letter_rgb.v} 29
+remove_bps -file {C:/Users/Tinaht/Desktop/MIPS32_CPU/thinpad_top.srcs/sources_1/new/letter_rgb.v} -line 29
+add_bp {C:/Users/Tinaht/Desktop/MIPS32_CPU/thinpad_top.srcs/sources_1/new/letter_rgb.v} 29
+restart
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+add_bp {C:/Users/Tinaht/Desktop/MIPS32_CPU/thinpad_top.srcs/sources_1/new/letter_rgb.v} 35
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+restart
+close_sim
+reset_run synth_1
+launch_runs impl_1 -to_step write_bitstream -jobs 4
+wait_on_run impl_1
+reset_run impl_1 -prev_step 
+launch_runs impl_1 -to_step write_bitstream -jobs 4
+wait_on_run impl_1
+launch_simulation
+source tb.tcl
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+add_bp {C:/Users/Tinaht/Desktop/MIPS32_CPU/thinpad_top.srcs/sources_1/new/letter_rgb.v} 31
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+close_sim
+reset_run synth_1
+launch_runs impl_1 -to_step write_bitstream -jobs 4
+wait_on_run impl_1
+reset_run synth_1
+launch_runs impl_1 -to_step write_bitstream -jobs 4
+wait_on_run impl_1
+reset_run synth_1
+launch_runs impl_1 -to_step write_bitstream -jobs 4
+wait_on_run impl_1
+reset_run synth_1
+launch_runs impl_1 -to_step write_bitstream -jobs 4
+wait_on_run impl_1
+reset_run synth_1
+launch_runs impl_1 -to_step write_bitstream -jobs 4
+wait_on_run impl_1
+reset_run synth_1
+launch_runs impl_1 -to_step write_bitstream -jobs 4
+wait_on_run impl_1
+launch_simulation
+source tb.tcl
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+add_bp {C:/Users/Tinaht/Desktop/MIPS32_CPU/thinpad_top.srcs/sources_1/modules/vga.v} 69
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+add_bp {C:/Users/Tinaht/Desktop/MIPS32_CPU/thinpad_top.srcs/sources_1/new/letter_rgb.v} 38
+run all
+run all
+remove_bps -file {C:/Users/Tinaht/Desktop/MIPS32_CPU/thinpad_top.srcs/sources_1/modules/vga.v} -line 69
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+remove_bps -file {C:/Users/Tinaht/Desktop/MIPS32_CPU/thinpad_top.srcs/sources_1/new/letter_rgb.v} -line 35
+remove_bps -file {C:/Users/Tinaht/Desktop/MIPS32_CPU/thinpad_top.srcs/sources_1/new/letter_rgb.v} -line 38
+add_bp {C:/Users/Tinaht/Desktop/MIPS32_CPU/thinpad_top.srcs/sources_1/modules/vga.v} 91
+run all
+remove_bps -file {C:/Users/Tinaht/Desktop/MIPS32_CPU/thinpad_top.srcs/sources_1/modules/alu.v} -line 88
+run all
+remove_bps -file {C:/Users/Tinaht/Desktop/MIPS32_CPU/thinpad_top.srcs/sources_1/modules/registers.v} -line 36
+run all
+add_bp {C:/Users/Tinaht/Desktop/MIPS32_CPU/thinpad_top.srcs/sources_1/new/letter_rgb.v} 34
+add_bp {C:/Users/Tinaht/Desktop/MIPS32_CPU/thinpad_top.srcs/sources_1/new/letter_rgb.v} 38
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+restart
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+close_sim
+reset_run impl_1 -prev_step 
+launch_runs impl_1 -to_step write_bitstream -jobs 4
+wait_on_run impl_1
+reset_run synth_1
+launch_runs impl_1 -to_step write_bitstream -jobs 4
+wait_on_run impl_1
+reset_run synth_1
+launch_runs impl_1 -to_step write_bitstream -jobs 4
+wait_on_run impl_1
+reset_run synth_1
+launch_runs impl_1 -to_step write_bitstream -jobs 4
+wait_on_run impl_1
+launch_simulation
+source tb.tcl
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+remove_bps -file {C:/Users/Tinaht/Desktop/MIPS32_CPU/thinpad_top.srcs/sources_1/modules/vga.v} -line 91
+run all
+add_bp {C:/Users/Tinaht/Desktop/MIPS32_CPU/thinpad_top.srcs/sources_1/new/letter_rgb.v} 32
+run all
+restart
+run all
+close_sim
+reset_run synth_1
+launch_runs impl_1 -to_step write_bitstream -jobs 4
+wait_on_run impl_1
+reset_run synth_1
+launch_runs impl_1 -to_step write_bitstream -jobs 4
+wait_on_run impl_1
+reset_run synth_1
+launch_runs impl_1 -to_step write_bitstream -jobs 4
+wait_on_run impl_1
+launch_simulation
+source tb.tcl
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+restart
+remove_bps -file {C:/Users/Tinaht/Desktop/MIPS32_CPU/thinpad_top.srcs/sources_1/new/letter_rgb.v} -line 38
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+remove_bps -file {C:/Users/Tinaht/Desktop/MIPS32_CPU/thinpad_top.srcs/sources_1/new/letter_rgb.v} -line 34
+add_bp {C:/Users/Tinaht/Desktop/MIPS32_CPU/thinpad_top.srcs/sources_1/modules/vga.v} 91
+run all
+restart
+run all
+remove_bps -file {C:/Users/Tinaht/Desktop/MIPS32_CPU/thinpad_top.srcs/sources_1/modules/vga.v} -line 91
+close_sim
+reset_run synth_1
+launch_runs impl_1 -to_step write_bitstream -jobs 4
+wait_on_run impl_1
+launch_simulation
+source tb.tcl
+add_bp {C:/Users/Tinaht/Desktop/MIPS32_CPU/thinpad_top.srcs/sources_1/modules/vga.v} 92
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+close_sim
+reset_run synth_1
+launch_runs impl_1 -to_step write_bitstream -jobs 4
+wait_on_run impl_1
+reset_run synth_1
+launch_runs impl_1 -to_step write_bitstream -jobs 4
+wait_on_run impl_1
+reset_run synth_1
+launch_runs impl_1 -to_step write_bitstream -jobs 4
+wait_on_run impl_1
+reset_run synth_1
+launch_runs impl_1 -to_step write_bitstream -jobs 4
+wait_on_run impl_1
+reset_run synth_1
+launch_runs impl_1 -to_step write_bitstream -jobs 4
+wait_on_run impl_1
+reset_run synth_1
+launch_runs impl_1 -to_step write_bitstream -jobs 4
+wait_on_run impl_1
+reset_run synth_1
+launch_runs impl_1 -to_step write_bitstream -jobs 4
+wait_on_run impl_1
+reset_run synth_1
+launch_runs impl_1 -to_step write_bitstream -jobs 4
+wait_on_run impl_1
+reset_run synth_1
+launch_runs impl_1 -to_step write_bitstream -jobs 4
+wait_on_run impl_1
+launch_simulation
+source tb.tcl
+add_bp {C:/Users/Tinaht/Desktop/MIPS32_CPU/thinpad_top.srcs/sources_1/new/letter_rgb.v} 39
+remove_bps -file {C:/Users/Tinaht/Desktop/MIPS32_CPU/thinpad_top.srcs/sources_1/new/letter_rgb.v} -line 39
+add_bp {C:/Users/Tinaht/Desktop/MIPS32_CPU/thinpad_top.srcs/sources_1/new/letter_rgb.v} 39
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+remove_bps -file {C:/Users/Tinaht/Desktop/MIPS32_CPU/thinpad_top.srcs/sources_1/new/letter_rgb.v} -line 39
+add_bp {C:/Users/Tinaht/Desktop/MIPS32_CPU/thinpad_top.srcs/sources_1/modules/vga.v} 47
+restart
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+remove_bps -file {C:/Users/Tinaht/Desktop/MIPS32_CPU/thinpad_top.srcs/sources_1/modules/vga.v} -line 47
+add_bp {C:/Users/Tinaht/Desktop/MIPS32_CPU/thinpad_top.srcs/sources_1/modules/vga.v} 75
+run all
+run all
+run all
+remove_bps -file {C:/Users/Tinaht/Desktop/MIPS32_CPU/thinpad_top.srcs/sources_1/modules/vga.v} -line 75
+add_bp {C:/Users/Tinaht/Desktop/MIPS32_CPU/thinpad_top.srcs/sources_1/modules/vga.v} 72
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+remove_bps -file {C:/Users/Tinaht/Desktop/MIPS32_CPU/thinpad_top.srcs/sources_1/modules/vga.v} -line 72
+add_bp {C:/Users/Tinaht/Desktop/MIPS32_CPU/thinpad_top.srcs/sources_1/modules/vga.v} 68
+run all
+restart
+run all
+close_sim
+reset_run synth_1
+launch_runs impl_1 -to_step write_bitstream -jobs 4
+wait_on_run impl_1
+reset_run synth_1
+launch_runs impl_1 -to_step write_bitstream -jobs 4
+wait_on_run impl_1
+launch_simulation
+source tb.tcl
+remove_bps -file {C:/Users/Tinaht/Desktop/MIPS32_CPU/thinpad_top.srcs/sources_1/modules/vga.v} -line 68
+add_bp {C:/Users/Tinaht/Desktop/MIPS32_CPU/thinpad_top.srcs/sources_1/new/letter_rgb.v} 39
+run all
+add_bp {C:/Users/Tinaht/Desktop/MIPS32_CPU/thinpad_top.srcs/sources_1/modules/vga.v} 47
+run all
+restart
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+add_bp {C:/Users/Tinaht/Desktop/MIPS32_CPU/thinpad_top.srcs/sources_1/new/letter_rgb.v} 29
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+close_sim
+reset_run synth_1
+launch_runs impl_1 -to_step write_bitstream -jobs 4
+wait_on_run impl_1
+reset_run synth_1
+launch_runs impl_1 -to_step write_bitstream -jobs 4
+wait_on_run impl_1
+launch_simulation
+source tb.tcl
+run all
+run all
+remove_bps -file {C:/Users/Tinaht/Desktop/MIPS32_CPU/thinpad_top.srcs/sources_1/new/letter_rgb.v} -line 39
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+remove_bps -file {C:/Users/Tinaht/Desktop/MIPS32_CPU/thinpad_top.srcs/sources_1/modules/vga.v} -line 47
+add_bp {C:/Users/Tinaht/Desktop/MIPS32_CPU/thinpad_top.srcs/sources_1/modules/vga.v} 47
+remove_bps -file {C:/Users/Tinaht/Desktop/MIPS32_CPU/thinpad_top.srcs/sources_1/modules/vga.v} -line 47
+add_bp {C:/Users/Tinaht/Desktop/MIPS32_CPU/thinpad_top.srcs/sources_1/new/letter_rgb.v} 40
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+run all
+close_sim
+reset_run synth_1
+launch_runs impl_1 -to_step write_bitstream -jobs 4
+wait_on_run impl_1
+reset_run synth_1
+launch_runs impl_1 -to_step write_bitstream -jobs 4
+wait_on_run impl_1
+reset_run synth_1
+launch_runs impl_1 -jobs 4
+wait_on_run impl_1
+launch_runs impl_1 -to_step write_bitstream -jobs 4
+wait_on_run impl_1
+launch_runs impl_1 -to_step write_bitstream -jobs 4
+reset_run synth_1
+launch_runs impl_1 -to_step write_bitstream -jobs 4
+wait_on_run impl_1
+reset_run synth_1
+launch_runs impl_1 -to_step write_bitstream -jobs 4
+wait_on_run impl_1
+reset_run synth_1
+launch_runs impl_1 -to_step write_bitstream -jobs 4
+wait_on_run impl_1
+reset_run synth_1
+launch_runs impl_1 -to_step write_bitstream -jobs 4
+wait_on_run impl_1

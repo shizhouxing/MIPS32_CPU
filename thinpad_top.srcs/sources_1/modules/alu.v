@@ -41,8 +41,19 @@ module alu(
 );
 
 wire[31:0] B_complement;
+wire[31:0] A_mul;
+wire[31:0] B_mul;
+wire[63:0] mulres_tmp;
+
+reg[63:0] mulres;
 
 assign B_complement = op == `ALU_OP_SUB ? ((~B) + 1) : B;
+
+assign A_mul = (op == `ALU_OP_MULS && A[31] == 1'b1) ? ((~A) + 1) : A;
+
+assign B_mul = (op == `ALU_OP_MULS && B[31] == 1'b1) ? ((~B) + 1) : B;
+
+assign mulres_tmp = A_mul * B_mul;
 
 always @(*) begin
     cp0_we_out <= 1'b0;
@@ -64,6 +75,14 @@ always @(*) begin
              cp0_we_out <= 1'b1;
              cp0_write_addr_out <= inst_in[15:11];
              cp0_data_out <= B;
+         end
+         `ALU_OP_MULS: begin
+             if (A[31] ^ B[31] == 1'b1) begin
+                res = ~{1'b0, mulres_tmp[46:16]} + 1;
+             end
+             else begin
+                res = {1'b0, mulres_tmp[46:16]};
+             end
          end
          `ALU_OP_ADD: begin
              {C, res} = {1'b0, A} + {1'b0, B};

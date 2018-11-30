@@ -17,6 +17,7 @@
     `define ALU_OP_MTC0 5'b01110
     `define ALU_OP_SYSCALL 5'b01111
     `define ALU_OP_ERET 5'b10000
+    `define ALU_OP_MULS 5'b10001
 
     `define WB_SRC_PC_PLUS_8 2'b00 
     `define WB_SRC_MOV 2'b01 
