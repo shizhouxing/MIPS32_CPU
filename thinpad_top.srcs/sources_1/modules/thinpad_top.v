@@ -288,11 +288,13 @@ if_id _if_id(
 registers _registers(
     .clk(clock),
     .rst(reset),
+
     .read_address_1(read_address_1_out),
     .read_address_2(read_address_2_out),
     .write_address(reg_write_address),
     .write_data(reg_write_data),
     .con_reg_write(con_reg_write),
+
     .read_data_1(reg_read_data_1),
     .read_data_2(reg_read_data_2),
     .result(result) // for debug
@@ -690,13 +692,5 @@ letter_rgb _letter_rgb(
     .green(video_green),
     .blue(video_blue)
 );
-
-// (* MARK_DEBUG = "TRUE" *) wire[7:0] debug_uart_data;
-// assign debug_uart_data = base_ram_data[7:0];
-// ila_0  _ila(
-//     .clk(clock),
-//     .probe0(debug_uart_data),
-//     .probe1(uart_rdn)
-// );
 
 endmodule

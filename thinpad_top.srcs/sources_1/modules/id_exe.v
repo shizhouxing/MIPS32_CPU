@@ -202,6 +202,7 @@ always @(posedge clk or posedge rst) begin
                     end else begin
                         reg_write_address <= inst_in[15:11];
                     end
+                    
                     //reg_write_address <= con_mfc0 ? inst_in[20:16] : (con_alu_immediate ? inst_in[20:16] : inst_in[15:11]);
                 end
                 mem_write_data <= data_2;
