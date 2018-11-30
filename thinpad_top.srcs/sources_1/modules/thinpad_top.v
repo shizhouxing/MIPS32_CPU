@@ -86,7 +86,7 @@ assign reset = reset_btn;
 
 wire clock;
 pll_example clock_gen(
-    .clk_out2(clock),
+    .clk_out1(clock),
     .reset(reset),
     .clk_in1(clk_50M)
 );
@@ -148,7 +148,7 @@ wire[31:0] reg_write_data_mem;
 wire con_reg_write_mem;
 wire[31:0] alu_res_mem, mov_data_mem;
 wire[31:0] mem_read_data, uart_read_data;
-wire[2:0] uart_state;
+wire[3:0] uart_state;
 
 wire mem_cp0_we_in;
 wire[4:0] mem_cp0_write_addr_in;
