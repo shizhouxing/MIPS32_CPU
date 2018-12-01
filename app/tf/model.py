@@ -94,14 +94,14 @@ class Seq2Seq():
 
             self.loss = tf.contrib.seq2seq.sequence_loss(train_output.rnn_output, self.response, mask) 
 
-            params = tf.trainable_variables()
+            self.params = tf.trainable_variables()
             gradients = tf.gradients(
                 self.loss * \
                 tf.cast(tf.reduce_sum(self.response_len), tf.float32) / \
-                tf.cast(self.batch_len, tf.float32), params
+                tf.cast(self.batch_len, tf.float32), self.params
             ) 
             clipped_gradients, _ = tf.clip_by_global_norm(gradients, 5.0)
-            self.train_op = self.optimizer.apply_gradients(zip(clipped_gradients, params))
+            self.train_op = self.optimizer.apply_gradients(zip(clipped_gradients, self.params))
             self.train_out = self.index2symbol.lookup(tf.cast(train_output.sample_id, tf.int64))
         
         with tf.variable_scope("decoder", reuse=True):

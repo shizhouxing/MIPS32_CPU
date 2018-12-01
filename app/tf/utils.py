@@ -51,3 +51,30 @@ def build_vocab(data):
     embed = np.array(embed, dtype=np.float32)
     print "Pre-trained vectors: %d/%d" % (cnt_pretrained, len(embed))
     return vocab_list_major, embed    
+
+def dump_header(file):
+    file.write("// generated automatically\n")
+    file.write(".section .rodata\n")
+    file.write(".p2align 2\n")
+
+# to convert a float to a 32-bit fixed-point real number in Hex
+def float2hex(x): 
+    y = int(x * (2 ** 16))
+    if abs(y) > 2 ** 31:
+        print "Warning: Overflow %.8lf" % x
+    if y >= 0:
+        return "0x%08x" % y
+    else:
+        return "-0x%07x" % abs(y)
+    
+def dump_matrix(file, mat, name):
+    file.write("%s: .long " % name)
+    if (len(mat.shape) == 1):
+        mat = mat.reshape((mat.shape[0], 1))
+    for i in range(mat.shape[0]):
+        for j in range(mat.shape[1]):
+            file.write(float2hex(mat[i][j]))
+            if i + 1 == mat.shape[0] and j + 1 == mat.shape[1]:
+                return
+            file.write(",")
+    file.write("\n")

@@ -1,14 +1,16 @@
 import tensorflow as tf
 import numpy as np
 import os, random, time, sys
-from Seq2Seq import Seq2Seq
+from model import Seq2Seq
 from utils import load_data, build_vocab
+from utils import dump_header, dump_matrix
 
 if not os.environ.has_key("CUDA_VISIBLE_DEVICES"): 
     os.environ["CUDA_VISIBLE_DEVICES"] = "0"
 FLAGS = tf.flags.FLAGS
 
 tf.flags.DEFINE_boolean("is_train", False, "is training")
+tf.flags.DEFINE_boolean("run_dump", False, "dump parameters")
 tf.flags.DEFINE_boolean("run_valid", False, "run inference on valid")
 tf.flags.DEFINE_integer("display_interval", 100, "display interval")
 tf.flags.DEFINE_string("word_vector", "../../glove/glove.6B.50d.txt", "word vector")
@@ -120,7 +122,32 @@ with sess.as_default():
             seq2seq.learning_rate_decay_op.eval()          
             
             saver.save(sess, "%s/checkpoint-epoch" % FLAGS.model_dir, global_step=epoch.eval())                                            
-    else:
+    elif FLAGS.run_dump:
+        f_out = open("params.S", "w")
+        dump_header(f_out)
+        params = sess.run(seq2seq.params)
+        
+        names = [
+            "word_embedding",
+            "encoder_gates_kernel",
+            "encoder_gates_bias",
+            "encoder_candidate_kernel",
+            "encoder_candidate_bias",
+            "decoder_gates_kernel",
+            "decoder_gates_bias",
+            "decoder_candidate_kernel",
+            "decoder_candidate_bias",
+            "decoder_dense_kernel",
+            "decoder_dense_bias"
+        ]
+        size = 0
+        for i in range(len(names)):
+            dump_matrix(f_out, params[i], names[i])
+            size += params[i].reshape(-1).shape[0]
+
+        print "Total size: %.2lf MB" % (size * 4 / 1024. / 1024.)
+        f_out.close()
+    else: # test
         if FLAGS.run_valid:
             for batch in valid_batches:
                 ops = seq2seq.step(sess, batch)

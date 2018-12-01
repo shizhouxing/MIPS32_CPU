@@ -1,6 +1,13 @@
 ## MIPS32 CPU
 
-### Build & Run
+### Software Requirements
+
+* Vivado 2018
+* mips-mti-elfi toolchain
+* Python 2.7
+* Tensorflow 1.3.0
+
+### Build & Run - Supervisor
 
 1. Set the output clock frequency of the pll IP properly (Please refer to Wiki)
 2. Use vivado to compile the project, yielding a .bit file
