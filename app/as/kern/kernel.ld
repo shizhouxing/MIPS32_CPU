@@ -23,26 +23,18 @@ PROVIDE(COM_IER = COM1 + 1);
 PROVIDE(COM_IER_RDI = 0x01);
 
 PROVIDE(KERNEL_STACK_INIT = 0x80800000);
-PROVIDE(USER_STACK_INIT = 0x807F0000);
 SECTIONS
 {
-    . = 0x807F0000;
+    . = 0x80400000;
     .bss : {
         _sbss = .;         /* define a global symbol at bss start */
-        *(.bss.uregs)
         *(.bss)
-        *(.bss.ptes)
         . = ALIGN(4);
         _ebss = .;         /* define a global symbol at bss end */
     }
-    .rodata : {
-        *(.rodata)
-    }
-    PROVIDE(uregs_sp = uregs + (29 - 1) * 4);
-    PROVIDE(uregs_fp = uregs + (30 - 1) * 4);
     . = 0x80000000;
-    .text.main : {
-        KEEP (*(.text.main))
+    .text.init : {
+        KEEP (*(.text.init))
     }
     .text : {
         *(.text)

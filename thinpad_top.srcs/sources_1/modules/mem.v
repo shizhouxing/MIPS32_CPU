@@ -143,7 +143,7 @@ always @(*) begin
         
         exception_address_out <= exception_address_in;
         
-        if (address[31:28] == 4'h8) begin
+        if (address[31:28] == 4'h8) begin // use ram 
             read_data <= ram_read_data;
             if (mem_read | mem_write) 
                 ram_en <= 1'b0;
@@ -151,8 +151,7 @@ always @(*) begin
                 ram_en <= 1'b1;
             uart_en <= 1'b1;
         end
-        else begin 
-            // uart 
+        else begin // use uart
             // 0xBFD003F8-0xBFD003FD
             ram_en <= 1'b1;
             if (mem_read | mem_write)

@@ -49,7 +49,7 @@ assign ext_ram_data = ext_write ? data_extended : 32'bz;
 assign base_ram_addr = data_addr[21:2];
 
 always @(*) begin
-    if (byte) begin
+    if (byte) begin // load or store a single byte
         data_extended <= { 4{data[7:0]} };
         case (data_addr[1:0])
             2'b00: begin

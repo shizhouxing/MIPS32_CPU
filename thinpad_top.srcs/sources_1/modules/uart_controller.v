@@ -23,7 +23,8 @@ module uart_controller(
 assign uart_data = (~en & data_write) ? data : 8'bz;
 
 // TODO: cp0 ?
-// state machine for uart I/O
+// maintain a state machine for uart I/O
+// use 9 clock circles for uart I/O
 always @(posedge rst or posedge clk) begin
     if (rst) begin
         uart_state <= 4'b0;
