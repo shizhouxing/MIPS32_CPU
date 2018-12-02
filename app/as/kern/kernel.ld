@@ -26,12 +26,19 @@ PROVIDE(KERNEL_STACK_INIT = 0x80800000);
 SECTIONS
 {
     . = 0x80400000;
+    .rodata : {
+        .srodata = .; 
+        *(.params)
+        . = ALIGN(4);
+        .erodata = .; 
+    }
+    . = 0x80700000;
     .bss : {
-        _sbss = .;         /* define a global symbol at bss start */
+        _sbss = .;  
         *(.bss)
         . = ALIGN(4);
-        _ebss = .;         /* define a global symbol at bss end */
-    }
+        _ebss = .;  
+    }    
     . = 0x80000000;
     .text.init : {
         KEEP (*(.text.init))

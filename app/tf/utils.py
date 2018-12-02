@@ -54,7 +54,7 @@ def build_vocab(data):
 
 def dump_header(file):
     file.write("// generated automatically\n")
-    file.write(".section .rodata\n")
+    file.write(".section .params\n")
     file.write(".p2align 2\n")
 
 # to convert a float to a 32-bit fixed-point real number in Hex
@@ -75,6 +75,7 @@ def dump_matrix(file, mat, name):
         for j in range(mat.shape[1]):
             file.write(float2hex(mat[i][j]))
             if i + 1 == mat.shape[0] and j + 1 == mat.shape[1]:
+                file.write("\n")
                 return
             file.write(",")
     file.write("\n")

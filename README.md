@@ -1,7 +1,8 @@
 ## MIPS32 CPU
 
-### Software Requirements
+### Requirements
 
+* THUCST Thinpad rev.3 (early 2018)
 * Vivado 2018
 * mips-mti-elfi toolchain
 * Python 2.7

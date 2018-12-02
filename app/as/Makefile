@@ -44,7 +44,7 @@ endif
 
 .PHONY: all clean show-utest
 
-all: checkdirs $(TARGET) kernel.bin
+all: checkdirs $(TARGET) kernel.bin params.bin
 
 
 $(TARGET): $(OBJ) $(LDSCRIPT)
@@ -61,6 +61,9 @@ $(OBJDIR):
 
 kernel.bin: $(TARGET)
 	@$(GCCPREFIX)objcopy -j .text -j .text.* -O binary -v $< kernel.bin
+
+params.bin: $(TARGET)
+	@$(GCCPREFIX)objcopy -j .rodata -j .rodata.* -O binary -v $< params.bin
 
 show-utest: $(TARGET)
 	@$(GCCPREFIX)objdump -D $< | grep "^[0-9a-f]\{8\} <UTEST_" | grep -n --color=auto 'UTEST_'
