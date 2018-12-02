@@ -54,7 +54,7 @@ def build_vocab(data):
 
 def dump_header(file):
     file.write("// generated automatically\n")
-    file.write(".section .params\n")
+    file.write(".section .rodata.params\n")
     file.write(".p2align 2\n")
 
 # to convert a float to a 32-bit fixed-point real number in Hex
@@ -68,6 +68,7 @@ def float2hex(x):
         return "-0x%07x" % abs(y)
     
 def dump_matrix(file, mat, name):
+    file.write(".global %s\n" % name)
     file.write("%s: .long " % name)
     if (len(mat.shape) == 1):
         mat = mat.reshape((mat.shape[0], 1))
@@ -79,3 +80,11 @@ def dump_matrix(file, mat, name):
                 return
             file.write(",")
     file.write("\n")
+
+def dump_vocab(file, vocab):
+    file.write(".global vocab\n")
+    file.write("vocab: .ascii\"")
+    for item in vocab:
+        file.write(item)
+        file.write("\\0")
+    file.write("\"\n")

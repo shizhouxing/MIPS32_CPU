@@ -26,11 +26,11 @@ PROVIDE(KERNEL_STACK_INIT = 0x80800000);
 SECTIONS
 {
     . = 0x80400000;
-    .rodata : {
-        .srodata = .; 
-        *(.params)
+    .rodata.params : {
+        .sparams = .; 
+        *(.rodata.params)
         . = ALIGN(4);
-        .erodata = .; 
+        .eparams = .; 
     }
     . = 0x80700000;
     .bss : {

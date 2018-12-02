@@ -16,8 +16,11 @@ INCLUDE	:= include
 SRCDIR	:= kern
 
 LDSCRIPT	:= kern/kernel.ld
-SRC	:= $(foreach sdir, $(SRCDIR), $(wildcard $(sdir)/*.S))
-OBJ	:= $(patsubst $(SRCDIR)/%.S, $(OBJDIR)/%.o, $(SRC))
+SRC_S	:= $(foreach sdir, $(SRCDIR), $(wildcard $(sdir)/*.S))
+OBJ_S	:= $(patsubst $(SRCDIR)/%.S, $(OBJDIR)/%.o, $(SRC_S))
+SRC_c	:= $(foreach sdir, $(SRCDIR), $(wildcard $(sdir)/*.c))
+OBJ_c	:= $(patsubst $(SRCDIR)/%.c, $(OBJDIR)/%.o, $(SRC_c))
+
 TARGET	:= kernel.elf
 ASFLAG	:= -D__ASSEMBLY__ -EL -g -mips32r2 -mno-abicalls -mno-shared
 
@@ -36,23 +39,15 @@ ifeq ($(EN_INT), y)
 	EN_TLB = n
 endif
 
-override EN_TLB ?= n
-ifeq ($(EN_TLB), y)
-	ASFLAG += -DENABLE_TLB
-endif
-
-
 .PHONY: all clean show-utest
 
 all: checkdirs $(TARGET) kernel.bin params.bin
 
+$(TARGET): $(OBJ_S) $(LDSCRIPT)
+	$(LD) $(OBJ_S) -T$(LDSCRIPT)
 
-$(TARGET): $(OBJ) $(LDSCRIPT)
-	$(LD) $(OBJ) -T$(LDSCRIPT)
-
-$(OBJ): $(OBJDIR)/%.o : $(SRCDIR)/%.S
+$(OBJ_S): $(OBJDIR)/%.o : $(SRCDIR)/%.S
 	$(CC) -o $@ $< -c -I$(INCLUDE) $(ASFLAG)
-
 
 checkdirs: $(OBJDIR)
 

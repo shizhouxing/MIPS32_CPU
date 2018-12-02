@@ -3,7 +3,7 @@ import numpy as np
 import os, random, time, sys
 from model import Seq2Seq
 from utils import load_data, build_vocab
-from utils import dump_header, dump_matrix
+from utils import dump_header, dump_matrix, dump_vocab
 
 if not os.environ.has_key("CUDA_VISIBLE_DEVICES"): 
     os.environ["CUDA_VISIBLE_DEVICES"] = "0"
@@ -144,6 +144,7 @@ with sess.as_default():
         for i in range(len(names)):
             dump_matrix(f_out, params[i], names[i])
             size += params[i].reshape(-1).shape[0]
+        dump_vocab(f_out, vocab)
 
         print "Total size: %.2lf MB" % (size * 4 / 1024. / 1024.)
         f_out.close()

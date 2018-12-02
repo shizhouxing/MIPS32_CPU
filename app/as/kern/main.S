@@ -1,19 +1,27 @@
 #include <regdef.h>
 #include <mipsregs.h>
 #include <unistd.h>
+#include <hyper.h>
 .set noreorder
 .set noat
 
 .section .bss
 .p2align 2
     .global post_raw
-    .global post_raw_len
     post_raw:
         .rept 512
         .byte 0
         .endr
-    post_raw_len:
+    .global state
+    state:
+        .rept NUM_UNITS
         .long 0
+        .endr
+    .global input
+    input:
+        .rept DIM_EMBED
+        .long 0
+        .endr
 
 .section .text
 .p2align 2
@@ -43,7 +51,9 @@
         nop
         jal read_sentence
         nop
-        jal write_sentence
+        jal encode
+        nop
+        jal decode
         nop
         j turn
         nop
