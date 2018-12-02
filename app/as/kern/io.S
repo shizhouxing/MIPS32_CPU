@@ -10,6 +10,8 @@
     .global puts
     .global puts_debug
     .global putchar
+    .global putspace
+    .global putnewline
     .global write_int
     .global stop
 
@@ -69,8 +71,34 @@ putchar:
     j WRITESERIAL
     nop
 
+putspace:
+    addiu sp, -4
+    sw ra, 0(sp)
+
+    ori a0, $0, ' '
+    jal putchar
+    nop
+
+    lw ra, 0(sp)
+    addiu sp, 4
+    jr ra
+    nop
+
+putnewline:
+    addiu sp, -4
+    sw ra, 0(sp)
+
+    ori a0, $0, '\n'
+    jal putchar
+    nop
+
+    lw ra, 0(sp)
+    addiu sp, 4
+    jr ra
+    nop
+
 puts:
-    addiu sp, sp, -8
+    addiu sp, -8
     sw ra, 0(sp)
     sw s0, 4(sp)
 
@@ -86,16 +114,16 @@ puts:
         nop
 
     puts_done:
-        ori a0, $0, '\n'
-        jal WRITESERIAL
-        nop
+    ori a0, $0, '\n'
+    jal WRITESERIAL
+    nop
 
-        lw ra, 0(sp)
-        lw s0, 4(sp)
-        addiu sp, sp, 8
+    lw ra, 0(sp)
+    lw s0, 4(sp)
+    addiu sp, sp, 8
 
-        jr ra
-        nop
+    jr ra
+    nop
 
 hex:
     .asciz "0123456789ABCDEF"
@@ -153,7 +181,7 @@ write_int:
     lw s2, 12(sp)
     lw s3, 16(sp)
     lw s4, 20(sp)
-    addiu sp, 20
+    addiu sp, 24
     jr ra
     nop
 
