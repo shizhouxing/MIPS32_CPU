@@ -12,14 +12,34 @@
         .rept 512
         .byte 0
         .endr
+    .global input
+    input:
+        .rept DIM_EMBED
+        .long 0
+        .endr        
     .global state
     state:
         .rept NUM_UNITS
         .long 0
         .endr
-    .global input
-    input:
-        .rept DIM_EMBED
+    .global input_and_state
+    input_and_state:
+        .rept DIM_INPUT_AND_STATE
+        .long 0
+        .endr
+    .global gate_inputs
+    gate_inputs:
+        .rept NUM_UNITS
+        .long 0
+        .endr
+    .global r_state
+    r_state:
+        .rept NUM_UNITS
+        .long 0
+        .endr
+    .global candidate
+    candidate:
+        .rept NUM_UNITS
         .long 0
         .endr
 

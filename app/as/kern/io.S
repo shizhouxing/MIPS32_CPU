@@ -43,8 +43,14 @@ read_sentence:
 
     .read_done:
     ori a0, $0, ' '
-    sb a0, (s0) // last '\0'
-    sb $0, 1(s0) // last '\0'
+    sb a0, (s0)
+    ori a0, $0, 'E'
+    sb a0, 1(s0)
+    ori a0, $0, 'O'
+    sb a0, 2(s0)
+    ori a0, $0, 'S'
+    sb a0, 3(s0)
+    sb $0, 4(s0)
     lw ra, 0(sp) 
     lw s0, 4(sp)
     lw s1, 8(sp)

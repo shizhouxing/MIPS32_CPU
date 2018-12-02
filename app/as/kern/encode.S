@@ -16,6 +16,17 @@ encode:
     sw s6, 16(sp)
     sw s7, 20(sp)
 
+    lui t0, %hi(state)
+    addiu t0, %lo(state)
+    lui t1, 0
+    ori t2, $0, NUM_UNITS
+    .L_clear_state:
+        beq t1, t2, .L_clear_state_done
+        sw $0, (t0)
+        addiu t0, 4
+        addiu t1, 1
+    .L_clear_state_done:
+
     ori s6, $0, ' '
     ori s7, $0, '\n' 
     lui s0, %hi(post_raw) 
@@ -115,6 +126,17 @@ encode_input: // input the word (a0)...(a1-1)
     jal encode_input_word2vec
     nop
 
+    lui a0, %hi(encoder_gates_kernel)
+    addiu a0, %lo(encoder_gates_kernel)
+    lui a1, %hi(encoder_gates_bias)
+    addiu a1, %lo(encoder_gates_bias)
+    lui a2, %hi(encoder_candidate_kernel)
+    addiu a2, %lo(encoder_candidate_kernel)
+    lui a3, %hi(encoder_candidate_bias)
+    addiu a3, %lo(encoder_candidate_bias)
+    jal gru_update
+    nop
+
     lw ra, (sp)
     lw s0, 4(sp)
     lw s1, 8(sp)
@@ -206,7 +228,7 @@ encode_input_word2vec:
     #     lw t1, 4(sp)
     #     lw t2, 8(sp)
     #     addiu sp, 12
-    
+
     #     addiu t0, 4
     #     addiu t1, 1
     #     j .L_disp_wordvec
@@ -221,3 +243,4 @@ encode_input_word2vec:
     addiu sp, 12
     jr ra
     nop
+
