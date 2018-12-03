@@ -20,6 +20,7 @@ module vga
     input wire vga_we_in,
     input wire[11:0] vga_address_in,
     input wire[6:0] vga_data_in,
+
     
     output wire hsync,
     output wire vsync,
@@ -46,12 +47,6 @@ integer i;
 initial begin
     for (i = 0; i < 1365; i = i + 1)
         screen[i] <= 7'b0;
-    screen[0] <= 20;
-    screen[1] <= 21;
-    screen[2] <= 22;
-    screen[3] <= 40;
-    screen[4] <= 41;
-    screen[5] <= 42;
     hdata <= 0;
     vdata <= 0;
     hcount <= 0;
@@ -59,10 +54,11 @@ initial begin
     pos <= 0;
 end
 
-always @ (posedge clk)
+// write
+always @ (negedge clk)
 begin
-    if (vga_we_in == 1'b1) begin
-        screen[vga_address_in] <= vga_data_in;
+    if (~vga_we_in) begin
+        screen[vga_address_in] <= vga_data_in - 8'h20;
     end
 end
 

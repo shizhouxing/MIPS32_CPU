@@ -38,6 +38,7 @@ module mem(
 
     output reg ram_en,
     output reg uart_en,
+    output reg graph_en,
     output reg[31:0] read_data
 );
 
@@ -135,6 +136,7 @@ always @(*) begin
         cp0_data_out <= 32'b0;
         ram_en <= 1'b1;
         uart_en <= 1'b1;
+        graph_en <= 1'b1;
         read_data <= 32'b0;
     end else begin
         cp0_we_out <= cp0_we_in;
@@ -143,13 +145,18 @@ always @(*) begin
         
         exception_address_out <= exception_address_in;
         
-        if (address[31:28] == 4'h8) begin // use ram 
+        if (address[31:28] == 4'h9) begin // graphics memory
+            { ram_en, uart_en } <= 2'b11;
+            graph_en <= 1'b0;
+        end
+        else if (address[31:28] == 4'h8) begin // use ram 
             read_data <= ram_read_data;
             if (mem_read | mem_write) 
                 ram_en <= 1'b0;
             else
                 ram_en <= 1'b1;
             uart_en <= 1'b1;
+            graph_en <= 1'b1;
         end
         else begin // use uart
             // 0xBFD003F8-0xBFD003FD
@@ -159,6 +166,7 @@ always @(*) begin
             else 
                 uart_en <= 1'b1;
             read_data <= uart_read_data;
+            graph_en <= 1'b1;
         end
     end
 end

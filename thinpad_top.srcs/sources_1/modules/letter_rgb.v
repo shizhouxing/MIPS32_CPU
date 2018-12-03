@@ -131,8 +131,8 @@ end
 always @(*) begin
     if (char[pos] == 1'b1) begin
         r_out <= 3'b111;
-        g_out <= 3'b0;
-        b_out <= 2'b0;
+        g_out <= 3'b111;
+        b_out <= 2'b11;
     end else begin
         r_out <= 3'b0;
         g_out <= 2'b0;

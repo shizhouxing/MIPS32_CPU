@@ -203,9 +203,8 @@ wire mem_this_delayslot_out;
 wire[0:3] stall, nop;
 
 wire mem_conflict;
-wire mem_ram_en, mem_uart_en; 
+wire mem_ram_en, mem_uart_en, mem_graph_en; 
 wire[31:0] mem_ram_read_data, mem_uart_read_data;
-
 
 // vga
 wire[6:0] letter_out;
@@ -593,6 +592,7 @@ mem _mem(
     
     .ram_en(mem_ram_en),
     .uart_en(mem_uart_en),
+    .graph_en(mem_graph_en),
     .read_data(mem_read_data)
 );
 
@@ -669,10 +669,10 @@ flush_controller _flush_controller(
 );
 
 wire[11:0] hdata;
-assign video_clk = clk_50M;
 
+assign video_clk = clk_50M;
 vga #(12, 800, 856, 976, 1040, 600, 637, 643, 666, 1, 1) vga800x600at75 (
-    .clk(clk_50M),
+    .clk(video_clk),
     .hdata(hdata),
     .vdata(),
     .letter(letter_out),
@@ -680,7 +680,11 @@ vga #(12, 800, 856, 976, 1040, 600, 637, 643, 666, 1, 1) vga800x600at75 (
     .letter_v(letter_v_out),
     .hsync(video_hsync),
     .vsync(video_vsync),
-    .data_enable(video_de)
+    .data_enable(video_de),
+    
+    .vga_we_in(mem_graph_en),
+    .vga_address_in(mem_address[11:0]),
+    .vga_data_in(mem_write_data[7:0])
 );
 
 letter_rgb _letter_rgb(

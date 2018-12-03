@@ -29,7 +29,6 @@ encode:
     .L_clear_state_done:
 
     ori s6, $0, ' '
-    ori s7, $0, '\n' 
     lui s0, %hi(post_raw) 
     addiu s0, %lo(post_raw)
     .L0:
@@ -39,8 +38,6 @@ encode:
         .L1:
             lb s2, (s1)
             beq s2, s6, .new_word
-            nop
-            beq s2, s7, .new_word
             nop
             addiu s1, 1
             j .L1
@@ -123,20 +120,29 @@ encode_input: // input the word (a0)...(a1-1)
             nop
 
     .symbol2index_done:
+    // debug
     ori a0, s0, 0
-    jal gru_input_word2vec
+    jal write_int
     nop
+    jal putnewline
+    nop  
+    jal putnewline
+    nop 
 
-    lui a0, %hi(encoder_gates_kernel)
-    addiu a0, %lo(encoder_gates_kernel)
-    lui a1, %hi(encoder_gates_bias)
-    addiu a1, %lo(encoder_gates_bias)
-    lui a2, %hi(encoder_candidate_kernel)
-    addiu a2, %lo(encoder_candidate_kernel)
-    lui a3, %hi(encoder_candidate_bias)
-    addiu a3, %lo(encoder_candidate_bias)
-    jal gru_update
-    nop
+    # ori a0, s0, 0
+    # jal gru_input_word2vec
+    # nop
+
+    # lui a0, %hi(encoder_gates_kernel)
+    # addiu a0, %lo(encoder_gates_kernel)
+    # lui a1, %hi(encoder_gates_bias)
+    # addiu a1, %lo(encoder_gates_bias)
+    # lui a2, %hi(encoder_candidate_kernel)
+    # addiu a2, %lo(encoder_candidate_kernel)
+    # lui a3, %hi(encoder_candidate_bias)
+    # addiu a3, %lo(encoder_candidate_bias)
+    # jal gru_update
+    # nop
 
     lw ra, (sp)
     lw s0, 4(sp)
