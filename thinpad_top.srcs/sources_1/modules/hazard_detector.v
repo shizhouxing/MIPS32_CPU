@@ -40,7 +40,6 @@ assign hazard_id_mem =
 
 wire hazard_mem, hazard_exe, hazard_id, hazard_if;
 assign hazard_mem = ~uart_en & (uart_state < 4'h9);
-//assign hazard_mem = 1'b0;
 assign hazard_exe = hazard_exe_mem;
 assign hazard_id = hazard_id_exe | hazard_id_mem;
 assign hazard_if = mem_conflict;
@@ -51,6 +50,11 @@ assign stall = {
     hazard_mem | hazard_exe,
     hazard_mem
 };
-assign nop = { hazard_if, hazard_id,  hazard_exe, hazard_mem };
+assign nop = { 
+    hazard_if & ~hazard_id & ~hazard_exe & ~hazard_mem, 
+    hazard_id & ~hazard_exe & ~hazard_mem,  
+    hazard_exe & ~hazard_mem, 
+    hazard_mem 
+};
 
 endmodule
