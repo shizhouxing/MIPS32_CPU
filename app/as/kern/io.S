@@ -7,6 +7,7 @@
     .text
     .global read_sentence
     .global write_sentence
+    .global write_string
     .global puts
     .global puts_debug
     .global putchar
@@ -103,7 +104,7 @@ putnewline:
     jr ra
     nop
 
-puts:
+write_string:
     addiu sp, -8
     sw ra, 0(sp)
     sw s0, 4(sp)
@@ -111,7 +112,7 @@ puts:
     ori s0, a0, 0
     .L0:
         lb a0, (s0)
-        beq a0, zero, puts_done
+        beq a0, zero, .write_string_done
         nop
         jal WRITESERIAL      
         nop
@@ -119,17 +120,29 @@ puts:
         j .L0
         nop
 
-    puts_done:
-    ori a0, $0, '\n'
-    jal WRITESERIAL
-    nop
+    .write_string_done:
 
     lw ra, 0(sp)
     lw s0, 4(sp)
     addiu sp, sp, 8
 
     jr ra
+    nop   
+
+puts:
+    addiu sp, -4
+    sw ra, 0(sp)
+
+    jal write_string
     nop
+    ori a0, $0, '\n'
+    jal putchar
+    nop
+
+    lw ra, 0(sp)
+    addiu sp, sp, 4
+    jr ra
+    nop 
 
 hex:
     .asciz "0123456789ABCDEF"

@@ -42,6 +42,11 @@
         .rept NUM_UNITS
         .long 0
         .endr
+    .global output
+    output:
+        .rept VOCAB_SIZE
+        .long 0
+        .endr
 
 .section .text
 .p2align 2
