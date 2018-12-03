@@ -38,6 +38,7 @@ module mem(
 
     output reg ram_en,
     output reg uart_en,
+    output reg vga_en,
     output reg[31:0] read_data
 );
 
@@ -135,6 +136,7 @@ always @(*) begin
         cp0_data_out <= 32'b0;
         ram_en <= 1'b1;
         uart_en <= 1'b1;
+        vga_en <= 1'b1;
         read_data <= 32'b0;
     end else begin
         cp0_we_out <= cp0_we_in;
@@ -150,10 +152,18 @@ always @(*) begin
             else
                 ram_en <= 1'b1;
             uart_en <= 1'b1;
+            vga_en <= 1'b1;
+        end
+        else if (address[31:28] == 4'h9) begin
+            
+            vga_en <= 1'b0;
+            uart_en <= 1'b1;
+            ram_en <= 1'b1;
         end
         else begin // use uart
             // 0xBFD003F8-0xBFD003FD
             ram_en <= 1'b1;
+            vga_en <= 1'b1;
             if (mem_read | mem_write)
                 uart_en <= 1'b0;
             else 

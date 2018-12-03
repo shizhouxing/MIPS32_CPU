@@ -3,6 +3,9 @@
 module registers(
     input wire clk, 
     input wire rst,
+    
+    input wire[0:3] stall,
+    
     input wire[4:0] read_address_1,
     input wire[4:0] read_address_2,
     input wire[4:0] write_address,

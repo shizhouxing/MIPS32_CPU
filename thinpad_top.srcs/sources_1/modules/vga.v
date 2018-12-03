@@ -47,11 +47,6 @@ initial begin
     for (i = 0; i < 1365; i = i + 1)
         screen[i] <= 7'b0;
     screen[0] <= 20;
-    screen[1] <= 21;
-    screen[2] <= 22;
-    screen[3] <= 40;
-    screen[4] <= 41;
-    screen[5] <= 42;
     hdata <= 0;
     vdata <= 0;
     hcount <= 0;
@@ -61,7 +56,7 @@ end
 
 always @ (posedge clk)
 begin
-    if (vga_we_in == 1'b1) begin
+    if (vga_we_in == 1'b0) begin
         screen[vga_address_in] <= vga_data_in;
     end
 end

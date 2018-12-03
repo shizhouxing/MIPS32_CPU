@@ -111,6 +111,8 @@ wire con_jal;
 wire con_mfc0;
 wire con_muls;
 wire con_muls_out;
+wire con_divs;
+wire con_divs_out;
 wire con_reg_write;
 wire[4:0] reg_write_address;
 wire[31:0] reg_write_data;
@@ -204,7 +206,7 @@ wire mem_this_delayslot_out;
 wire[0:3] stall, nop;
 
 wire mem_conflict;
-wire mem_ram_en, mem_uart_en; 
+wire mem_ram_en, mem_uart_en, mem_vga_en; 
 wire[31:0] mem_ram_read_data, mem_uart_read_data;
 
 // vga
@@ -214,9 +216,10 @@ wire[3:0] letter_v_out;
 
 // flash
 wire clk_8;
+wire flash_flag;
 wire[22:0] flash_address;
 wire[2:0] flash_state;
-wire stop;
+wire flash_complete;
 wire[15:0] flash_data;
 
 wire[31:0] flash_ram_inst_addr;
@@ -227,15 +230,45 @@ wire flash_ram_data_en;
 wire flash_ram_data_read;
 wire flash_ram_data_write;
 
+//keyboard
+wire[7:0] keyboard_data;
+
+// div
+wire div_ready;
+wire[31:0] div_result;
+wire[31:0] div_opdata1;
+wire[31:0] div_opdata2;
+wire div_start;
+wire div_signed;
+wire div_stall;
+
 clock_8 _clock_8(
     .clk(clock),
     .clk_8(clk_8)
 );
 
+/*
+keyboard _keyboard(
+    .clk(clock),
+    .rst_n(reset),
+    
+    .sl811_a0(sl811_a0),
+    .sl811_wr_n(sl811_wr_n),
+    .sl811_rd_n(sl811_rd_n),
+    .sl811_cs_n(sl811_cs_n),
+    .sl811_rst_n(sl811_rst_n),
+    .sl811_dack_n(sl811_dack_n),
+    
+    .data(dm9k_sd[7:0]),
+    .char_data(keyboard_data)
+);
+*/
+/*
 flash_controller _flash_controller(
     .clk(clk_8),
     .rst(reset),
     .flash_address(flash_address),
+    .flag(flash_flag),
     
     // flash io
     .flash_a(flash_a),
@@ -254,46 +287,22 @@ flash_controller _flash_controller(
 init_ram _init_ram(
     .clk(clk_8),
     .rst(reset),
-    
-    // flash controller
     .flash_address(flash_address),
+    .flash_flag(flash_flag),
     .flash_data(flash_data),
     
-    // ram controller
+    
     .ram_inst_addr(flash_ram_inst_addr),
     .ram_data_addr(flash_ram_data_addr),
     .ram_byte(flash_ram_byte),
     .ram_data(flash_ram_data),
-    .ram_data_en(flash_ram_data_en),
     .ram_data_read(flash_ram_data_read),
-    .ram_data_write(flash_ram_data_write)
+    .ram_data_write(flash_ram_data_write),
+    
+    
+    .complete(flash_complete)
 );
-
-ram_controller _ram_controller_for_flash(
-    .clk(clock),
-    .inst_addr(flash_ram_inst_addr),
-    .data_addr(flash_ram_data_addr),
-    .byte(flash_ram_byte),
-    .data(flash_ram_data),
-    .data_en(flash_ram_data_en),
-    .data_read(flash_ram_data_read),
-    .data_write(flash_ram_data_write),
-
-    .base_ram_data(base_ram_data),
-    .base_ram_addr(base_ram_addr),
-    .base_ram_be_n(base_ram_be_n),
-    .base_ram_ce_n(base_ram_ce_n),
-    .base_ram_oe_n(base_ram_oe_n),
-    .base_ram_we_n(base_ram_we_n),
-
-    .ext_ram_data(ext_ram_data),
-    .ext_ram_addr(ext_ram_addr),
-    .ext_ram_be_n(ext_ram_be_n),
-    .ext_ram_ce_n(ext_ram_ce_n),
-    .ext_ram_oe_n(ext_ram_oe_n),
-    .ext_ram_we_n(ext_ram_we_n)
-);
-
+*/
 pc _pc(
     .clk(clock),
     .rst(reset),
@@ -316,7 +325,12 @@ ram_controller _ram_controller(
     .data_en(mem_ram_en),
     .data_read(con_mem_read),
     .data_write(con_mem_write),
-
+    
+    /*
+    .flash_data_addr(),
+    .flash_data(),
+    .flash_data_en(),
+*/
     .base_ram_data(base_ram_data),
     .base_ram_addr(base_ram_addr),
     .base_ram_be_n(base_ram_be_n),
@@ -370,6 +384,8 @@ if_id _if_id(
 registers _registers(
     .clk(clock),
     .rst(reset),
+    
+    .stall(stall),
 
     .read_address_1(read_address_1_out),
     .read_address_2(read_address_2_out),
@@ -381,7 +397,10 @@ registers _registers(
     .read_data_2(reg_read_data_2),
     .result(result) // for debug
 );
-assign leds = { uart_dataready, result[14:0]};
+
+assign leds = result;
+//assign leds = { 8'b0, keyboard_data[7:0] };
+//assign leds = { uart_dataready, result[14:0]};
 //assign leds = { stall[0], mem_conflict, con_mem_read, con_mem_write, pc_current[11:0] };
 
 wire[31:0] reg_read_data_1_forw, reg_read_data_2_forw;
@@ -432,6 +451,7 @@ control _control(
     .con_jal(con_jal),
     .con_mfc0(con_mfc0),
     .con_muls(con_muls),
+    .con_divs(con_divs),
     
     // exception
     .exception_out(id_exception_out),
@@ -464,6 +484,7 @@ hazard_detector _hazard_detector(
     .con_pc_jump(con_pc_jump),
     .uart_en(mem_uart_en),
     .uart_state(uart_state),
+    .div_stall(div_stall),
     .stall(stall),
     .nop(nop) 
 );
@@ -502,6 +523,9 @@ id_exe _id_exe(
     .con_mfc0(con_mfc0),
     .con_muls(con_muls),
     .con_muls_out(con_muls_out),
+    
+    .con_divs(con_divs),
+    .con_divs_out(con_divs_out),
     
     .con_alu_op_in(con_alu_op_id),
     .con_reg_write_in(con_reg_write_id),
@@ -567,6 +591,15 @@ alu _alu(
     .exception_out(exe_exception_out),
     .exception_address_out(exe_exception_address_out),
     
+    // div
+    .div_ready_in(div_ready),
+    .div_result_in(div_result),
+    .div_opdata1_out(div_opdata1),
+    .div_opdata2_out(div_opdata2),
+    .div_start_out(div_start),
+    .div_signed_out(div_signed),
+    .div_stall_out(div_stall),
+    
     .res(alu_res),
     .S(alu_s),
     .Z(alu_z),
@@ -628,6 +661,7 @@ exe_mem _exe_mem(
     .con_wb_src_out(con_wb_src),
     
     .con_muls(con_muls_out),
+    .con_divs(con_divs_out),
 
     .pc_plus_8_out(pc_plus_8_mem),
     .mem_address(mem_address),
@@ -675,6 +709,7 @@ mem _mem(
     
     .ram_en(mem_ram_en),
     .uart_en(mem_uart_en),
+    .vga_en(mem_vga_en),
     .read_data(mem_read_data)
 );
 
@@ -762,6 +797,9 @@ vga #(12, 800, 856, 976, 1040, 600, 637, 643, 666, 1, 1) vga800x600at75 (
     .letter_v(letter_v_out),
     .hsync(video_hsync),
     .vsync(video_vsync),
+    .vga_we_in(mem_vga_en),
+    .vga_address_in(mem_address[11:0]),
+    .vga_data_in(mem_write_data[6:0]),
     .data_enable(video_de)
 );
 
@@ -773,6 +811,18 @@ letter_rgb _letter_rgb(
     .red(video_red),
     .green(video_green),
     .blue(video_blue)
+);
+
+div _div(
+    .clk(clock),
+    .rst(reset),
+    .signed_div_in(div_signed),
+    .opdata1_in(div_opdata1),
+    .opdata2_in(div_opdata2),
+    .start_in(div_start),
+    .annul_in(flush),
+    .result_out(div_result),
+    .ready_out(div_ready)
 );
 
 endmodule

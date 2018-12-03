@@ -6,8 +6,10 @@ module init_ram(
     
     output reg[22:0] flash_address,
     output reg flash_flag,
-    input wire[15:0] flash_data,
+    input wire[15:0] flash_data_in,
+    output wire[31:0] flash_data_out,
     
+    /*
     output reg[31:0] ram_inst_addr,
     output reg[31:0] ram_data_addr,
     output reg ram_byte,
@@ -15,6 +17,7 @@ module init_ram(
     output reg ram_data_en,
     output reg ram_data_read,
     output reg ram_data_write,
+    */
     
     output reg complete
 );
@@ -36,11 +39,12 @@ always @(posedge clk) begin
     else begin
         if (complete == 1'b0) begin
             if (counter == 3'b111) begin // get flash output
-                if (flash_address == 23'h8) begin
+                if (flash_address == 23'h100/* TODO: end address */) begin
                     complete <= 1'b1;
                 end
                 flash_flag <= ~flash_flag;
                 flash_address <= flash_address + 2;
+                counter <= 3'b0;
             end
             else begin
                 counter = counter + 1;

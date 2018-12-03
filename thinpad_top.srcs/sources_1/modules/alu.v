@@ -37,6 +37,15 @@ module alu(
     input wire this_delayslot_in,
     output reg this_delayslot_out,
     
+    // div
+    input wire div_ready_in,
+    input wire[31:0] div_result_in,
+    output reg[31:0] div_opdata1_out,
+    output reg[31:0] div_opdata2_out,
+    output reg div_start_out,
+    output reg div_signed_out,
+    output reg div_stall_out,
+    
     output reg C, S, Z, V
 );
 
@@ -60,6 +69,11 @@ always @(*) begin
     exception_out <= exception_in;
     exception_address_out <= exception_address_in;
     this_delayslot_out <= this_delayslot_in;
+    div_opdata1_out <= 32'b0;
+    div_opdata2_out <= 32'b0;
+    div_start_out <= 1'b0;
+    div_signed_out <= 1'b0;
+    div_stall_out <= 1'b0;
     case (op)
          `ALU_OP_MFC0: begin
              cp0_read_addr <= inst_in[15:11];
@@ -83,6 +97,30 @@ always @(*) begin
              else begin
                 res = {1'b0, mulres_tmp[46:16]};
              end
+         end
+         `ALU_OP_DIVS: begin
+            if (div_ready_in == 1'b0) begin
+                div_opdata1_out <= B;
+                div_opdata2_out <= A;
+                div_start_out <= 1'b1;
+                div_signed_out <= 1'b1;
+                div_stall_out <= 1'b1;
+            end
+            else if (div_ready_in == 1'b1) begin
+                div_opdata1_out <= B;
+                div_opdata2_out <= A;
+                div_start_out <= 1'b0;
+                div_signed_out <= 1'b1;
+                res = div_result_in;
+                div_stall_out <= 1'b0;
+            end
+            else begin
+                div_opdata1_out <= 32'b0;
+                div_opdata2_out <= 32'b0;
+                div_start_out <= 1'b0;
+                div_signed_out <= 1'b0;
+                div_stall_out <= 1'b0;
+            end
          end
          `ALU_OP_ADD: begin
              {C, res} = {1'b0, A} + {1'b0, B};
