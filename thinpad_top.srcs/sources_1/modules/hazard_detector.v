@@ -17,6 +17,8 @@ module hazard_detector(
 
     input wire uart_en, 
     input wire[3:0] uart_state,
+    
+    input wire div_stall,
 
     output wire[0:3] stall, // pc, if, id, exe
     output wire[0:3] nop // if, id, exe
@@ -27,7 +29,8 @@ assign hazard_exe_mem =
     (read_address_1_exe != 5'b0 && read_address_1_exe == reg_write_address_mem && reg_write_mem && 
         (wb_src_mem == `WB_SRC_MOV || wb_src_mem == `WB_SRC_MEM)) || 
     (read_address_2_exe != 5'b0 && read_address_2_exe == reg_write_address_mem && reg_write_mem && 
-        (wb_src_mem == `WB_SRC_MOV || wb_src_mem == `WB_SRC_MEM));
+        (wb_src_mem == `WB_SRC_MOV || wb_src_mem == `WB_SRC_MEM))
+    || div_stall;
 assign hazard_id_exe = 
     (read_address_1_id != 5'b0 && read_address_1_id == reg_write_address_exe && reg_write_exe) ||
     (read_address_2_id != 5'b0 && read_address_2_id == reg_write_address_exe && reg_write_exe);

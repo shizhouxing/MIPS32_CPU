@@ -27,6 +27,7 @@ module control(
     output reg con_jal, // for JAL
     output reg con_mfc0, // for mfc0
     output reg con_muls, // for muls
+    output reg con_divs, // for divs
 
     // exe
     output reg[4:0] con_alu_op,
@@ -68,6 +69,7 @@ always @(*) begin
         con_mem_write <= inst[31:29] == 3'b101;
         con_mfc0 <= inst[31:29] == 3'b010 && inst[28:21] == 8'b00000000;
         con_muls <= inst[31:21] == 11'b01000110000 && inst[5:0] == 6'b000010;
+        con_divs <= inst[31:21] == 11'b01000110000 && inst[5:0] == 6'b000011;
         
         exception_out <= 32'b0;
         exception_out[9] <= 1'b1;
@@ -112,6 +114,12 @@ always @(*) begin
                                 con_reg_write <= 1'b1;
                                 con_wb_src <= `WB_SRC_ALU;
                                 con_alu_op <= `ALU_OP_MULS;
+                                exception_out[9] <= 1'b0;
+                            end
+                            6'b000011: begin // DIV.S
+                                con_reg_write <= 1'b1;
+                                con_wb_src <= `WB_SRC_ALU;
+                                con_alu_op <= `ALU_OP_DIVS;
                                 exception_out[9] <= 1'b0;
                             end
                             6'b011000: begin // ERET

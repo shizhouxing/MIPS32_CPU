@@ -29,6 +29,8 @@ module id_exe(
     input wire con_mfc0,
     input wire con_muls,
     output reg con_muls_out,
+    input wire con_divs,
+    output reg con_divs_out,
  
     // for exe
     input wire[4:0] con_alu_op_in,
@@ -128,6 +130,9 @@ always @(posedge clk or posedge rst) begin
         
         this_delayslot_out <= 32'b0;
         exe_this_delayslot <= 32'b0;
+        
+        con_muls_out <= 1'b0;
+        con_divs_out <= 1'b0;
     end
     else if (flush == 1'b1) begin
         con_reg_write_out <= 1'b0;
@@ -147,6 +152,9 @@ always @(posedge clk or posedge rst) begin
         
         this_delayslot_out <= 32'b0;
         exe_this_delayslot <= 32'b0;
+        
+        con_muls_out <= 1'b0;
+        con_divs_out <= 1'b0;
     end else begin
         if (~stall) begin
             if (nop) begin
@@ -166,15 +174,17 @@ always @(posedge clk or posedge rst) begin
 
                 con_wb_src_out <= con_wb_src_in;
                 
-                if (con_muls) begin
+                if (con_muls || con_divs) begin
                     read_address_1 <= inst_in[20:16];
-                    read_address_2 <= inst_in[15:10];
+                    read_address_2 <= inst_in[15:11];
                 end
                 else begin
                     read_address_1 <= inst_in[25:21];
                     read_address_2 <= inst_in[20:16];
                 end
-
+                con_muls_out <= con_muls;
+                con_divs_out <= con_divs;
+                
                 data_A_no_forw <= con_alu_sa ? inst_in[10:6] : data_1;
                 data_B_no_forw <= con_alu_immediate ? immediate : data_2;
                 reg_data_A <= ~con_alu_sa;
@@ -194,7 +204,7 @@ always @(posedge clk or posedge rst) begin
                     if (con_mfc0 == 1'b1) begin
                         reg_write_address <= inst_in[20:16];
                     end
-                    else if (con_muls == 1'b1) begin
+                    else if (con_muls == 1'b1 || con_divs == 1'b1) begin
                         reg_write_address <= inst_in[10:6];
                     end
                     else if (con_alu_immediate) begin

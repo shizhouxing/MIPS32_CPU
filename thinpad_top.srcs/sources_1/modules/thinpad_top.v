@@ -4,51 +4,51 @@ module thinpad_top(
     input wire clk_50M,           //50MHz 时钟输入
     input wire clk_11M0592,       //11.0592MHz 时钟输入
 
-    input wire clock_btn,         //BTN5手动时钟按钮�?关，带消抖电路，按下时为1
-    input wire reset_btn,         //BTN6手动复位按钮�?关，带消抖电路，按下时为1
+    input wire clock_btn,         //BTN5手动时钟按钮�??关，带消抖电路，按下时为1
+    input wire reset_btn,         //BTN6手动复位按钮�??关，带消抖电路，按下时为1
 
     input  wire[3:0]  touch_btn,  //BTN1~BTN4，按钮开关，按下时为1
-    input  wire[31:0] dip_sw,     //32位拨码开关，拨到“ON”时�?1
+    input  wire[31:0] dip_sw,     //32位拨码开关，拨到“ON”时�??1
     output wire[15:0] leds,       //16位LED，输出时1点亮
     output wire[7:0]  dpy0,       //数码管低位信号，包括小数点，输出1点亮
     output wire[7:0]  dpy1,       //数码管高位信号，包括小数点，输出1点亮
 
-    //CPLD串口控制器信�?
-    output wire uart_rdn,         //读串口信号，低有�?
-    output wire uart_wrn,         //写串口信号，低有�?
-    input wire uart_dataready,    //串口数据准备�?
-    input wire uart_tbre,         //发�?�数据标�?
-    input wire uart_tsre,         //数据发�?�完毕标�?
+    //CPLD串口控制器信�??
+    output wire uart_rdn,         //读串口信号，低有�??
+    output wire uart_wrn,         //写串口信号，低有�??
+    input wire uart_dataready,    //串口数据准备�??
+    input wire uart_tbre,         //发�?�数据标�??
+    input wire uart_tsre,         //数据发�?�完毕标�??
 
     //BaseRAM信号
-    inout wire[31:0] base_ram_data,  //BaseRAM数据，低8位与CPLD串口控制器共�?
+    inout wire[31:0] base_ram_data,  //BaseRAM数据，低8位与CPLD串口控制器共�??
     output wire[19:0] base_ram_addr, //BaseRAM地址
-    output wire[3:0] base_ram_be_n,  //BaseRAM字节使能，低有效。如果不使用字节使能，请保持�?0
-    output wire base_ram_ce_n,       //BaseRAM片�?�，低有�?
-    output wire base_ram_oe_n,       //BaseRAM读使能，低有�?
-    output wire base_ram_we_n,       //BaseRAM写使能，低有�?
+    output wire[3:0] base_ram_be_n,  //BaseRAM字节使能，低有效。如果不使用字节使能，请保持�??0
+    output wire base_ram_ce_n,       //BaseRAM片�?�，低有�??
+    output wire base_ram_oe_n,       //BaseRAM读使能，低有�??
+    output wire base_ram_we_n,       //BaseRAM写使能，低有�??
 
     //ExtRAM信号
     inout wire[31:0] ext_ram_data,  //ExtRAM数据
     output wire[19:0] ext_ram_addr, //ExtRAM地址
-    output wire[3:0] ext_ram_be_n,  //ExtRAM字节使能，低有效。如果不使用字节使能，请保持�?0
-    output wire ext_ram_ce_n,       //ExtRAM片�?�，低有�?
-    output wire ext_ram_oe_n,       //ExtRAM读使能，低有�?
-    output wire ext_ram_we_n,       //ExtRAM写使能，低有�?
+    output wire[3:0] ext_ram_be_n,  //ExtRAM字节使能，低有效。如果不使用字节使能，请保持�??0
+    output wire ext_ram_ce_n,       //ExtRAM片�?�，低有�??
+    output wire ext_ram_oe_n,       //ExtRAM读使能，低有�??
+    output wire ext_ram_we_n,       //ExtRAM写使能，低有�??
 
     //直连串口信号
     output wire txd,  //直连串口发�?�端
-    input  wire rxd,  //直连串口接收�?
+    input  wire rxd,  //直连串口接收�??
 
     //Flash存储器信号，参�?? JS28F640 芯片手册
-    output wire [22:0]flash_a,      //Flash地址，a0仅在8bit模式有效�?16bit模式无意�?
+    output wire [22:0]flash_a,      //Flash地址，a0仅在8bit模式有效�??16bit模式无意�??
     inout  wire [15:0]flash_d,      //Flash数据
     output wire flash_rp_n,         //Flash复位信号，低有效
-    output wire flash_vpen,         //Flash写保护信号，低电平时不能擦除、烧�?
-    output wire flash_ce_n,         //Flash片�?�信号，低有�?
-    output wire flash_oe_n,         //Flash读使能信号，低有�?
-    output wire flash_we_n,         //Flash写使能信号，低有�?
-    output wire flash_byte_n,       //Flash 8bit模式选择，低有效。在使用flash�?16位模式时请设�?1
+    output wire flash_vpen,         //Flash写保护信号，低电平时不能擦除、烧�??
+    output wire flash_ce_n,         //Flash片�?�信号，低有�??
+    output wire flash_oe_n,         //Flash读使能信号，低有�??
+    output wire flash_we_n,         //Flash写使能信号，低有�??
+    output wire flash_byte_n,       //Flash 8bit模式选择，低有效。在使用flash�??16位模式时请设�??1
 
     //USB 控制器信号，参�?? SL811 芯片手册
     output wire sl811_a0,
@@ -71,13 +71,13 @@ module thinpad_top(
     input  wire dm9k_int,
 
     //图像输出信号
-    output wire[2:0] video_red,    //红色像素�?3�?
-    output wire[2:0] video_green,  //绿色像素�?3�?
-    output wire[1:0] video_blue,   //蓝色像素�?2�?
-    output wire video_hsync,       //行同步（水平同步）信�?
-    output wire video_vsync,       //场同步（垂直同步）信�?
+    output wire[2:0] video_red,    //红色像素�??3�??
+    output wire[2:0] video_green,  //绿色像素�??3�??
+    output wire[1:0] video_blue,   //蓝色像素�??2�??
+    output wire video_hsync,       //行同步（水平同步）信�??
+    output wire video_vsync,       //场同步（垂直同步）信�??
     output wire video_clk,         //像素时钟输出
-    output wire video_de           //行数据有效信号，用于区分消隐�?
+    output wire video_de           //行数据有效信号，用于区分消隐�??
 );
 
 // reset
@@ -85,6 +85,7 @@ wire reset;
 assign reset = reset_btn;
 
 wire clock;
+wire clock_8;
 pll_example clock_gen(
     .clk_out1(clock),
     .reset(reset),
@@ -110,6 +111,8 @@ wire con_jal;
 wire con_mfc0;
 wire con_muls;
 wire con_muls_out;
+wire con_divs;
+wire con_divs_out;
 wire con_reg_write;
 wire[4:0] reg_write_address;
 wire[31:0] reg_write_data;
@@ -211,6 +214,95 @@ wire[6:0] letter_out;
 wire[2:0] letter_h_out;
 wire[3:0] letter_v_out;
 
+// flash
+wire clk_8;
+wire flash_flag;
+wire[22:0] flash_address;
+wire[2:0] flash_state;
+wire flash_complete;
+wire[15:0] flash_data;
+
+wire[31:0] flash_ram_inst_addr;
+wire[31:0] flash_ram_data_addr;
+wire flash_ram_byte;
+wire[31:0] flash_ram_data;
+wire flash_ram_data_en;
+wire flash_ram_data_read;
+wire flash_ram_data_write;
+
+//keyboard
+wire[7:0] keyboard_data;
+
+// div
+wire div_ready;
+wire[31:0] div_result;
+wire[31:0] div_opdata1;
+wire[31:0] div_opdata2;
+wire div_start;
+wire div_signed;
+wire div_stall;
+
+clock_8 _clock_8(
+    .clk(clock),
+    .clk_8(clk_8)
+);
+
+/*
+keyboard _keyboard(
+    .clk(clock),
+    .rst_n(reset),
+    
+    .sl811_a0(sl811_a0),
+    .sl811_wr_n(sl811_wr_n),
+    .sl811_rd_n(sl811_rd_n),
+    .sl811_cs_n(sl811_cs_n),
+    .sl811_rst_n(sl811_rst_n),
+    .sl811_dack_n(sl811_dack_n),
+    
+    .data(dm9k_sd[7:0]),
+    .char_data(keyboard_data)
+);
+*/
+/*
+flash_controller _flash_controller(
+    .clk(clk_8),
+    .rst(reset),
+    .flash_address(flash_address),
+    .flag(flash_flag),
+    
+    // flash io
+    .flash_a(flash_a),
+    .flash_d(flash_d),
+    .flash_rp(flash_rp_n),
+    .flash_vpen(flash_vpen),
+    .flash_ce(flash_ce_n),
+    .flash_oe(flash_oe_n),
+    .flash_we(flash_we_n),
+    .flash_byte(flash_byte_n),
+    
+    // data
+    .data_out(flash_data)
+);
+
+init_ram _init_ram(
+    .clk(clk_8),
+    .rst(reset),
+    .flash_address(flash_address),
+    .flash_flag(flash_flag),
+    .flash_data(flash_data),
+    
+    
+    .ram_inst_addr(flash_ram_inst_addr),
+    .ram_data_addr(flash_ram_data_addr),
+    .ram_byte(flash_ram_byte),
+    .ram_data(flash_ram_data),
+    .ram_data_read(flash_ram_data_read),
+    .ram_data_write(flash_ram_data_write),
+    
+    
+    .complete(flash_complete)
+);
+*/
 pc _pc(
     .clk(clock),
     .rst(reset),
@@ -233,7 +325,12 @@ ram_controller _ram_controller(
     .data_en(mem_ram_en),
     .data_read(con_mem_read),
     .data_write(con_mem_write),
-
+    
+    /*
+    .flash_data_addr(),
+    .flash_data(),
+    .flash_data_en(),
+*/
     .base_ram_data(base_ram_data),
     .base_ram_addr(base_ram_addr),
     .base_ram_be_n(base_ram_be_n),
@@ -287,6 +384,8 @@ if_id _if_id(
 registers _registers(
     .clk(clock),
     .rst(reset),
+    
+    .stall(stall),
 
     .read_address_1(read_address_1_out),
     .read_address_2(read_address_2_out),
@@ -298,7 +397,10 @@ registers _registers(
     .read_data_2(reg_read_data_2),
     .result(result) // for debug
 );
-assign leds = { uart_dataready, result[14:0]};
+
+assign leds = result;
+//assign leds = { 8'b0, keyboard_data[7:0] };
+//assign leds = { uart_dataready, result[14:0]};
 //assign leds = { stall[0], mem_conflict, con_mem_read, con_mem_write, pc_current[11:0] };
 
 wire[31:0] reg_read_data_1_forw, reg_read_data_2_forw;
@@ -349,6 +451,7 @@ control _control(
     .con_jal(con_jal),
     .con_mfc0(con_mfc0),
     .con_muls(con_muls),
+    .con_divs(con_divs),
     
     // exception
     .exception_out(id_exception_out),
@@ -381,6 +484,7 @@ hazard_detector _hazard_detector(
     .con_pc_jump(con_pc_jump),
     .uart_en(mem_uart_en),
     .uart_state(uart_state),
+    .div_stall(div_stall),
     .stall(stall),
     .nop(nop) 
 );
@@ -419,6 +523,9 @@ id_exe _id_exe(
     .con_mfc0(con_mfc0),
     .con_muls(con_muls),
     .con_muls_out(con_muls_out),
+    
+    .con_divs(con_divs),
+    .con_divs_out(con_divs_out),
     
     .con_alu_op_in(con_alu_op_id),
     .con_reg_write_in(con_reg_write_id),
@@ -484,6 +591,15 @@ alu _alu(
     .exception_out(exe_exception_out),
     .exception_address_out(exe_exception_address_out),
     
+    // div
+    .div_ready_in(div_ready),
+    .div_result_in(div_result),
+    .div_opdata1_out(div_opdata1),
+    .div_opdata2_out(div_opdata2),
+    .div_start_out(div_start),
+    .div_signed_out(div_signed),
+    .div_stall_out(div_stall),
+    
     .res(alu_res),
     .S(alu_s),
     .Z(alu_z),
@@ -545,6 +661,7 @@ exe_mem _exe_mem(
     .con_wb_src_out(con_wb_src),
     
     .con_muls(con_muls_out),
+    .con_divs(con_divs_out),
 
     .pc_plus_8_out(pc_plus_8_mem),
     .mem_address(mem_address),
@@ -695,6 +812,18 @@ letter_rgb _letter_rgb(
     .red(video_red),
     .green(video_green),
     .blue(video_blue)
+);
+
+div _div(
+    .clk(clock),
+    .rst(reset),
+    .signed_div_in(div_signed),
+    .opdata1_in(div_opdata1),
+    .opdata2_in(div_opdata2),
+    .start_in(div_start),
+    .annul_in(flush),
+    .result_out(div_result),
+    .ready_out(div_ready)
 );
 
 endmodule
