@@ -20,19 +20,16 @@ exp:
 
 	// a0 input x (f4)
 	// v0 output e^x (temp a2, f6)
-	ori a2, $0, 0
 	lui a2, 1
 
 	// t0 loop variable
 	ori t0, $0, 16
 
 	// t2 loop variable(real number) (f10)
-	ori t2, $0, 0
 	lui t2, 1
 
 	// t4 v (f12)
-	ori t4, $0, 0
-	lui t2, 1
+	lui t4, 1
 
 .exp_loop:
 	// t0 = t0 - 1
@@ -49,8 +46,8 @@ exp:
 	addu $6, $6, $12
 
 	// t2 = t2 + 1
-	addiu t2, 0x8000
-	addiu t2, 0x8000
+    lui t3, 1
+    addu t2, t2, t3
 
 	j .exp_loop
 	nop

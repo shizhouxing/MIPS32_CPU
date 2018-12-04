@@ -87,25 +87,17 @@
         addiu a0, %lo(welcome_message)
         jal puts
         nop
-
-
-    # debug:
-    #     lui $4, 0x0002
-    #     ori $4, $4, 0x1999
-    #     ori $6, $0, 0x3333
-    #     div.s $f4, $f4, $f6
-    #     ori a0, $4, 0
-    #     jal write_int
-    #     nop
-
-        # jal exp
-        # nop
-        # ori a0, v0, 0
-        # jal write_int
-        # nop
-        # dead:
-        #     j dead
-        #     nop
+        
+    debug:
+        //lui $4, 0
+        lui $4, 0x0002
+        ori $4, $4, 0x8000
+        ori a0, $4, 0
+        jal exp
+        nop
+        ori a0, v0, 0
+        jal write_int
+        nop
 
     turn:
         ori a0, $0, '>'
