@@ -30,7 +30,6 @@ exp:
 
 	// t4 v (f12)
 	lui t4, 1
-
 .exp_loop:
 	// t0 = t0 - 1
 	addiu t0, -1
@@ -40,6 +39,7 @@ exp:
 
 	// v = v * x / i
 	mul.s $f12, $f12, $f4
+
 	div.s $f12, $f12, $f10
 
 	// a2 = a2 + v
@@ -63,7 +63,6 @@ exp:
 
 	jr ra
 	nop
-	
 
 tanh:
     addiu sp, -20
@@ -72,6 +71,35 @@ tanh:
     sw t2, 8(sp)
     sw t4, 12(sp)
 	sw t6, 16(sp)
+
+	lui t3, 0x7fff
+	ori t3, t3, 0xffff
+	and t3, t3, a0
+	lui t4, 5
+	sub t3, t3, t4
+	bgtz t3, .tanh_overflow
+	nop
+	j .tanh_normal
+	nop
+
+	.tanh_overflow:
+	bgtz a0, .tanh_pos
+	nop
+
+	.tanh_neg:
+	lui v0, 0x8001
+	j .tanh_done
+	nop
+
+	.tanh_pos:
+	lui v0, 1
+	j .tanh_done
+	nop
+
+	.tanh_normal:
+	jal exp
+	nop
+
 
 	// a0 input x (f4)
 	// v0 output tanh(x) (temp a2, f6)
@@ -96,6 +124,8 @@ tanh:
 
 	ori v0, a2, 0
 
+	.tanh_done:
+
     lw ra, (sp)
     lw t0, 4(sp)
     lw t2, 8(sp)
@@ -114,8 +144,36 @@ sigmoid:
 
 	// a0 input x (f4)
 	// v0 output tanh(x) (temp a2, f6)
+
+	lui t3, 0x7fff
+	ori t3, t3, 0xffff
+	and t3, t3, a0
+	lui t4, 10
+	sub t3, t3, t4
+	bgtz t3, .sigmoid_overflow
+	nop
+	j .sigmoid_normal
+	nop
+
+	.sigmoid_overflow:
+	bgtz a0, .sigmoid_pos
+	nop
+
+	.sigmoid_neg:
+	lui v0, 0
+	j .sigmoid_done
+	nop
+
+	.sigmoid_pos:
+	lui v0, 1
+	j .sigmoid_done
+	nop
+
+	.sigmoid_normal:
 	jal exp
 	nop
+
+
 
 	// t0 e^x (f8)
 	ori t0, v0, 0
@@ -132,6 +190,9 @@ sigmoid:
 	div.s $f6, $f10, $f8
 
 	ori v0, a2, 0	
+
+
+	.sigmoid_done:
 
 	lw ra, (sp)
     lw t0, 4(sp)

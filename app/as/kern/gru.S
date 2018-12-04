@@ -34,10 +34,11 @@ gru_update:
     ori t0, $0, NUM_UNITS
     sll t0, t0, 1
     sw t0, (sp)
+
     jal vector_mul_matrix
     nop
     addiu sp, 4
-    
+
     lui a0, %hi(gate_inputs)
     addiu a0, %lo(gate_inputs)
     ori a1, s1, 0
@@ -50,9 +51,7 @@ gru_update:
     addiu a0, %lo(gate_inputs)
     ori a1, $0, NUM_UNITS
     sll a1, a1, 1  
-    lui a2, %hi(sigmoid)
-    addiu a2, %lo(sigmoid) 
-    jal vector_func
+    jal vector_sigmoid
     nop
 
     lui t0, %hi(gate_inputs)
@@ -134,9 +133,7 @@ gru_update:
     lui a0, %hi(candidate)
     addiu a0, %lo(candidate)
     ori a1, $0, NUM_UNITS  
-    lui a2, %hi(tanh)
-    addiu a2, %lo(tanh) 
-    jal vector_func
+    jal vector_tanh
     nop
 
     lui t0, %hi(gate_inputs)
@@ -171,6 +168,7 @@ gru_update:
     ori t4, $0, NUM_UNITS
     ori t5, $0, 1 // constant 1
     .L_update_state_2:
+        ori $30, t3, 0
         beq t3, t4, .L_update_state_2_done
         nop
         lw $14, (t0)
@@ -179,6 +177,8 @@ gru_update:
         sub $14, t5, $14 // 1 - u
         mul.s $f14, $f14, $f24
         addu $14, $14, t7
+        nop
+        nop // ???
         sw $14, (t2)
         addiu t0, 4
         addiu t1, 4
@@ -187,7 +187,8 @@ gru_update:
         j .L_update_state_2
         nop
     .L_update_state_2_done:
-   
+
+
     lw ra, (sp)
     lw s0, 4(sp)
     lw s1, 8(sp)
@@ -278,12 +279,6 @@ gru_input_word2vec:
         nop
 
     .copy_word_embedding:
-    ori a0, s1, 0
-    jal write_int
-    nop
-    jal putnewline
-    nop
-
     lui t0, %hi(input)
     addiu t0, %lo(input)
     ori t1, $0, 0
@@ -296,7 +291,6 @@ gru_input_word2vec:
         addiu t0, 4
         addiu s1, 4
         addiu t1, 1
-
         j .L_copy
         nop
 
@@ -337,23 +331,20 @@ vector_mul_matrix:
         nop
 
     ori s2, a2, 0
-    addu t0, s0, s4
     ori t1, $0, 0
+
     .L_vector_mul_matrix_i:
         .L_vector_mul_matrix_j:
             lw $14, (s0)
             lw $24, (s1)
             mul.s $f14, $f14, $f24
             sw $14, (s2)
-            addiu s0, 4
             addiu s1, 4
             addiu s2, 4
-            bne s0, t0, .L_vector_mul_matrix_j
+            bne s2, t0, .L_vector_mul_matrix_j
             nop
-        ori s0, a0, 0
+        addiu s0, 4            
         ori s2, a2, 0
-        j .L_vector_mul_matrix_i
-        nop
         addiu t1, 1
         bne t1, s3, .L_vector_mul_matrix_i
         nop
@@ -364,6 +355,8 @@ vector_mul_matrix:
     lw s3, 16(sp)
     lw s4, 20(sp)
     addiu sp, 24
+    jr ra
+    nop
 
 vector_add_bias:
     // a0: vector
@@ -371,8 +364,8 @@ vector_add_bias:
     // a2: dimension
     addiu sp, -12 
     sw ra, (sp)
-    sw s0, (sp)
-    sw s1, (sp)
+    sw s0, 4(sp)
+    sw s1, 8(sp)
     
     ori s0, a0, 0
     ori s1, a1, 0
@@ -392,13 +385,46 @@ vector_add_bias:
     .L_vector_add_bias_done:
 
     lw ra, (sp)
-    lw s0, (sp)
-    lw s1, (sp)
+    lw s0, 4(sp)
+    lw s1, 8(sp)
     addiu sp, 12
     jr ra
     nop
 
-vector_func:
+vector_sigmoid:
+    // a0: vector
+    // a1: dimension
+    // a2: func
+    addiu sp, -12
+    sw ra, (sp)
+    sw s0, 4(sp)
+    sw s1, 8(sp)
+
+    ori s0, a0, 0
+    ori s1, a2, 0
+    ori t0, $0, 0
+    ori t1, a1, 0 
+    .L_vector_sigmoid:
+        beq t0, t1, .L_vector_sigmoid_done
+        nop
+        lw a0, (s0)
+        jal sigmoid
+        nop
+        sw v0, (s0)
+        addiu s0, 4
+        addiu t0, 1
+        j .L_vector_sigmoid
+        nop
+    .L_vector_sigmoid_done:
+
+    lw ra, (sp)
+    lw s0, 4(sp)
+    lw s1, 8(sp)
+    addiu sp, 12
+    jr ra
+    nop
+
+vector_tanh:
     // a0: vector
     // a1: dimension
     // a2: func
@@ -411,22 +437,22 @@ vector_func:
     ori s1, a2, 0
     ori t0, $0, 0
     ori t1, a1, 0
-    .L_vector_func:
-        beq t0, t1, .L_vector_func_done
-        lw a0, (s0)
-        ori ra, $0, .L_vector_func_next
-        jr s1
+    .L_vector_tanh:
+        beq t0, t1, .L_vector_tanh_done
         nop
-        .L_vector_func_next:
+        lw a0, (s0)
+        jal tanh
+        nop
         sw v0, (s0)
         addiu s0, 4
         addiu t0, 1
-        j .L_vector_func
-    .L_vector_func_done:
+        j .L_vector_tanh
+        nop
+    .L_vector_tanh_done:
 
     lw ra, (sp)
     lw s0, 4(sp)
     lw s1, 8(sp)
     addiu sp, 12
     jr ra
-    nop
+    nop    

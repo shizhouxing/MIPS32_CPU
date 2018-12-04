@@ -77,9 +77,10 @@ encode_input: // input the word (a0)...(a1-1)
     lui s0, 0 // word index
     ori s5, a0, 0
     ori s6, a1, 0    
+
     lui s1, %hi(vocab)
     addiu s1, %lo(vocab)
-    ori s2, a0, 0
+    ori s2, s5, 0
     .L_symbol2index:
         ori t0, $0, VOCAB_SIZE
         bne s0, t0, .L_check
@@ -129,20 +130,20 @@ encode_input: // input the word (a0)...(a1-1)
     jal putnewline
     nop 
 
-    # ori a0, s0, 0
-    # jal gru_input_word2vec
-    # nop
+    ori a0, s0, 0
+    jal gru_input_word2vec
+    nop
 
-    # lui a0, %hi(encoder_gates_kernel)
-    # addiu a0, %lo(encoder_gates_kernel)
-    # lui a1, %hi(encoder_gates_bias)
-    # addiu a1, %lo(encoder_gates_bias)
-    # lui a2, %hi(encoder_candidate_kernel)
-    # addiu a2, %lo(encoder_candidate_kernel)
-    # lui a3, %hi(encoder_candidate_bias)
-    # addiu a3, %lo(encoder_candidate_bias)
-    # jal gru_update
-    # nop
+    lui a0, %hi(encoder_gates_kernel)
+    addiu a0, %lo(encoder_gates_kernel)
+    lui a1, %hi(encoder_gates_bias)
+    addiu a1, %lo(encoder_gates_bias)
+    lui a2, %hi(encoder_candidate_kernel)
+    addiu a2, %lo(encoder_candidate_kernel)
+    lui a3, %hi(encoder_candidate_bias)
+    addiu a3, %lo(encoder_candidate_bias)
+    jal gru_update
+    nop
 
     lw ra, (sp)
     lw s0, 4(sp)
