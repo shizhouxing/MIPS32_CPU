@@ -79,32 +79,29 @@ tanh:
 	nop
 
 	// t0 e^x (f8)
-	ori t0, a2, 0
+	ori t0, v0, 0
 
 	// t2 e^(-x) (f10)
-	ori t2, $0, 0
 	lui t2, 1
 	div.s $f10, $f10, $f8
 
 	// t4 e^x - e^(-x) (f12)
-	ori t4, $0, 0
 	sub t4, t0, t2
 
 	// t6 e^x + e^(-x) (f14)
-	ori t6, $0, 0
-	addu t4, t0, t2
+	addu t6, t0, t2
 
 	// a2 = t4 / t6
-	div.s $f6, $f12, $f16
+	div.s $f6, $f12, $f14
 
 	ori v0, a2, 0
 
-    sw ra, (sp)
-    sw t0, 4(sp)
-    sw t2, 8(sp)
-    sw t4, 12(sp)
-	sw t6, 16(sp)
-    addiu sp, -20
+    lw ra, (sp)
+    lw t0, 4(sp)
+    lw t2, 8(sp)
+    lw t4, 12(sp)
+	lw t6, 16(sp)
+    addiu sp, 20
 
 	jr ra
 	nop
@@ -121,7 +118,7 @@ sigmoid:
 	nop
 
 	// t0 e^x (f8)
-	ori t0, a2, 0
+	ori t0, v0, 0
 
 	// t2 1 (f10)
 	ori t2, $0, 0
@@ -136,10 +133,10 @@ sigmoid:
 
 	ori v0, a2, 0	
 
-    sw ra, (sp)
-    sw t0, 4(sp)
-    sw t2, 8(sp)
-    addiu sp, -20
+	lw ra, (sp)
+    lw t0, 4(sp)
+    lw t2, 8(sp)
+    addiu sp, 20
 
 	jr ra
 	nop

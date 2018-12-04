@@ -88,17 +88,6 @@
         jal puts
         nop
         
-    debug:
-        //lui $4, 0
-        lui $4, 0x0002
-        ori $4, $4, 0x8000
-        ori a0, $4, 0
-        jal exp
-        nop
-        ori a0, v0, 0
-        jal write_int
-        nop
-
     turn:
         ori a0, $0, '>'
         jal putchar
