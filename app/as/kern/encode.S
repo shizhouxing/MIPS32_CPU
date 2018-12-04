@@ -26,7 +26,10 @@ encode:
         sw $0, (t0)
         addiu t0, 4
         addiu t1, 1
+        j .L_clear_state
+        nop
     .L_clear_state_done:
+
 
     ori s6, $0, ' '
     lui s0, %hi(post_raw) 
@@ -134,6 +137,11 @@ encode_input: // input the word (a0)...(a1-1)
     jal gru_input_word2vec
     nop
 
+
+
+
+
+
     lui a0, %hi(encoder_gates_kernel)
     addiu a0, %lo(encoder_gates_kernel)
     lui a1, %hi(encoder_gates_bias)
@@ -144,6 +152,40 @@ encode_input: // input the word (a0)...(a1-1)
     addiu a3, %lo(encoder_candidate_bias)
     jal gru_update
     nop
+
+
+        # // debug
+        # lui t0, %hi(state)
+        # addiu t0, %lo(state)
+        # ori t1, $0, 0
+        # ori t2, $0, NUM_UNITS
+        # .L_print_state:
+        #     beq t1, t2, .L_print_state_done
+        #     nop
+        #     lw a0, (t0)
+        #     addiu sp, -12
+        #     sw t0, (sp)
+        #     sw t1, 4(sp)
+        #     sw t2, 8(sp)
+        #     jal write_int
+        #     nop
+        #     jal putspace
+        #     nop
+        #     lw t0, (sp)
+        #     lw t1, 4(sp)
+        #     lw t2, 8(sp)
+        #     addiu sp, 12
+        #     addiu t1, 1
+        #     addiu t0, 4
+        #     j .L_print_state
+        #     nop
+        # .L_print_state_done:
+        # jal putnewline
+        # nop
+
+
+
+
 
     lw ra, (sp)
     lw s0, 4(sp)

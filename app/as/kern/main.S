@@ -29,7 +29,7 @@
         .endr
     .global gate_inputs
     gate_inputs:
-        .rept NUM_UNITS
+        .rept NUM_UNITS_2
         .long 0
         .endr
     .global r_state
@@ -99,6 +99,10 @@
         nop
         jal encode
         nop
+
+
+
+
         # jal decode
         # nop
         j turn

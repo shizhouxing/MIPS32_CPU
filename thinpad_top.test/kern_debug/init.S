@@ -6,16 +6,18 @@
 .section .text.init
 .global START
 START:
-    lui t2, 0x8040
-    sub $14, t5, $14 // 1 - u
-    mul.s $f14, $f14, $f24
-    addu $14, $14, t7
-    sw $14, (t2)
+    mul.s $f24, $f14, $f24
+    ori $30, $0, 0xff00
     nop
     nop
     nop
     nop
+    addu $24, $24, t3
     nop
     nop
     nop
-    nop            
+    nop
+    ori $30, $0, 0xfff0
+    dead:
+    j dead
+    nop

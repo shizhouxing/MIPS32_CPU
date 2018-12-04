@@ -124,11 +124,11 @@ always @(*) begin
          end
          `ALU_OP_ADD: begin
              {C, res} = {1'b0, A} + {1'b0, B};
-             exception_out[11] <= (!A[31] && !B_complement[31] && res[31]) || (A[31] && B_complement[31] && !res[31]);
+             //exception_out[11] <= (!A[31] && !B_complement[31] && res[31]) || (A[31] && B_complement[31] && !res[31]);
          end
          `ALU_OP_SUB: begin
              {C, res} = {1'b0, A} - {1'b1, B};
-             exception_out[11] <= (!A[31] && !B_complement[31] && res[31]) || (A[31] && B_complement[31] && !res[31]);
+             //exception_out[11] <= (!A[31] && !B_complement[31] && res[31]) || (A[31] && B_complement[31] && !res[31]);
          end
          `ALU_OP_AND: res = A & B;
          `ALU_OP_OR:  res = A | B;
