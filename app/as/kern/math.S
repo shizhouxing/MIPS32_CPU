@@ -7,6 +7,7 @@
 .p2align 2
 .text
 
+.global exp
 .global tanh
 .global sigmoid
 
@@ -18,7 +19,7 @@ exp:
     sw t4, 12(sp)
 
 	// a0 input x (f4)
-	// a2 output e^x (f6)
+	// v0 output e^x (temp a2, f6)
 	ori a2, $0, 0
 	lui a2, 1
 
@@ -45,7 +46,7 @@ exp:
 	div.s $f12, $f12, $f10
 
 	// a2 = a2 + v
-	addu $f6, $f6, $f12
+	addu $6, $6, $12
 
 	// t2 = t2 + 1
 	addiu t2, 0x8000
@@ -55,6 +56,7 @@ exp:
 	nop
 
 .exp_exit:
+	ori v0, a2, 0
 
     lw ra, (sp)
     lw t0, 4(sp)
@@ -75,7 +77,7 @@ tanh:
 	sw t6, 16(sp)
 
 	// a0 input x (f4)
-	// a2 output tanh(x) (f6)
+	// v0 output tanh(x) (temp a2, f6)
 	jal exp
 	nop
 
@@ -98,6 +100,8 @@ tanh:
 	// a2 = t4 / t6
 	div.s $f6, $f12, $f16
 
+	ori v0, a2, 0
+
     sw ra, (sp)
     sw t0, 4(sp)
     sw t2, 8(sp)
@@ -115,7 +119,7 @@ sigmoid:
     sw t2, 8(sp)
 
 	// a0 input x (f4)
-	// a2 output tanh(x) (f6)
+	// v0 output tanh(x) (temp a2, f6)
 	jal exp
 	nop
 
@@ -132,6 +136,8 @@ sigmoid:
 
 	// a2 = t2 / t0
 	div.s $f6, $f10, $f8
+
+	ori v0, a2, 0	
 
     sw ra, (sp)
     sw t0, 4(sp)
