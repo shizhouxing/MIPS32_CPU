@@ -91,16 +91,17 @@ putchar:
 
     lui t0, %hi(screen)
     addiu t0, %lo(screen)
+    lui t3, 0x9000
 
     lui t1, %hi(screen_row)
     addiu t1, %lo(screen_row)
     lw t1, (t1)
-    ori $30, t1, 0
     .L_find_screen_row:
         beq t1, $0, .L_find_screen_row_done
         nop
         addiu t1, -1
         addiu t0, SCREEN_COLS 
+        addiu t3, SCREEN_COLS 
         j .L_find_screen_row
         nop
     .L_find_screen_row_done:
@@ -108,11 +109,31 @@ putchar:
     addiu t1, %lo(screen_col)
     lw t2, (t1)
     addu t0, t0, t2
+    addu t3, t3, t2
 
     sb s0, (t0)
+    sb s0, (t3)
     
     addiu t2, 1
-    sw $0, (t1)
+
+    ori t4, $0, SCREEN_COLS
+    beq t2, t4, .newline
+    nop
+    ori t4, $0, '\n'
+    beq s0, t4, .newline
+    nop
+    j .newline_done
+    nop
+    .newline:
+        lui t2, 0
+        lui t5, %hi(screen_row)
+        addiu t5, %lo(screen_row)
+        lw t6, (t5)
+        addiu t6, 1
+        sw t6, (t5)
+    .newline_done:
+
+    sw t2, (t1)
     
     lw ra, (sp)
     lw s0, 4(sp)

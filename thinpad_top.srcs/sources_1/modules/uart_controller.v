@@ -24,7 +24,7 @@ assign uart_data = (~en & data_write) ? data : 8'bz;
 
 // TODO: cp0 ?
 // maintain a state machine for uart I/O
-// use 9 clock circles for uart I/O
+// use 15 clock circles for uart I/O
 always @(posedge rst or posedge clk) begin
     if (rst) begin
         uart_state <= 4'b0;
@@ -33,7 +33,7 @@ always @(posedge rst or posedge clk) begin
         if (en) 
             uart_state <= 4'b0;
         else begin
-            if (uart_state < 4'h9)
+            if (uart_state < 4'hf)
                 uart_state <= uart_state + 4'b1;
         end
     end
@@ -51,11 +51,11 @@ always @(*) begin
     else begin
         if (data_write) begin
             uart_rdn <= 1'b1;
-            uart_wrn <= (uart_state >= 4'h4 && uart_state <= 4'h6) ? 1'b0 : 1'b1;
+            uart_wrn <= (uart_state >= 4'h5 && uart_state <= 4'ha) ? 1'b0 : 1'b1;
             result_data <= 32'b0;
         end
         else if (data_read) begin
-            uart_rdn <= (uart_state >= 4'h4 && uart_state <= 4'h6) ? 1'b0 : 1'b1;
+            uart_rdn <= (uart_state >= 4'h5 && uart_state <= 4'ha) ? 1'b0 : 1'b1;
             uart_wrn <= 1'b1;
             result_data <= { 24'b0, uart_data };        
         end

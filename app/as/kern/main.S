@@ -47,6 +47,7 @@
         .rept VOCAB_SIZE
         .long 0
         .endr
+    .p2align 2
     .global screen
     screen:
         .rept SCREEN_SIZE
@@ -59,7 +60,7 @@
     .global screen_col
     screen_col:
         .long 0
-        
+
 .section .text
 .p2align 2
     welcome_message:

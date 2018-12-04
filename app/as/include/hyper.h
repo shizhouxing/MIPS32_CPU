@@ -7,6 +7,6 @@
 #define EOS_ID 2
 #define GO_ID 3
 #define MAX_DECODE_LENGTH 64
-#define SCREEN_ROWS 65
-#define SCREEN_COLS 21
+#define SCREEN_ROWS 21
+#define SCREEN_COLS 65
 #define SCREEN_SIZE 1365
