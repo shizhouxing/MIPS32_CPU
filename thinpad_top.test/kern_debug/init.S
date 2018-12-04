@@ -2,8 +2,8 @@
 .set noat
 .set noreorder
 .set nomacro
-.global _start
-_start:
+.global START
+START:
 	ori $30, $0, 0x8000
 	lui $4, 2
 	div.s $f30, $f30, $f4

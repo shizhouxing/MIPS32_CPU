@@ -161,7 +161,6 @@ always @(*) begin
         else begin // use uart
             // 0xBFD003F8-0xBFD003FD
             ram_en <= 1'b1;
-            vga_en <= 1'b1;
             if (mem_read | mem_write)
                 uart_en <= 1'b0;
             else 

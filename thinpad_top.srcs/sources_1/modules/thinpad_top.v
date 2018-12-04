@@ -203,7 +203,7 @@ wire mem_this_delayslot_in;
 wire mem_this_delayslot_out;
 
 // hazard
-wire[0:3] stall, nop;
+wire[0:4] stall, nop;
 
 wire mem_conflict;
 wire mem_ram_en, mem_uart_en, mem_graph_en; 
@@ -717,7 +717,8 @@ mem_wb _mem_wb(
     .clk(clock),
     .rst(reset),
     .flush(flush),
-    .nop(nop[3]),    
+    .stall(stall[4]),
+    .nop(nop[3]),   
     .reg_write_in(con_reg_write_mem),
     .reg_write_address_in(reg_write_address_mem),
     .pc_plus_8(pc_plus_8_mem),
@@ -746,6 +747,7 @@ mem_wb _mem_wb(
 wb_end _wb_end(
     .clk(clock),
     .rst(reset),
+    .nop(nop[4]),    
     .reg_write_address_in(reg_write_address),
     .reg_write_data_in(reg_write_data),
     .reg_write_in(con_reg_write),
