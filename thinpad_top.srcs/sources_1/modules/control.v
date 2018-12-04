@@ -75,7 +75,7 @@ always @(*) begin
         exception_out[9] <= 1'b1;
         exception_address_out <= pc;
 
-        if (inst[31:21] == 11'b01000110000 && inst[5:0] == 6'b000010) begin
+        if (inst[31:21] == 11'b01000110000 && (inst[5:0] == 6'b000010 || inst[5:0] == 6'b000011)) begin
             read_address_1 <= inst[20:16];
             read_address_2 <= inst[15:11];        
         end
