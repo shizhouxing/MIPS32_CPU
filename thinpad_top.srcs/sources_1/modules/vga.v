@@ -16,6 +16,7 @@ module vga
 #(parameter WIDTH = 0, HSIZE = 0, HFP = 0, HSP = 0, HMAX = 0, VSIZE = 0, VFP = 0, VSP = 0, VMAX = 0, HSPP = 0, VSPP = 0)
 (
     input wire clk,
+    input wire rst,
     
     input wire vga_we_in,
     input wire[11:0] vga_address_in,
@@ -55,10 +56,15 @@ initial begin
 end
 
 // write
-always @ (negedge clk)
+always @ (posedge clk)
 begin
-    if (~vga_we_in) begin
-        screen[vga_address_in] <= vga_data_in - 8'h20;
+    if (rst == 1'b1) begin
+        for (i = 0; i < 1365; i = i + 1)
+            screen[i] <= 7'b0;
+    end else begin
+        if (~vga_we_in) begin
+            screen[vga_address_in] <= vga_data_in - 8'h20;
+        end
     end
 end
 

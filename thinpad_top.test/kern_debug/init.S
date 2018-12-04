@@ -4,7 +4,22 @@
 .set nomacro
 .global START
 START:
-	lui $4, 0x0002
-	ori $4, $4, 0x1999
-	ori $6, $0, 0x3333
-	div.s $f4, $f4, $f6
+	lui $1, 0x9000
+	ori $1, $1, 0x2
+	ori $30, $0, 0x48
+	sw $30, ($1)
+
+	addiu $1, $1, 1
+	ori $30, $0, 0x50
+	sw $30, ($1)
+	
+	addiu $1, $1, 1
+	ori $30, $0, 0x54
+	sw $30, ($1)
+
+	addiu $1, $1, 1
+	ori $30, $0, 0x52
+	sw $30, ($1)
+
+	.loop:
+	j .loop

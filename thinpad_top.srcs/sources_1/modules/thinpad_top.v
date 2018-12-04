@@ -4,51 +4,51 @@ module thinpad_top(
     input wire clk_50M,           //50MHz 时钟输入
     input wire clk_11M0592,       //11.0592MHz 时钟输入
 
-    input wire clock_btn,         //BTN5手动时钟按钮�??关，带消抖电路，按下时为1
-    input wire reset_btn,         //BTN6手动复位按钮�??关，带消抖电路，按下时为1
+    input wire clock_btn,         //BTN5手动时钟按钮�???关，带消抖电路，按下时为1
+    input wire reset_btn,         //BTN6手动复位按钮�???关，带消抖电路，按下时为1
 
     input  wire[3:0]  touch_btn,  //BTN1~BTN4，按钮开关，按下时为1
-    input  wire[31:0] dip_sw,     //32位拨码开关，拨到“ON”时�??1
+    input  wire[31:0] dip_sw,     //32位拨码开关，拨到“ON”时�???1
     output wire[15:0] leds,       //16位LED，输出时1点亮
     output wire[7:0]  dpy0,       //数码管低位信号，包括小数点，输出1点亮
     output wire[7:0]  dpy1,       //数码管高位信号，包括小数点，输出1点亮
 
-    //CPLD串口控制器信�??
-    output wire uart_rdn,         //读串口信号，低有�??
-    output wire uart_wrn,         //写串口信号，低有�??
-    input wire uart_dataready,    //串口数据准备�??
-    input wire uart_tbre,         //发�?�数据标�??
-    input wire uart_tsre,         //数据发�?�完毕标�??
+    //CPLD串口控制器信�???
+    output wire uart_rdn,         //读串口信号，低有�???
+    output wire uart_wrn,         //写串口信号，低有�???
+    input wire uart_dataready,    //串口数据准备�???
+    input wire uart_tbre,         //发�?�数据标�???
+    input wire uart_tsre,         //数据发�?�完毕标�???
 
     //BaseRAM信号
-    inout wire[31:0] base_ram_data,  //BaseRAM数据，低8位与CPLD串口控制器共�??
+    inout wire[31:0] base_ram_data,  //BaseRAM数据，低8位与CPLD串口控制器共�???
     output wire[19:0] base_ram_addr, //BaseRAM地址
-    output wire[3:0] base_ram_be_n,  //BaseRAM字节使能，低有效。如果不使用字节使能，请保持�??0
-    output wire base_ram_ce_n,       //BaseRAM片�?�，低有�??
-    output wire base_ram_oe_n,       //BaseRAM读使能，低有�??
-    output wire base_ram_we_n,       //BaseRAM写使能，低有�??
+    output wire[3:0] base_ram_be_n,  //BaseRAM字节使能，低有效。如果不使用字节使能，请保持�???0
+    output wire base_ram_ce_n,       //BaseRAM片�?�，低有�???
+    output wire base_ram_oe_n,       //BaseRAM读使能，低有�???
+    output wire base_ram_we_n,       //BaseRAM写使能，低有�???
 
     //ExtRAM信号
     inout wire[31:0] ext_ram_data,  //ExtRAM数据
     output wire[19:0] ext_ram_addr, //ExtRAM地址
-    output wire[3:0] ext_ram_be_n,  //ExtRAM字节使能，低有效。如果不使用字节使能，请保持�??0
-    output wire ext_ram_ce_n,       //ExtRAM片�?�，低有�??
-    output wire ext_ram_oe_n,       //ExtRAM读使能，低有�??
-    output wire ext_ram_we_n,       //ExtRAM写使能，低有�??
+    output wire[3:0] ext_ram_be_n,  //ExtRAM字节使能，低有效。如果不使用字节使能，请保持�???0
+    output wire ext_ram_ce_n,       //ExtRAM片�?�，低有�???
+    output wire ext_ram_oe_n,       //ExtRAM读使能，低有�???
+    output wire ext_ram_we_n,       //ExtRAM写使能，低有�???
 
     //直连串口信号
     output wire txd,  //直连串口发�?�端
-    input  wire rxd,  //直连串口接收�??
+    input  wire rxd,  //直连串口接收�???
 
     //Flash存储器信号，参�?? JS28F640 芯片手册
-    output wire [22:0]flash_a,      //Flash地址，a0仅在8bit模式有效�??16bit模式无意�??
+    output wire [22:0]flash_a,      //Flash地址，a0仅在8bit模式有效�???16bit模式无意�???
     inout  wire [15:0]flash_d,      //Flash数据
     output wire flash_rp_n,         //Flash复位信号，低有效
-    output wire flash_vpen,         //Flash写保护信号，低电平时不能擦除、烧�??
-    output wire flash_ce_n,         //Flash片�?�信号，低有�??
-    output wire flash_oe_n,         //Flash读使能信号，低有�??
-    output wire flash_we_n,         //Flash写使能信号，低有�??
-    output wire flash_byte_n,       //Flash 8bit模式选择，低有效。在使用flash�??16位模式时请设�??1
+    output wire flash_vpen,         //Flash写保护信号，低电平时不能擦除、烧�???
+    output wire flash_ce_n,         //Flash片�?�信号，低有�???
+    output wire flash_oe_n,         //Flash读使能信号，低有�???
+    output wire flash_we_n,         //Flash写使能信号，低有�???
+    output wire flash_byte_n,       //Flash 8bit模式选择，低有效。在使用flash�???16位模式时请设�???1
 
     //USB 控制器信号，参�?? SL811 芯片手册
     output wire sl811_a0,
@@ -71,13 +71,13 @@ module thinpad_top(
     input  wire dm9k_int,
 
     //图像输出信号
-    output wire[2:0] video_red,    //红色像素�??3�??
-    output wire[2:0] video_green,  //绿色像素�??3�??
-    output wire[1:0] video_blue,   //蓝色像素�??2�??
-    output wire video_hsync,       //行同步（水平同步）信�??
-    output wire video_vsync,       //场同步（垂直同步）信�??
+    output wire[2:0] video_red,    //红色像素�???3�???
+    output wire[2:0] video_green,  //绿色像素�???3�???
+    output wire[1:0] video_blue,   //蓝色像素�???2�???
+    output wire video_hsync,       //行同步（水平同步）信�???
+    output wire video_vsync,       //场同步（垂直同步）信�???
     output wire video_clk,         //像素时钟输出
-    output wire video_de           //行数据有效信号，用于区分消隐�??
+    output wire video_de           //行数据有效信号，用于区分消隐�???
 );
 
 // reset
@@ -221,6 +221,10 @@ wire[22:0] flash_address;
 wire[2:0] flash_state;
 wire flash_complete;
 wire[15:0] flash_data;
+wire[31:0] flash_data_out;
+wire[19:0] flash_data_address_out;
+wire flash_data_en_out;
+wire flash_stall;
 
 wire[31:0] flash_ram_inst_addr;
 wire[31:0] flash_ram_data_addr;
@@ -263,7 +267,7 @@ keyboard _keyboard(
     .char_data(keyboard_data)
 );
 */
-/*
+
 flash_controller _flash_controller(
     .clk(clk_8),
     .rst(reset),
@@ -287,9 +291,16 @@ flash_controller _flash_controller(
 init_ram _init_ram(
     .clk(clk_8),
     .rst(reset),
+    
+    // ram controller
+    .flash_data_out(flash_data_out),
+    .flash_data_address_out(flash_data_address_out),
+    .flash_data_en(flash_data_en_out),
+    
+    
     .flash_address(flash_address),
     .flash_flag(flash_flag),
-    .flash_data(flash_data),
+    .flash_data_in(flash_data),
     
     
     .ram_inst_addr(flash_ram_inst_addr),
@@ -299,10 +310,9 @@ init_ram _init_ram(
     .ram_data_read(flash_ram_data_read),
     .ram_data_write(flash_ram_data_write),
     
-    
-    .complete(flash_complete)
+    .flash_stall(flash_stall)
 );
-*/
+
 pc _pc(
     .clk(clock),
     .rst(reset),
@@ -326,11 +336,11 @@ ram_controller _ram_controller(
     .data_read(con_mem_read),
     .data_write(con_mem_write),
     
-    /*
-    .flash_data_addr(),
-    .flash_data(),
-    .flash_data_en(),
-*/
+    
+    .flash_data_addr(flash_data_address_out),
+    .flash_data(flash_data_out),
+    .flash_data_en(flash_data_en_out),
+
     .base_ram_data(base_ram_data),
     .base_ram_addr(base_ram_addr),
     .base_ram_be_n(base_ram_be_n),
@@ -398,7 +408,7 @@ registers _registers(
     .result(result) // for debug
 );
 
-assign leds = result;
+//assign leds = result;
 //assign leds = { 8'b0, keyboard_data[7:0] };
 //assign leds = { uart_dataready, result[14:0]};
 //assign leds = { stall[0], mem_conflict, con_mem_read, con_mem_write, pc_current[11:0] };
@@ -485,6 +495,7 @@ hazard_detector _hazard_detector(
     .uart_en(mem_uart_en),
     .uart_state(uart_state),
     .div_stall(div_stall),
+    .flash_stall(flash_stall),
     .stall(stall),
     .nop(nop) 
 );
@@ -792,6 +803,7 @@ wire[11:0] hdata;
 assign video_clk = clk_50M;
 vga #(12, 800, 856, 976, 1040, 600, 637, 643, 666, 1, 1) vga800x600at75 (
     .clk(video_clk),
+    .rst(reset),
     .hdata(hdata),
     .vdata(),
     .letter(letter_out),
