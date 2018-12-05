@@ -99,11 +99,14 @@ EXCEPTIONHANDLER:
 
 
 RETURNFRMTRAP:
+
     lw k0, TF_STATUS(sp)
     ori k0, k0, ST0_IE              // 使能中断。通常eret自动取消EXL位。
     xori k1, k0, ST0_ERL
     and k0, k0, k1                  // 清除错误位(防止eret出错)
     lw k1, TF_EPC(sp)
+
+
     mtc0 k0, CP0_STATUS
     mtc0 k1, CP0_EPC
     lw AT, TF_AT(sp)                // 从中断帧中恢复k0,k1以外寄存器，上下文
@@ -136,6 +139,8 @@ RETURNFRMTRAP:
     lw ra, TF_ra(sp)
 
     lw sp, TF_sp(sp)                // 从中断帧中恢复
+
+
     eret
     nop
 
@@ -153,8 +158,12 @@ WAKEUPSHELL:
     nop
 
 SYSCALL:
+
+
     lw k0, TF_EPC(sp)               // SYSCALL需对EPC特别处理
     addiu k0, k0, 0x4               // EPC+4,退出中断后执行SYSCALL的下一条语句
+
+
     sw k0, TF_EPC(sp)
     ori t0, zero, SYS_wait          // 取得wait调用号
     beq v0, t0, .syscall_wait       // syscall wait
@@ -165,10 +174,13 @@ SYSCALL:
 
     // 系统调用扩展
 
+
     j RETURNFRMTRAP                 // 其他系统调用忽略
     nop
 
 .syscall_wait:
+
+
     j SCHEDULE                      // 调度转交控制权
     nop
 

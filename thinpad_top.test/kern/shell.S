@@ -24,6 +24,8 @@ uregs:
      *  用户程序入口临时存储：0x807F0078
      */
 SHELL:
+
+
     jal READSERIAL                  // 读操作符
     nop
 

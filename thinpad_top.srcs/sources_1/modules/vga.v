@@ -33,20 +33,19 @@ module vga
     output wire data_enable
 );
 
-reg[6:0] screen[0:1364];
+reg[6:0] screen[0:1499];
 reg[3:0] hcount;
 reg[4:0] vcount;
 reg [11:0] pos;
 
 assign letter_h = hcount[3:1];
 assign letter_v = vcount[4:1];
-
 assign letter = screen[pos];
 integer i;
 
 // init
 initial begin
-    for (i = 0; i < 1365; i = i + 1)
+    for (i = 0; i < 1500; i = i + 1)
         screen[i] <= 7'b0;
     hdata <= 0;
     vdata <= 0;
@@ -59,8 +58,8 @@ end
 always @ (posedge clk)
 begin
     if (rst == 1'b1) begin
-        //for (i = 0; i < 1365; i = i + 1)
-            //screen[i] <= 7'b0;
+        for (i = 0; i < 1500; i = i + 1)
+            screen[i] <= 7'b0;
     end else begin
         if (vga_data_in >= 8'h20 && ~vga_we_in) begin
             screen[vga_address_in] <= vga_data_in - 8'h20;

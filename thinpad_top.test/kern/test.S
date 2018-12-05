@@ -54,7 +54,6 @@ UTEST_1PTB:
     nop
     nop
 .LC0:
-    ori $30, zero, 2
     addiu t0, t0, -1                // 滚动计数器
     ori t1, zero, 0
     ori t2, zero, 1
@@ -62,9 +61,6 @@ UTEST_1PTB:
     bne t0, zero, .LC0
     nop
     nop
-
-    ori $30, zero, 8
-
     jr ra
     nop
 

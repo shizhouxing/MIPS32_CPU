@@ -1,24 +1,23 @@
-.org 0x0
-.set noat
+#include <regdef.h>
+#include <mipsregs.h>
+#include <unistd.h>
 .set noreorder
-.set nomacro
+.set noat
+.section .text.init
 .global START
 START:
-	lui $1, 0x9000
-	ori $30, $0, 0x48
-	sw $30, ($1)
-
-	addiu $1, $1, 1
-	ori $30, $0, 0x50
-	sw $30, ($1)
-	
-	addiu $1, $1, 1
-	ori $30, $0, 0x54
-	sw $30, ($1)
-
-	addiu $1, $1, 1
-	ori $30, $0, 0x52
-	sw $30, ($1)
-
-	.loop:
-	j .loop
+    mul.s $f24, $f14, $f24
+    ori $30, $0, 0xff00
+    nop
+    nop
+    nop
+    nop
+    addu $24, $24, t3
+    nop
+    nop
+    nop
+    nop
+    ori $30, $0, 0xfff0
+    dead:
+    j dead
+    nop

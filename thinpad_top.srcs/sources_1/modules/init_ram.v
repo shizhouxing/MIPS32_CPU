@@ -14,7 +14,6 @@ module init_ram(
     input wire[15:0] flash_data_in,
     output reg[22:0] flash_address,
     output reg flash_flag,
-    output reg[31:0] ram_inst_addr,
     output reg[31:0] ram_data_addr,
     output reg ram_byte,
     output reg[31:0] ram_data,

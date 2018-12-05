@@ -226,7 +226,6 @@ wire[19:0] flash_data_address_out;
 wire flash_data_en_out;
 wire flash_stall;
 
-wire[31:0] flash_ram_inst_addr;
 wire[31:0] flash_ram_data_addr;
 wire flash_ram_byte;
 wire[31:0] flash_ram_data;
@@ -304,7 +303,6 @@ init_ram _init_ram(
     .flash_data_in(flash_data),
     
     
-    .ram_inst_addr(flash_ram_inst_addr),
     .ram_data_addr(flash_ram_data_addr),
     .ram_byte(flash_ram_byte),
     .ram_data(flash_ram_data),

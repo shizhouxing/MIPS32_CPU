@@ -61,6 +61,7 @@ bss_init:
 
 bss_init_done:
 #ifdef ENABLE_INT
+
     mfc0 t0, CP0_STATUS             // 取得cp0的status Reg
     nop
     xori t1, t0, (ST0_IM | ST0_IE | ST0_EXL | ST0_ERL)
@@ -68,6 +69,8 @@ bss_init_done:
                                     // 见Vol3p196ERL,错误置位会让eret跳ErEPC
     and t0, t0, t1                  // status Reg 的IE位和IM位置零
     mtc0 t0, CP0_STATUS             // 暂停中断响应，直到启动完成
+
+
     nop
 
     mfc0 t0, CP0_STATUS
@@ -272,10 +275,15 @@ bss_init_done:
     nop
     ori t0, t0, ST0_IE              // status Reg 的IE位置一
     xori t1, t0, STATUSF_IP4
+
+
     and t0, t0, t1                  // 主线程屏蔽串口硬件中断
+
     mtc0 t0, CP0_STATUS             // 启动完成，恢复中断机制
     nop
+
 #endif
+
 
     j WELCOME                       // 进入主线程
     nop
