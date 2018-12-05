@@ -83,14 +83,13 @@ end
 
 
 always @(*) begin
-/*
     if (flash_data_en == 1'b0) begin
         data_extended <= flash_data;
         base_write <= 1'b0;
         ext_write <= 1'b1;
-        ext_ram_addr <= flash_data_addr[19:0];
+        ext_ram_addr <= flash_data_addr;
+        conflict <= 1'b1;
     end else begin
-    */
         if (byte) begin // load or store a single byte
             data_extended <= { 4{data[7:0]} };
             case (data_addr[1:0])
@@ -139,7 +138,7 @@ always @(*) begin
                 ext_ram_addr <= inst_addr[21:2];
             end
         end
-    //end
+    end
 end
 
 endmodule

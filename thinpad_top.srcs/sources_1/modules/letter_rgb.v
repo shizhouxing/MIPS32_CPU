@@ -29,7 +29,7 @@ wire[127:0] char;
 assign char = lattice[letter];
 
 initial begin
-    for (i = 0; i < 128; i = i + 1)
+    for (i = 95; i < 128; i = i + 1)
         lattice[i] <= 128'b0;
     lattice[0] <= 128'h00000000000000000000000000000000;
     lattice[1] <= 128'h00001818000010101010101010000000;

@@ -44,6 +44,10 @@ READSERIAL:                         // 读串口：将读到的数据写入v0低
 #ifdef ENABLE_INT
     ori v0, zero, SYS_wait          // 取得wait调用号
     syscall SYSCALL_BASE            // 睡眠等待
+
+    // end syscall
+
+
 #endif
     j .TESTR                        // 检测验证
     nop

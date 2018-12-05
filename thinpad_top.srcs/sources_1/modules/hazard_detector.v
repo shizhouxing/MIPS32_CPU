@@ -22,6 +22,7 @@ module hazard_detector(
     input wire[3:0] uart_state,
     
     input wire div_stall,
+    input wire flash_stall,
 
     output wire[0:3] stall, // pc, if/id, id/exe, exe/mem, mem/wb
     output wire[0:3] nop // if/id, id/exe, exe/mem, mem/wb
@@ -44,11 +45,12 @@ assign hazard_id_mem =
     (mem_conflict && con_pc_jump);
 assign busy_mem = (~uart_en & (uart_state < 4'hf)) | (mem_write & ~ram_en & (ram_state < 2'b10));
 
-wire hazard_mem, hazard_exe, hazard_id, hazard_if;
-assign hazard_mem = busy_mem | div_stall;
-assign hazard_exe = hazard_exe_mem | div_stall;
-assign hazard_id = hazard_id_exe | hazard_id_mem;
-assign hazard_if = mem_conflict;
+wire hazard_wb, hazard_mem, hazard_exe, hazard_id, hazard_if;
+assign hazard_wb = ~uart_en & (uart_state < 4'h9) | div_stall | flash_stall;
+assign hazard_mem = (~uart_en & (uart_state < 4'h9)) | div_stall | flash_stall;
+assign hazard_exe = hazard_exe_mem | div_stall | flash_stall;
+assign hazard_id = hazard_id_exe | hazard_id_mem | flash_stall;
+assign hazard_if = mem_conflict | flash_stall;
 
 assign stall = { 
     hazard_mem | hazard_exe | hazard_id | hazard_if, 
