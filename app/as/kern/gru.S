@@ -24,7 +24,6 @@ gru_update:
     ori s2, a2, 0 // candidate_kernel
     ori s3, a3, 0 // candidate_bias
 
-
     lui a0, %hi(input)
     addiu a0, %lo(input)
     ori a1, s0, 0
@@ -39,6 +38,27 @@ gru_update:
     nop
     addiu sp, 4
 
+
+
+        # lui t0, %hi(gate_inputs)
+        # addiu t0, %lo(gate_inputs)
+        # lw a0, (t0)
+        # addiu sp, -12
+        # sw t0, (sp)
+        # sw t1, 4(sp)
+        # sw t2, 8(sp)
+        # jal write_int
+        # nop
+        # jal putspace
+        # nop
+        # lw t0, (sp)
+        # lw t1, 4(sp)
+        # lw t2, 8(sp)
+        # addiu sp, 12
+        # addiu t1, 1
+        # addiu t0, 4
+            
+
     lui a0, %hi(gate_inputs)
     addiu a0, %lo(gate_inputs)
     ori a1, s1, 0
@@ -48,10 +68,33 @@ gru_update:
 
     lui a0, %hi(gate_inputs)
     addiu a0, %lo(gate_inputs)
-    ori a1, $0, NUM_UNITS
-    sll a1, a1, 1  
+    ori a1, $0, NUM_UNITS_2
     jal vector_sigmoid
     nop
+
+
+        # lui t0, %hi(gate_inputs)
+        # addiu t0, %lo(gate_inputs)
+        # lw a0, (t0)
+        # addiu sp, -12
+        # sw t0, (sp)
+        # sw t1, 4(sp)
+        # sw t2, 8(sp)
+        # jal write_int
+        # nop
+        # jal putnewline
+        # nop
+        # lw t0, (sp)
+        # lw t1, 4(sp)
+        # lw t2, 8(sp)
+        # addiu sp, 12
+        # addiu t1, 1
+        # addiu t0, 4
+        
+
+
+
+
 
     lui t0, %hi(gate_inputs)
     addiu t0, %lo(gate_inputs)
@@ -75,6 +118,38 @@ gru_update:
         j .L_get_r_state
         nop
     .L_get_r_state_done:
+
+
+        # // debug
+        # lui t0, %hi(r_state)
+        # addiu t0, %lo(r_state)
+        # ori t1, $0, 0
+        # ori t2, $0, NUM_UNITS
+        # .L_print_state:
+        #     beq t1, t2, .L_print_state_done
+        #     nop
+        #     lw a0, (t0)
+        #     addiu sp, -12
+        #     sw t0, (sp)
+        #     sw t1, 4(sp)
+        #     sw t2, 8(sp)
+        #     jal write_int
+        #     nop
+        #     jal putspace
+        #     nop
+        #     lw t0, (sp)
+        #     lw t1, 4(sp)
+        #     lw t2, 8(sp)
+        #     addiu sp, 12
+        #     addiu t1, 1
+        #     addiu t0, 4
+        #     j .L_print_state
+        #     nop
+        # .L_print_state_done:
+        # jal putnewline
+        # nop
+
+
 
 
 
@@ -111,6 +186,9 @@ gru_update:
         nop
     .L_copy_state_done:
 
+
+
+
     lui a0, %hi(input_and_state)
     addiu a0, %lo(input_and_state)
     ori a1, s2, 0
@@ -131,11 +209,52 @@ gru_update:
     jal vector_add_bias
     nop
 
+
+
+
+
+
+
+        # // debug
+        # lui t0, %hi(candidate)
+        # addiu t0, %lo(candidate)
+        # ori t1, $0, 0
+        # ori t2, $0, NUM_UNITS
+        # .L_print_state:
+        #     beq t1, t2, .L_print_state_done
+        #     nop
+        #     lw a0, (t0)
+        #     addiu sp, -12
+        #     sw t0, (sp)
+        #     sw t1, 4(sp)
+        #     sw t2, 8(sp)
+        #     jal write_int
+        #     nop
+        #     jal putspace
+        #     nop
+        #     lw t0, (sp)
+        #     lw t1, 4(sp)
+        #     lw t2, 8(sp)
+        #     addiu sp, 12
+        #     addiu t1, 1
+        #     addiu t0, 4
+        #     j .L_print_state
+        #     nop
+        # .L_print_state_done:
+        # jal putnewline
+        # nop
+
+
+
+
+
     lui a0, %hi(candidate)
     addiu a0, %lo(candidate)
     ori a1, $0, NUM_UNITS  
     jal vector_tanh
     nop
+
+
 
     lui t0, %hi(gate_inputs)
     addiu t0, %lo(gate_inputs)
@@ -182,8 +301,6 @@ gru_update:
         sub $14, t5, $14 // 1 - u
         mul.s $f14, $f14, $f24
         addu $14, $14, t7
-        nop
-        nop // ???
         sw $14, (t2)
         addiu t0, 4
         addiu t1, 4
@@ -421,7 +538,6 @@ vector_mul_matrix:
             lw t3, (s2)
             mul.s $f12, $f14, $f24
             addu t3, t3, $12
-            ori $30, t2, 0
             sw t3, (s2)      
             addiu s1, 4
             addiu s2, 4
@@ -433,6 +549,7 @@ vector_mul_matrix:
         bne t1, s3, .L_vector_mul_matrix_i
         nop
     
+    lw ra, (sp)
     lw s0, 4(sp)
     lw s1, 8(sp)
     lw s2, 12(sp)

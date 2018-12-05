@@ -127,29 +127,41 @@ with sess.as_default():
         params = sess.run(seq2seq.params)
         
         # for debugging
-        inputs = params[0][45]
+
+        words = [45, 29, 7, 2]
         state = np.zeros(64)
 
-        gate_kernel = params[1]
-        gate_inputs = np.matmul(np.concatenate([inputs, state], axis=-1), gate_kernel) + params[2]
-        gate_inputs = 1. / (np.exp(-gate_inputs) + 1)
+        for k in range(len(words)):
 
-        r, u = np.split(gate_inputs, 2, axis=-1)
-        r_state = r * state
+            inputs = params[0][words[k]]
 
-        candidate = np.matmul(np.concatenate([inputs, r_state], axis=-1), params[3]) + params[4]
-        c = np.tanh(candidate)
+            gate_kernel = params[1]
+            gate_inputs = np.matmul(np.concatenate([inputs, state], axis=-1), gate_kernel) + params[2]
+            
+            gate_inputs = 1. / (np.exp(-gate_inputs) + 1)
 
-        new_h = u * state + (1 - u) * c
+            r, u = np.split(gate_inputs, 2, axis=-1)
+            r_state = r * state
 
-        print new_h.shape
-        for i in range(len(new_h)):
-            print float2hex(new_h[i]),
-        print
+            candidate = np.matmul(np.concatenate([inputs, r_state], axis=-1), params[3]) + params[4]
+            c = np.tanh(candidate)
 
-        # c = self._activation(candidate)
-        # new_h = u * state + (1 - u) * c
-        # return new_h, new_h
+            
+            print "candidate"
+            tt = candidate
+            for i in range(len(tt)):
+                print float2hex(tt[i]),
+            print
+
+
+            new_h = u * state + (1 - u) * c
+
+            state = new_h
+
+            print "state"
+            for i in range(len(state)):
+                print float2hex(state[i]),
+            print            
 
         names = [
             "word_embedding",

@@ -72,10 +72,19 @@ tanh:
     sw t4, 12(sp)
 	sw t6, 16(sp)
 
-	lui t3, 0x7fff
-	ori t3, t3, 0xffff
-	and t3, t3, a0
-	lui t4, 5
+	srl t3, a0, 31
+	bgtz t3, .tanh_abs
+	nop
+	j .tanh_abs_done
+	nop
+	.tanh_abs:
+		lui t5, 0xffff
+		addiu t5, 0xffff
+		xor t5, t5, a0
+		addiu t3, t5, 1
+	.tanh_abs_done:
+
+	lui t4, 10
 	sub t3, t3, t4
 	bgtz t3, .tanh_overflow
 	nop
@@ -87,7 +96,7 @@ tanh:
 	nop
 
 	.tanh_neg:
-	lui v0, 0x8001
+	lui v0, 0xffff
 	j .tanh_done
 	nop
 
@@ -145,9 +154,18 @@ sigmoid:
 	// a0 input x (f4)
 	// v0 output tanh(x) (temp a2, f6)
 
-	lui t3, 0x7fff
-	ori t3, t3, 0xffff
-	and t3, t3, a0
+	srl t3, a0, 31
+	bgtz t3, .sigmoid_abs
+	nop
+	j .sigmoid_abs_done
+	nop
+	.sigmoid_abs:
+		lui t5, 0xffff
+		addiu t5, 0xffff
+		xor t5, t5, a0
+		addiu t3, t5, 1
+	.sigmoid_abs_done:
+
 	lui t4, 10
 	sub t3, t3, t4
 	bgtz t3, .sigmoid_overflow
