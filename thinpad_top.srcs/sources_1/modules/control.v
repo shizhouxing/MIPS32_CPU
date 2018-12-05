@@ -84,6 +84,25 @@ always @(*) begin
             read_address_2 <= inst[20:16];        
         end
 
+    
+        case (inst[31:26])
+            6'b000100: begin // BEQ
+                exception_out[9] <= 1'b0;
+            end
+            6'b000111: begin // BGTZ
+                exception_out[9] <= 1'b0;
+            end
+            6'b000101: begin // BNE
+                exception_out[9] <= 1'b0;
+            end
+            6'b000010: begin // J
+                exception_out[9] <= 1'b0;
+            end
+            6'b000011: begin // JAL
+                exception_out[9] <= 1'b0;
+            end
+        endcase
+        
         case (inst[31:29])
             3'b010: begin // exceptions
                 { con_alu_immediate, con_alu_signed } <= 2'b00;
@@ -121,13 +140,6 @@ always @(*) begin
                                 con_wb_src <= `WB_SRC_ALU;
                                 con_alu_op <= `ALU_OP_DIVS;
                                 exception_out[9] <= 1'b0;
-                            end
-                            6'b011000: begin // ERET
-                                con_reg_write <= 1'b0;
-                                con_wb_src <= `WB_SRC_ALU;
-                                con_alu_op <= `ALU_OP_ERET;
-                                exception_out[9] <= 1'b0;
-                                exception_out[12] <= 1'b1;
                             end
                         endcase
                     end
@@ -217,6 +229,9 @@ always @(*) begin
                                 con_wb_src <= `WB_SRC_MOV;
                                 exception_out[9] <= 1'b0;
                             end
+                            6'b001000: begin // JR
+                                exception_out[9] <= 1'b0;
+                            end
                         endcase
                     end
                     3'b011: begin // JAL
@@ -226,6 +241,7 @@ always @(*) begin
                     end
                     default: begin // branch or j
                         con_reg_write <= 1'b0;
+                        exception_out[9] <= 1'b0;
                     end
                 endcase
             end
