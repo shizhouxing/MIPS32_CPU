@@ -22,7 +22,7 @@ gru_update:
     ori s0, a0, 0 // gates_kernel
     ori s1, a1, 0 // gates_bias
     ori s2, a2, 0 // candidate_kernel
-    ori s3, s3, 0 // candidate_bias
+    ori s3, a3, 0 // candidate_bias
 
     lui a0, %hi(input)
     addiu a0, %lo(input)
@@ -31,28 +31,24 @@ gru_update:
     addiu a2, %lo(gate_inputs)
     ori a3, $0, DIM_INPUT_AND_STATE
     addiu sp, -4
-    ori t0, $0, NUM_UNITS
-    sll t0, t0, 1
+    ori t0, $0, NUM_UNITS_2
     sw t0, (sp)
+
     jal vector_mul_matrix
     nop
     addiu sp, 4
-    
+
     lui a0, %hi(gate_inputs)
     addiu a0, %lo(gate_inputs)
     ori a1, s1, 0
-    ori a2, $0, NUM_UNITS
-    sll a2, a2, 1
+    ori a2, $0, NUM_UNITS_2
     jal vector_add_bias
     nop
 
     lui a0, %hi(gate_inputs)
     addiu a0, %lo(gate_inputs)
-    ori a1, $0, NUM_UNITS
-    sll a1, a1, 1  
-    lui a2, %hi(sigmoid)
-    addiu a2, %lo(sigmoid) 
-    jal vector_func
+    ori a1, $0, NUM_UNITS_2
+    jal vector_sigmoid
     nop
 
     lui t0, %hi(gate_inputs)
@@ -95,8 +91,8 @@ gru_update:
         j .L_copy_input
         nop
     .L_copy_input_done:
-    lui t0, %hi(state)
-    addiu t0, %lo(state)
+    lui t0, %hi(r_state)
+    addiu t0, %lo(r_state)
     ori t2, $0, 0
     ori t3, $0, NUM_UNITS
     .L_copy_state:
@@ -123,7 +119,7 @@ gru_update:
     jal vector_mul_matrix
     nop        
     addiu sp, 4
-      
+
     lui a0, %hi(candidate)
     addiu a0, %lo(candidate)
     ori a1, s3, 0
@@ -134,14 +130,14 @@ gru_update:
     lui a0, %hi(candidate)
     addiu a0, %lo(candidate)
     ori a1, $0, NUM_UNITS  
-    lui a2, %hi(tanh)
-    addiu a2, %lo(tanh) 
-    jal vector_func
+    jal vector_tanh
     nop
 
     lui t0, %hi(gate_inputs)
     addiu t0, %lo(gate_inputs)
-    addiu t0, NUM_UNITS
+    ori t5, $0, NUM_UNITS
+    sll t5, t5, 2
+    addu t0, t0, t5
     lui t1, %hi(state)
     addiu t1, %lo(state)
     ori t3, $0, 0
@@ -162,14 +158,16 @@ gru_update:
 
     lui t0, %hi(gate_inputs)
     addiu t0, %lo(gate_inputs)
-    addiu t0, NUM_UNITS
+    ori t3, $0, NUM_UNITS
+    sll t3, t3, 2
+    addu t0, t0, t3
     lui t1, %hi(candidate)
     addiu t1, %lo(candidate)
     lui t2, %hi(state)
     addiu t2, %lo(state)    
     ori t3, $0, 0
     ori t4, $0, NUM_UNITS
-    ori t5, $0, 1 // constant 1
+    lui t5, 1 // constant 1
     .L_update_state_2:
         beq t3, t4, .L_update_state_2_done
         nop
@@ -187,7 +185,7 @@ gru_update:
         j .L_update_state_2
         nop
     .L_update_state_2_done:
-   
+
     lw ra, (sp)
     lw s0, 4(sp)
     lw s1, 8(sp)
@@ -223,12 +221,12 @@ gru_output:
     jal vector_add_bias
     nop
 
-    ori v0, $0, 0
-
-    ori t0, $0, 0
+    ori t0, $0, 1
     ori t1, $0, VOCAB_SIZE
     lui t2, %hi(output)
     addiu t2, %lo(output)
+    addiu t2, 4
+    ori v0, $0, 1
     lw v1, (t2)
     .L_find_max_output:
         beq t0, t1, .L_find_max_output_done
@@ -278,12 +276,6 @@ gru_input_word2vec:
         nop
 
     .copy_word_embedding:
-    ori a0, s1, 0
-    jal write_int
-    nop
-    jal putnewline
-    nop
-
     lui t0, %hi(input)
     addiu t0, %lo(input)
     ori t1, $0, 0
@@ -292,15 +284,50 @@ gru_input_word2vec:
         beq t1, t2, .input_word2vec_done
         nop
         lw t3, (s1)
+        nop
+        nop
         sw t3, (t0)
         addiu t0, 4
         addiu s1, 4
         addiu t1, 1
-
         j .L_copy
         nop
 
     .input_word2vec_done:
+
+        # ori s1, t5, 0
+
+
+        # // debug
+        # lui t0, %hi(input)
+        # addiu t0, %lo(input)
+        # ori t1, $0, 0
+        # ori t2, $0, DIM_EMBED
+        # .L_print_state:
+        #     beq t1, t2, .L_print_state_done
+        #     nop
+        #     lw a0, (t0)
+        #     addiu sp, -12
+        #     sw t0, (sp)
+        #     sw t1, 4(sp)
+        #     sw t2, 8(sp)
+        #     jal write_int
+        #     nop
+        #     jal putspace
+        #     nop
+        #     lw t0, (sp)
+        #     lw t1, 4(sp)
+        #     lw t2, 8(sp)
+        #     addiu sp, 12
+        #     addiu t1, 1
+        #     addiu s1, 4
+        #     addiu t0, 4
+        #     j .L_print_state
+        #     nop
+        # .L_print_state_done:
+        # jal putnewline
+        # nop
+
     lw ra, (sp)
     lw s0, 4(sp)
     lw s1, 8(sp)
@@ -337,33 +364,35 @@ vector_mul_matrix:
         nop
 
     ori s2, a2, 0
-    addu t0, s0, s4
     ori t1, $0, 0
+
     .L_vector_mul_matrix_i:
-        .L_vector_mul_matrix_j:
-            lw $14, (s0)
+        lw $14, (s0)
+        .L_vector_mul_matrix_j:        
             lw $24, (s1)
-            mul.s $f14, $f14, $f24
-            sw $14, (s2)
-            addiu s0, 4
+            lw t3, (s2)
+            mul.s $f12, $f14, $f24
+            addu t3, t3, $12
+            sw t3, (s2)      
             addiu s1, 4
             addiu s2, 4
-            bne s0, t0, .L_vector_mul_matrix_j
+            bne s2, t0, .L_vector_mul_matrix_j
             nop
-        ori s0, a0, 0
+        addiu s0, 4            
         ori s2, a2, 0
-        j .L_vector_mul_matrix_i
-        nop
         addiu t1, 1
         bne t1, s3, .L_vector_mul_matrix_i
         nop
     
+    lw ra, (sp)
     lw s0, 4(sp)
     lw s1, 8(sp)
     lw s2, 12(sp)
     lw s3, 16(sp)
     lw s4, 20(sp)
     addiu sp, 24
+    jr ra
+    nop
 
 vector_add_bias:
     // a0: vector
@@ -371,8 +400,8 @@ vector_add_bias:
     // a2: dimension
     addiu sp, -12 
     sw ra, (sp)
-    sw s0, (sp)
-    sw s1, (sp)
+    sw s0, 4(sp)
+    sw s1, 8(sp)
     
     ori s0, a0, 0
     ori s1, a1, 0
@@ -392,13 +421,46 @@ vector_add_bias:
     .L_vector_add_bias_done:
 
     lw ra, (sp)
-    lw s0, (sp)
-    lw s1, (sp)
+    lw s0, 4(sp)
+    lw s1, 8(sp)
     addiu sp, 12
     jr ra
     nop
 
-vector_func:
+vector_sigmoid:
+    // a0: vector
+    // a1: dimension
+    // a2: func
+    addiu sp, -12
+    sw ra, (sp)
+    sw s0, 4(sp)
+    sw s1, 8(sp)
+
+    ori s0, a0, 0
+    ori s1, a2, 0
+    ori t0, $0, 0
+    ori t1, a1, 0 
+    .L_vector_sigmoid:
+        beq t0, t1, .L_vector_sigmoid_done
+        nop
+        lw a0, (s0)
+        jal sigmoid
+        nop
+        sw v0, (s0)
+        addiu s0, 4
+        addiu t0, 1
+        j .L_vector_sigmoid
+        nop
+    .L_vector_sigmoid_done:
+
+    lw ra, (sp)
+    lw s0, 4(sp)
+    lw s1, 8(sp)
+    addiu sp, 12
+    jr ra
+    nop
+
+vector_tanh:
     // a0: vector
     // a1: dimension
     // a2: func
@@ -411,22 +473,22 @@ vector_func:
     ori s1, a2, 0
     ori t0, $0, 0
     ori t1, a1, 0
-    .L_vector_func:
-        beq t0, t1, .L_vector_func_done
-        lw a0, (s0)
-        ori ra, $0, .L_vector_func_next
-        jr s1
+    .L_vector_tanh:
+        beq t0, t1, .L_vector_tanh_done
         nop
-        .L_vector_func_next:
+        lw a0, (s0)
+        jal tanh
+        nop
         sw v0, (s0)
         addiu s0, 4
         addiu t0, 1
-        j .L_vector_func
-    .L_vector_func_done:
+        j .L_vector_tanh
+        nop
+    .L_vector_tanh_done:
 
     lw ra, (sp)
     lw s0, 4(sp)
     lw s1, 8(sp)
     addiu sp, 12
     jr ra
-    nop
+    nop    

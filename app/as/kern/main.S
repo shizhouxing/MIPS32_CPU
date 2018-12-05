@@ -29,7 +29,7 @@
         .endr
     .global gate_inputs
     gate_inputs:
-        .rept NUM_UNITS
+        .rept NUM_UNITS_2
         .long 0
         .endr
     .global r_state
@@ -47,6 +47,19 @@
         .rept VOCAB_SIZE
         .long 0
         .endr
+    .p2align 2
+    .global screen
+    screen:
+        .rept SCREEN_SIZE
+        .byte 0
+        .endr
+    .p2align 2
+    .global screen_row
+    screen_row:
+        .long 0
+    .global screen_col
+    screen_col:
+        .long 0
 
 .section .text
 .p2align 2
@@ -61,25 +74,33 @@
         addiu sp, %lo(KERNEL_STACK_INIT)
         or fp, sp, zero
 
+        // initialize screen
+        lui t1, %hi(screen_row)
+        addiu t1, %lo(screen_row)
+        sw $0, (t1)
+        lui t1, %hi(screen_col)
+        addiu t1, %lo(screen_col)
+        sw $0, (t1)      
+
         // print welcome message
         lui a0, %hi(welcome_message)
         addiu a0, %lo(welcome_message)
         jal puts
         nop
-
+        
     turn:
         ori a0, $0, '>'
-        jal WRITESERIAL
+        jal putchar
         nop
         ori a0, $0, '>'
-        jal WRITESERIAL
+        jal putchar
         nop
         jal read_sentence
         nop
         jal encode
         nop
-        # jal decode
-        # nop
+        jal decode
+        nop
         j turn
         nop
 

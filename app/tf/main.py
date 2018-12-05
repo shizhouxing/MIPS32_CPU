@@ -3,7 +3,7 @@ import numpy as np
 import os, random, time, sys
 from model import Seq2Seq
 from utils import load_data, build_vocab
-from utils import dump_header, dump_matrix, dump_vocab
+from utils import dump_header, dump_matrix, dump_vocab, float2hex
 
 if not os.environ.has_key("CUDA_VISIBLE_DEVICES"): 
     os.environ["CUDA_VISIBLE_DEVICES"] = "0"
@@ -73,10 +73,9 @@ with sess.as_default():
     for var in tf.trainable_variables():
         print var
 
-    train_batches = get_batches(data_train, FLAGS.batch_size)
-    valid_batches = get_batches(data_valid, FLAGS.batch_size)
-
     if FLAGS.is_train:
+        train_batches = get_batches(data_train, FLAGS.batch_size)
+        valid_batches = get_batches(data_valid, FLAGS.batch_size)
         train_writer = tf.summary.FileWriter(os.path.join(FLAGS.log_dir, "train"))
         valid_writer = tf.summary.FileWriter(os.path.join(FLAGS.log_dir, "valid"))
         summary_placeholder = tf.placeholder(tf.float32)
@@ -127,6 +126,60 @@ with sess.as_default():
         dump_header(f_out)
         params = sess.run(seq2seq.params)
         
+        # for debugging
+
+        #words = [45, 29, 7, 2]
+        words = ["hello", "EOS"]
+        state = np.zeros(64)
+
+        for k in range(len(words)):
+            idx = 0
+            while (vocab[idx] != words[k]):
+                idx += 1
+            print idx
+            inputs = params[0][idx]
+            gate_kernel = params[1]
+            gate_inputs = np.matmul(np.concatenate([inputs, state], axis=-1), gate_kernel) + params[2]
+            
+            gate_inputs = 1. / (np.exp(-gate_inputs) + 1)
+            r, u = np.split(gate_inputs, 2, axis=-1)
+            r_state = r * state
+            candidate = np.matmul(np.concatenate([inputs, r_state], axis=-1), params[3]) + params[4]
+            c = np.tanh(candidate)
+            new_h = u * state + (1 - u) * c
+
+            state = new_h
+
+
+            print "state"
+            for i in range(len(state)):
+                print float2hex(state[i]),
+            print   
+
+
+        words = ["GO", "hello", ",", "i", "am", "a"]
+        print 
+
+        for k in range(len(words)):
+            idx = 0
+            while (vocab[idx] != words[k]):
+                idx += 1
+            print idx
+            inputs = params[0][idx]
+            gate_kernel = params[5]
+            gate_inputs = np.matmul(np.concatenate([inputs, state], axis=-1), gate_kernel) + params[6]
+            gate_inputs = 1. / (np.exp(-gate_inputs) + 1)
+            r, u = np.split(gate_inputs, 2, axis=-1)
+            r_state = r * state
+            candidate = np.matmul(np.concatenate([inputs, r_state], axis=-1), params[7]) + params[8]
+            c = np.tanh(candidate)
+            new_h = u * state + (1 - u) * c
+            state = new_h
+            print "state"
+            for i in range(len(state)):
+                print float2hex(state[i]),
+            print            
+
         names = [
             "word_embedding",
             "encoder_gates_kernel",
@@ -150,6 +203,7 @@ with sess.as_default():
         f_out.close()
     else: # test
         if FLAGS.run_valid:
+            valid_batches = get_batches(data_valid, FLAGS.batch_size)
             for batch in valid_batches:
                 ops = seq2seq.step(sess, batch)
                 for i in range(len(batch)):

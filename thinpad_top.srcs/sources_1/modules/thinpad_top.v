@@ -151,6 +151,7 @@ wire[31:0] reg_write_data_mem;
 wire con_reg_write_mem;
 wire[31:0] alu_res_mem, mov_data_mem;
 wire[31:0] mem_read_data, uart_read_data;
+wire[1:0] ram_state;
 wire[3:0] uart_state;
 
 wire mem_cp0_we_in;
@@ -203,7 +204,7 @@ wire mem_this_delayslot_in;
 wire mem_this_delayslot_out;
 
 // hazard
-wire[0:4] stall, nop;
+wire[0:3] stall, nop;
 
 wire mem_conflict;
 wire mem_ram_en, mem_uart_en, mem_graph_en; 
@@ -327,6 +328,7 @@ pc _pc(
 
 ram_controller _ram_controller(
     .clk(clock),
+    .rst(reset),
     .inst_addr(pc_current),
     .data_addr(mem_address),
     .byte(con_mem_byte),
@@ -356,7 +358,8 @@ ram_controller _ram_controller(
 
     .result_inst(inst_if),
     .result_data(mem_ram_read_data),
-    .conflict(mem_conflict)
+    .conflict(mem_conflict),
+    .ram_state(ram_state)
 );
 
 uart_controller _uart_controller(
@@ -491,6 +494,9 @@ hazard_detector _hazard_detector(
     .wb_src_mem(con_wb_src),
     .mem_conflict(mem_conflict),
     .con_pc_jump(con_pc_jump),
+    .ram_en(mem_ram_en),
+    .ram_state(ram_state),
+    .mem_write(con_mem_write),
     .uart_en(mem_uart_en),
     .uart_state(uart_state),
     .div_stall(div_stall),
@@ -727,7 +733,7 @@ mem_wb _mem_wb(
     .clk(clock),
     .rst(reset),
     .flush(flush),
-    .stall(stall[4]),
+    .stall(stall[3]),
     .nop(nop[3]),   
     .reg_write_in(con_reg_write_mem),
     .reg_write_address_in(reg_write_address_mem),
@@ -757,7 +763,7 @@ mem_wb _mem_wb(
 wb_end _wb_end(
     .clk(clock),
     .rst(reset),
-    .nop(nop[4]),    
+    .stall(stall[3]), 
     .reg_write_address_in(reg_write_address),
     .reg_write_data_in(reg_write_data),
     .reg_write_in(con_reg_write),

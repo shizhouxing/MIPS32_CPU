@@ -1,6 +1,7 @@
 `timescale 1ns / 1ps
 
 module ram_controller(
+    input wire rst,
     input wire clk,
 
     input wire[31:0] inst_addr,
@@ -20,17 +21,18 @@ module ram_controller(
     output wire[3:0] base_ram_be_n, 
     output wire base_ram_ce_n, 
     output wire base_ram_oe_n, 
-    output wire base_ram_we_n, 
+    output reg base_ram_we_n, 
 
     inout wire[31:0] ext_ram_data, 
     output reg[19:0] ext_ram_addr,
     output wire[3:0] ext_ram_be_n,
     output wire ext_ram_ce_n, 
     output wire ext_ram_oe_n, 
-    output wire ext_ram_we_n, 
+    output reg ext_ram_we_n, 
 
     output wire[31:0] result_inst,
     output reg[31:0] result_data,
+    output reg[1:0] ram_state,
     output reg conflict
 );
 
@@ -42,8 +44,6 @@ assign result_inst = ext_ram_data;
 assign result_data_raw = conflict ? ext_ram_data : base_ram_data;
 assign ext_ram_ce_n = 1'b0;
 assign base_ram_ce_n = data_en;
-assign base_ram_we_n = base_write ? ~clk : 1'b1;
-assign ext_ram_we_n = ext_write ? ~clk : 1'b1;
 assign base_ram_oe_n = ~base_write ? 1'b0 : 1'b1;
 assign ext_ram_oe_n = ~ext_write ? 1'b0 : 1'b1;
 assign base_ram_be_n = base_write ? mask : 4'b0;
@@ -51,6 +51,36 @@ assign ext_ram_be_n = ext_write ? mask : 4'b0;
 assign base_ram_data = base_write ? data_extended : 32'bz;
 assign ext_ram_data = ext_write ? data_extended : 32'bz;
 assign base_ram_addr = data_addr[21:2];
+
+// use 2 clock circles for ram writing
+always @(posedge rst or negedge clk) begin
+    if (rst) begin
+        ram_state <= 2'b0;
+    end
+    else begin
+        if (~data_en & data_write) begin
+            if (ram_state < 2'b10)
+                ram_state <= ram_state + 2'b1;
+            else
+                ram_state <= 2'b0;
+        end
+        else
+            ram_state <= 2'b0;
+    end
+end
+
+// ram writing
+always @(*) begin
+    if (base_write) 
+        base_ram_we_n <= ram_state != 2'b1;
+    else 
+        base_ram_we_n <= 1'b1;
+    if (ext_write)
+        ext_ram_we_n <= ram_state != 2'b1;
+    else
+        ext_ram_we_n <= 1'b1;
+end
+
 
 always @(*) begin
     if (flash_data_en == 1'b0) begin

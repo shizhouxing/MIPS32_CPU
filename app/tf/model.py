@@ -1,8 +1,9 @@
 import tensorflow as tf
 import numpy as np
-import os
+import os, sys
 from tensorflow.python.layers.core import Dense
 from helper import GreedyEmbeddingHelper
+from utils import float2hex
 
 UNK_ID, PAD_ID, EOS_ID, GO_ID = 0, 1, 2, 3
 
@@ -65,7 +66,7 @@ class Seq2Seq():
     def _build_encoder(self):
         with tf.variable_scope("encoder"):
             cell = self._build_cell()
-            _, self.enc_post = tf.nn.dynamic_rnn(
+            self.enc_out, self.enc_post = tf.nn.dynamic_rnn(
                 cell=cell,
                 inputs=self.input_enc,
                 sequence_length=self.post_len,
@@ -123,6 +124,7 @@ class Seq2Seq():
                 decoder=infer_decoder,
                 maximum_iterations=64
             )
+            self.dec_out = infer_output.rnn_output
             self.inference = self.index2symbol.lookup(tf.cast(infer_output.sample_id, tf.int64))
 
     def initialize(self, vocab):
@@ -166,6 +168,12 @@ class Seq2Seq():
             self.response_len: data['response_len']
         }
         if is_infer:
+            out = sess.run(self.enc_out, input_feed)[0]
+            print "encode"
+            for i in range(len(out)):
+                for j in range(len(out[i])):
+                    print float2hex(out[i][j]),
+                print  
             output_feed = self.inference
         else:
             if is_train:

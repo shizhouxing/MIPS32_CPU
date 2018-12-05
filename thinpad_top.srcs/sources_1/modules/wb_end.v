@@ -3,7 +3,7 @@
 module wb_end(
     input wire clk,
     input wire rst,
-    input wire nop,
+    input wire stall,
     input wire[4:0] reg_write_address_in,
     input wire[31:0] reg_write_data_in,
     input wire reg_write_in,
@@ -17,10 +17,7 @@ always @(posedge clk or posedge rst) begin
         reg_write_out <= 1'b0;
     end
     else begin
-        if (nop) begin
-            reg_write_out <= 1'b0;
-        end
-        else begin
+        if (~stall) begin
             reg_write_address_out <= reg_write_address_in;
             reg_write_data_out <= reg_write_data_in;
             reg_write_out <= reg_write_in;
