@@ -5,7 +5,6 @@
 .global START
 START:
 	lui $1, 0x9000
-	ori $1, $1, 0x2
 	ori $30, $0, 0x48
 	sw $30, ($1)
 

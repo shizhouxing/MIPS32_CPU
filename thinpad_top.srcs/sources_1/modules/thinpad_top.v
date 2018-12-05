@@ -268,6 +268,7 @@ keyboard _keyboard(
 );
 */
 
+
 flash_controller _flash_controller(
     .clk(clk_8),
     .rst(reset),
@@ -408,7 +409,7 @@ registers _registers(
     .result(result) // for debug
 );
 
-//assign leds = result;
+assign leds = result;
 //assign leds = { 8'b0, keyboard_data[7:0] };
 //assign leds = { uart_dataready, result[14:0]};
 //assign leds = { stall[0], mem_conflict, con_mem_read, con_mem_write, pc_current[11:0] };

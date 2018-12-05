@@ -27,13 +27,13 @@ module init_ram(
 );
 
 reg[2:0] counter;
-reg[2:0] updown;
+reg updown;
 
 initial begin
     flash_stall <= 1'b0;
     flash_address <= 23'b0;
     flash_flag <= 1'b0;
-    counter <= 26'b0;
+    counter <= 3'b0;
     updown <= 1'b0;
     
     flash_data_out <= 32'b0;

@@ -147,7 +147,8 @@ always @(*) begin
         
         if (address[31:28] == 4'h9) begin // graphics memory
             { ram_en, uart_en } <= 2'b11;
-            graph_en <= 1'b0;
+            if (mem_read | mem_write)
+                graph_en <= 1'b0;
         end
         else if (address[31:28] == 4'h8) begin // use ram 
             read_data <= ram_read_data;
