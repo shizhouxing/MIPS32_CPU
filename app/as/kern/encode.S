@@ -30,7 +30,6 @@ encode:
         nop
     .L_clear_state_done:
 
-
     ori s6, $0, ' '
     lui s0, %hi(post_raw) 
     addiu s0, %lo(post_raw)
@@ -124,19 +123,9 @@ encode_input: // input the word (a0)...(a1-1)
             nop
 
     .symbol2index_done:
-    // debug
-    ori a0, s0, 0
-    jal write_int
-    nop
-    jal putnewline
-    nop  
-    jal putnewline
-    nop 
-
     ori a0, s0, 0
     jal gru_input_word2vec
     nop
-
 
     lui a0, %hi(encoder_gates_kernel)
     addiu a0, %lo(encoder_gates_kernel)
@@ -148,8 +137,6 @@ encode_input: // input the word (a0)...(a1-1)
     addiu a3, %lo(encoder_candidate_bias)
     jal gru_update
     nop
-
-
 
     lw ra, (sp)
     lw s0, 4(sp)

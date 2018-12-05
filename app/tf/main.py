@@ -128,36 +128,53 @@ with sess.as_default():
         
         # for debugging
 
-        words = [45, 29, 7, 2]
+        #words = [45, 29, 7, 2]
+        words = ["hello", "EOS"]
         state = np.zeros(64)
 
         for k in range(len(words)):
-
-            inputs = params[0][words[k]]
-
+            idx = 0
+            while (vocab[idx] != words[k]):
+                idx += 1
+            print idx
+            inputs = params[0][idx]
             gate_kernel = params[1]
             gate_inputs = np.matmul(np.concatenate([inputs, state], axis=-1), gate_kernel) + params[2]
             
             gate_inputs = 1. / (np.exp(-gate_inputs) + 1)
-
             r, u = np.split(gate_inputs, 2, axis=-1)
             r_state = r * state
-
             candidate = np.matmul(np.concatenate([inputs, r_state], axis=-1), params[3]) + params[4]
             c = np.tanh(candidate)
-
-            
-            print "candidate"
-            tt = candidate
-            for i in range(len(tt)):
-                print float2hex(tt[i]),
-            print
-
-
             new_h = u * state + (1 - u) * c
 
             state = new_h
 
+
+            print "state"
+            for i in range(len(state)):
+                print float2hex(state[i]),
+            print   
+
+
+        words = ["GO", "hello", ",", "i", "am", "a"]
+        print 
+
+        for k in range(len(words)):
+            idx = 0
+            while (vocab[idx] != words[k]):
+                idx += 1
+            print idx
+            inputs = params[0][idx]
+            gate_kernel = params[5]
+            gate_inputs = np.matmul(np.concatenate([inputs, state], axis=-1), gate_kernel) + params[6]
+            gate_inputs = 1. / (np.exp(-gate_inputs) + 1)
+            r, u = np.split(gate_inputs, 2, axis=-1)
+            r_state = r * state
+            candidate = np.matmul(np.concatenate([inputs, r_state], axis=-1), params[7]) + params[8]
+            c = np.tanh(candidate)
+            new_h = u * state + (1 - u) * c
+            state = new_h
             print "state"
             for i in range(len(state)):
                 print float2hex(state[i]),

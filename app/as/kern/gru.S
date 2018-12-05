@@ -38,27 +38,6 @@ gru_update:
     nop
     addiu sp, 4
 
-
-
-        # lui t0, %hi(gate_inputs)
-        # addiu t0, %lo(gate_inputs)
-        # lw a0, (t0)
-        # addiu sp, -12
-        # sw t0, (sp)
-        # sw t1, 4(sp)
-        # sw t2, 8(sp)
-        # jal write_int
-        # nop
-        # jal putspace
-        # nop
-        # lw t0, (sp)
-        # lw t1, 4(sp)
-        # lw t2, 8(sp)
-        # addiu sp, 12
-        # addiu t1, 1
-        # addiu t0, 4
-            
-
     lui a0, %hi(gate_inputs)
     addiu a0, %lo(gate_inputs)
     ori a1, s1, 0
@@ -71,30 +50,6 @@ gru_update:
     ori a1, $0, NUM_UNITS_2
     jal vector_sigmoid
     nop
-
-
-        # lui t0, %hi(gate_inputs)
-        # addiu t0, %lo(gate_inputs)
-        # lw a0, (t0)
-        # addiu sp, -12
-        # sw t0, (sp)
-        # sw t1, 4(sp)
-        # sw t2, 8(sp)
-        # jal write_int
-        # nop
-        # jal putnewline
-        # nop
-        # lw t0, (sp)
-        # lw t1, 4(sp)
-        # lw t2, 8(sp)
-        # addiu sp, 12
-        # addiu t1, 1
-        # addiu t0, 4
-        
-
-
-
-
 
     lui t0, %hi(gate_inputs)
     addiu t0, %lo(gate_inputs)
@@ -118,40 +73,6 @@ gru_update:
         j .L_get_r_state
         nop
     .L_get_r_state_done:
-
-
-        # // debug
-        # lui t0, %hi(r_state)
-        # addiu t0, %lo(r_state)
-        # ori t1, $0, 0
-        # ori t2, $0, NUM_UNITS
-        # .L_print_state:
-        #     beq t1, t2, .L_print_state_done
-        #     nop
-        #     lw a0, (t0)
-        #     addiu sp, -12
-        #     sw t0, (sp)
-        #     sw t1, 4(sp)
-        #     sw t2, 8(sp)
-        #     jal write_int
-        #     nop
-        #     jal putspace
-        #     nop
-        #     lw t0, (sp)
-        #     lw t1, 4(sp)
-        #     lw t2, 8(sp)
-        #     addiu sp, 12
-        #     addiu t1, 1
-        #     addiu t0, 4
-        #     j .L_print_state
-        #     nop
-        # .L_print_state_done:
-        # jal putnewline
-        # nop
-
-
-
-
 
     lui t0, %hi(input)
     addiu t0, %lo(input)
@@ -186,9 +107,6 @@ gru_update:
         nop
     .L_copy_state_done:
 
-
-
-
     lui a0, %hi(input_and_state)
     addiu a0, %lo(input_and_state)
     ori a1, s2, 0
@@ -209,52 +127,11 @@ gru_update:
     jal vector_add_bias
     nop
 
-
-
-
-
-
-
-        # // debug
-        # lui t0, %hi(candidate)
-        # addiu t0, %lo(candidate)
-        # ori t1, $0, 0
-        # ori t2, $0, NUM_UNITS
-        # .L_print_state:
-        #     beq t1, t2, .L_print_state_done
-        #     nop
-        #     lw a0, (t0)
-        #     addiu sp, -12
-        #     sw t0, (sp)
-        #     sw t1, 4(sp)
-        #     sw t2, 8(sp)
-        #     jal write_int
-        #     nop
-        #     jal putspace
-        #     nop
-        #     lw t0, (sp)
-        #     lw t1, 4(sp)
-        #     lw t2, 8(sp)
-        #     addiu sp, 12
-        #     addiu t1, 1
-        #     addiu t0, 4
-        #     j .L_print_state
-        #     nop
-        # .L_print_state_done:
-        # jal putnewline
-        # nop
-
-
-
-
-
     lui a0, %hi(candidate)
     addiu a0, %lo(candidate)
     ori a1, $0, NUM_UNITS  
     jal vector_tanh
     nop
-
-
 
     lui t0, %hi(gate_inputs)
     addiu t0, %lo(gate_inputs)
@@ -278,7 +155,6 @@ gru_update:
         j .L_update_state_1
         nop
     .L_update_state_1_done:
-
 
     lui t0, %hi(gate_inputs)
     addiu t0, %lo(gate_inputs)
@@ -309,35 +185,6 @@ gru_update:
         j .L_update_state_2
         nop
     .L_update_state_2_done:
-
-        # // debug
-        # lui t0, %hi(state)
-        # addiu t0, %lo(state)
-        # ori t1, $0, 0
-        # ori t2, $0, NUM_UNITS
-        # .L_print_state:
-        #     beq t1, t2, .L_print_state_done
-        #     nop
-        #     lw a0, (t0)
-        #     addiu sp, -12
-        #     sw t0, (sp)
-        #     sw t1, 4(sp)
-        #     sw t2, 8(sp)
-        #     jal write_int
-        #     nop
-        #     jal putspace
-        #     nop
-        #     lw t0, (sp)
-        #     lw t1, 4(sp)
-        #     lw t2, 8(sp)
-        #     addiu sp, 12
-        #     addiu t1, 1
-        #     addiu t0, 4
-        #     j .L_print_state
-        #     nop
-        # .L_print_state_done:
-        # jal putnewline
-        # nop
 
     lw ra, (sp)
     lw s0, 4(sp)
@@ -374,12 +221,12 @@ gru_output:
     jal vector_add_bias
     nop
 
-    ori v0, $0, 0
-
-    ori t0, $0, 0
+    ori t0, $0, 1
     ori t1, $0, VOCAB_SIZE
     lui t2, %hi(output)
     addiu t2, %lo(output)
+    addiu t2, 4
+    ori v0, $0, 1
     lw v1, (t2)
     .L_find_max_output:
         beq t0, t1, .L_find_max_output_done
@@ -428,18 +275,7 @@ gru_input_word2vec:
         j .L_find_embedding_start
         nop
 
-
-
     .copy_word_embedding:
-    ori a0, s1, 0
-    jal write_int
-    nop
-    jal putspace
-    nop
-
-
-
-    # ori t5, s1, 0
     lui t0, %hi(input)
     addiu t0, %lo(input)
     ori t1, $0, 0
@@ -471,7 +307,6 @@ gru_input_word2vec:
         #     beq t1, t2, .L_print_state_done
         #     nop
         #     lw a0, (t0)
-        #     //lw a0, (s1)
         #     addiu sp, -12
         #     sw t0, (sp)
         #     sw t1, 4(sp)

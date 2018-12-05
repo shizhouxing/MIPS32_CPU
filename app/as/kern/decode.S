@@ -46,6 +46,7 @@ decode:
         jal gru_input_word2vec
         nop
         addiu s1, 1
+
         bne s1, s2, .L_decode_step
         nop
     .L_decode_step_done:

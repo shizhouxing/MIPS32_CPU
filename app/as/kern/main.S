@@ -99,12 +99,8 @@
         nop
         jal encode
         nop
-
-
-
-
-        # jal decode
-        # nop
+        jal decode
+        nop
         j turn
         nop
 

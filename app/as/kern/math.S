@@ -23,7 +23,7 @@ exp:
 	lui a2, 1
 
 	// t0 loop variable
-	ori t0, $0, 16
+	ori t0, $0, 32
 
 	// t2 loop variable(real number) (f10)
 	lui t2, 1
@@ -79,13 +79,14 @@ tanh:
 	nop
 	.tanh_abs:
 		lui t5, 0xffff
-		addiu t5, 0xffff
+		ori t5, t5, 0xffff
 		xor t5, t5, a0
 		addiu t3, t5, 1
 	.tanh_abs_done:
 
 	lui t4, 10
 	sub t3, t3, t4
+
 	bgtz t3, .tanh_overflow
 	nop
 	j .tanh_normal
@@ -106,9 +107,6 @@ tanh:
 	nop
 
 	.tanh_normal:
-	jal exp
-	nop
-
 
 	// a0 input x (f4)
 	// v0 output tanh(x) (temp a2, f6)
@@ -119,8 +117,13 @@ tanh:
 	ori t0, v0, 0
 
 	// t2 e^(-x) (f10)
-	lui t2, 1
-	div.s $f10, $f10, $f8
+	lui t5, 0xffff
+	ori t5, t5, 0xffff
+	xor t5, t5, a0
+	addiu a0, t5, 1
+	jal exp
+	nop
+	ori t2, v0, 0
 
 	// t4 e^x - e^(-x) (f12)
 	sub t4, t0, t2
@@ -161,7 +164,7 @@ sigmoid:
 	nop
 	.sigmoid_abs:
 		lui t5, 0xffff
-		addiu t5, 0xffff
+		ori t5, t5, 0xffff
 		xor t5, t5, a0
 		addiu t3, t5, 1
 	.sigmoid_abs_done:
@@ -188,27 +191,26 @@ sigmoid:
 	nop
 
 	.sigmoid_normal:
+
+	// t0 e^(-x) (f8)
+	lui t5, 0xffff
+	ori t5, t5, 0xffff
+	xor t5, t5, a0
+	addiu a0, t5, 1
 	jal exp
 	nop
-
-
-
-	// t0 e^x (f8)
 	ori t0, v0, 0
 
 	// t2 1 (f10)
-	ori t2, $0, 0
 	lui t2, 1
 
-	// t0 = t2 / t0 + 1  e^(-x) + 1
-	div.s $f8, $f10, $f8
+	// 1 + exp(-x)
 	addu t0, t0, t2
 
 	// a2 = t2 / t0
 	div.s $f6, $f10, $f8
 
 	ori v0, a2, 0	
-
 
 	.sigmoid_done:
 
