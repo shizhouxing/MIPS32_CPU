@@ -18,16 +18,18 @@
     .global stop
 
 read_sentence:
-    addiu sp, sp, -16
+    addiu sp, sp, -20
     sw ra, 0(sp)
     sw s0, 4(sp)
     sw s1, 8(sp)
     sw s2, 12(sp)
+    sw s3, 16(sp)
 
     lui s0, %hi(post_raw) // address
     addiu s0, %lo(post_raw) 
     ori s1, $0, 0 // length
     ori s2, $0, '\n' // ending char '\n'
+    ori s3, $0, '\r'
 
     .read_char:
         jal READSERIAL 
@@ -37,6 +39,8 @@ read_sentence:
         nop
         beq v0, s2, .read_done // finish reading on '\n'
         nop
+        beq v0, s3, .read_done // finish reading on '\r'
+        nop
         sb v0, (s0)
         addiu s0, s0, 1
         addiu s1, s1, 1
@@ -44,6 +48,11 @@ read_sentence:
         nop
 
     .read_done:
+    bne v0, s3, .read_done_1
+    nop
+    jal READSERIAL 
+    nop
+    .read_done_1:
     ori a0, $0, ' '
     sb a0, (s0)
     ori a0, $0, 'E'
@@ -59,7 +68,8 @@ read_sentence:
     lw s0, 4(sp)
     lw s1, 8(sp)
     lw s2, 12(sp)
-    addiu sp, sp, 16
+    lw s3, 16(sp)
+    addiu sp, sp, 20
     jr ra
     nop
 
@@ -89,51 +99,51 @@ putchar:
     jal WRITESERIAL
     nop
 
-    # lui t0, %hi(screen)
-    # addiu t0, %lo(screen)
-    # lui t3, 0x9000
+    lui t0, %hi(screen)
+    addiu t0, %lo(screen)
+    lui t3, 0x9000
 
-    # lui t1, %hi(screen_row)
-    # addiu t1, %lo(screen_row)
-    # lw t1, (t1)
-    # .L_find_screen_row:
-    #     beq t1, $0, .L_find_screen_row_done
-    #     nop
-    #     addiu t1, -1
-    #     addiu t0, SCREEN_COLS 
-    #     addiu t3, SCREEN_COLS 
-    #     j .L_find_screen_row
-    #     nop
-    # .L_find_screen_row_done:
-    # lui t1, %hi(screen_col)
-    # addiu t1, %lo(screen_col)
-    # lw t2, (t1)
-    # addu t0, t0, t2
-    # addu t3, t3, t2
+    lui t1, %hi(screen_row)
+    addiu t1, %lo(screen_row)
+    lw t1, (t1)
+    .L_find_screen_row:
+        beq t1, $0, .L_find_screen_row_done
+        nop
+        addiu t1, -1
+        addiu t0, SCREEN_COLS 
+        addiu t3, SCREEN_COLS 
+        j .L_find_screen_row
+        nop
+    .L_find_screen_row_done:
+    lui t1, %hi(screen_col)
+    addiu t1, %lo(screen_col)
+    lw t2, (t1)
+    addu t0, t0, t2
+    addu t3, t3, t2
 
-    # sb s0, (t0)
-    # sb s0, (t3)
+    sb s0, (t0)
+    sb s0, (t3)
     
-    # addiu t2, 1
+    addiu t2, 1
 
-    # ori t4, $0, SCREEN_COLS
-    # beq t2, t4, .newline
-    # nop
-    # ori t4, $0, '\n'
-    # beq s0, t4, .newline
-    # nop
-    # j .newline_done
-    # nop
-    # .newline:
-    #     lui t2, 0
-    #     lui t5, %hi(screen_row)
-    #     addiu t5, %lo(screen_row)
-    #     lw t6, (t5)
-    #     addiu t6, 1
-    #     sw t6, (t5)
-    # .newline_done:
+    ori t4, $0, SCREEN_COLS
+    beq t2, t4, .newline
+    nop
+    ori t4, $0, '\n'
+    beq s0, t4, .newline
+    nop
+    j .newline_done
+    nop
+    .newline:
+        lui t2, 0
+        lui t5, %hi(screen_row)
+        addiu t5, %lo(screen_row)
+        lw t6, (t5)
+        addiu t6, 1
+        sw t6, (t5)
+    .newline_done:
 
-    # sw t2, (t1)
+    sw t2, (t1)
     
     lw ra, (sp)
     lw s0, 4(sp)

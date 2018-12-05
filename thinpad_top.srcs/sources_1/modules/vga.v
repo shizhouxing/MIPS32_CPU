@@ -57,8 +57,9 @@ end
 // write
 always @ (negedge clk)
 begin
-    if (~vga_we_in) begin
-        screen[vga_address_in] <= vga_data_in - 8'h20;
+    if (~vga_we_in && 
+            vga_data_in > 7'h20 && vga_address_in >= 12'h0 && vga_address_in < 12'h555) begin
+        screen[vga_address_in] <= vga_data_in - 7'h20;
     end
 end
 
