@@ -290,10 +290,6 @@ bss_init_done:
 
 
 WELCOME:
-
-ori $30, $0, 255
-
-
     lui s0, %hi(monitor_version)    // 装入启动信息
     addiu s0, %lo(monitor_version)
     lb a0, 0(s0)
