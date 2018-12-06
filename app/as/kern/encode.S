@@ -53,7 +53,7 @@ encode:
             j .L0
             nop
 
-    .encode_done:
+    .encode_done:    
     lw ra, (sp)
     lw s0, 4(sp)
     lw s1, 8(sp)
@@ -75,6 +75,7 @@ encode_input: // input the word (a0)...(a1-1)
     sw s4, 20(sp)
     sw s5, 24(sp)
     sw s6, 28(sp)
+
 
     lui s0, 0 // word index
     ori s5, a0, 0

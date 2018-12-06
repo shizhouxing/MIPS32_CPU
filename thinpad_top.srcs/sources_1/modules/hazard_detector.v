@@ -43,14 +43,15 @@ assign hazard_id_mem =
     (read_address_2_id != 5'b0 && read_address_2_id == reg_write_address_mem && reg_write_mem && 
         (wb_src_mem == `WB_SRC_MOV || wb_src_mem == `WB_SRC_MEM)) || 
     (mem_conflict && con_pc_jump);
-assign busy_mem = (~uart_en & (uart_state < 4'hf)) | (mem_write & ~ram_en & (ram_state < 2'b10));
+assign busy_mem = (~uart_en & (uart_state < 4'hf)) 
+    | (mem_write & ~ram_en & (ram_state < 2'b10)) | flash_stall;
 
 wire hazard_wb, hazard_mem, hazard_exe, hazard_id, hazard_if;
-assign hazard_wb = ~uart_en & (uart_state < 4'h9) | div_stall | flash_stall;
-assign hazard_mem = (~uart_en & (uart_state < 4'h9)) | div_stall | flash_stall;
-assign hazard_exe = hazard_exe_mem | div_stall | flash_stall;
-assign hazard_id = hazard_id_exe | hazard_id_mem | flash_stall;
-assign hazard_if = mem_conflict | flash_stall;
+assign hazard_wb = busy_mem | div_stall;
+assign hazard_mem = busy_mem | div_stall;
+assign hazard_exe = hazard_exe_mem | div_stall;
+assign hazard_id = hazard_id_exe | hazard_id_mem;
+assign hazard_if = mem_conflict;
 
 assign stall = { 
     hazard_mem | hazard_exe | hazard_id | hazard_if, 

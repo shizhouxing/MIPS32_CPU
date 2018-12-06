@@ -39,7 +39,7 @@ initial begin
     flash_data_en <= 1'b1;
 end
 
-always @(posedge clk) begin
+always @(posedge rst or posedge clk) begin
     if (rst) begin
         flash_stall <= 1'b0;
         counter <= 3'b0;

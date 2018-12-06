@@ -29,7 +29,7 @@ read_sentence:
     addiu s0, %lo(post_raw) 
     ori s1, $0, 0 // length
     ori s2, $0, '\n' // ending char '\n'
-    ori s3, $0, '\r'
+    //ori s3, $0, '\r'
 
     .read_char:
         jal READSERIAL 
@@ -39,8 +39,8 @@ read_sentence:
         nop
         beq v0, s2, .read_done // finish reading on '\n'
         nop
-        beq v0, s3, .read_done // finish reading on '\r'
-        nop
+        //beq v0, s3, .read_done // finish reading on '\r'
+        //nop
         sb v0, (s0)
         addiu s0, s0, 1
         addiu s1, s1, 1
@@ -48,10 +48,10 @@ read_sentence:
         nop
 
     .read_done:
-    bne v0, s3, .read_done_1
-    nop
-    jal READSERIAL 
-    nop
+    //bne v0, s3, .read_done_1
+    //nop
+    //jal READSERIAL 
+    //nop
     .read_done_1:
     ori a0, $0, ' '
     sb a0, (s0)
