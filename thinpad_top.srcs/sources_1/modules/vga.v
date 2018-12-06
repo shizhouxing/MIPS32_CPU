@@ -58,9 +58,8 @@ end
 always @ (posedge rst or posedge clk)
 begin
     if (rst == 1'b1) begin
-        // debug
-        //for (i = 0; i < 1500; i = i + 1)
-        //    screen[i] <= 7'b0;
+        for (i = 0; i < 1500; i = i + 1)
+            screen[i] <= 7'b0;
     end else begin
         if (vga_data_in >= 8'h20 && ~vga_we_in) begin
             screen[vga_address_in] <= vga_data_in - 8'h20;
