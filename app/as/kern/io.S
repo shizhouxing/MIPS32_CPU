@@ -121,12 +121,17 @@ putchar:
     addu t0, t0, t2
     addu t3, t3, t2
 
+    ori t4, $0, '\n'
+    beq s0, t4, .skip_enter
+    nop
     sb s0, (t0)
     sb s0, (t3)
+    .skip_enter:
     
     addiu t2, 1
+    addiu t0, 1
 
-    ori t4, $0, SCREEN_COLS
+    ori t4, $0, SCREEN_COLS_SOFT
     beq t2, t4, .newline
     nop
     ori t4, $0, '\n'
@@ -143,52 +148,53 @@ putchar:
         lw t6, (t5)
         addiu t6, 1
         ori t7, $0, SCREEN_ROWS
-        bne t6, t7, .scroll
+        beq t6, t7, .scroll
         nop
         sw t6, (t5)        
         j .newline_done
         nop
     .scroll:
-    #     ori t5, $0, 0
-    #     ori t6, $0, SCREEN_SIZE
-    #     sub t6, t6, SCREEN_COLS
+        ori t5, $0, 0
+        ori t6, $0, SCREEN_SIZE
+        ori t7, $0, SCREEN_COLS
+        sub t6, t6, t7
         
-    #     lui t0, %hi(screen)
-    #     addiu t0, %lo(screen)
-    #     ori t1, t0, 0
-    #     addiu t1, SCREEN_COLS
+        lui t0, %hi(screen)
+        addiu t0, %lo(screen)
+        ori t1, t0, 0
+        ori t2, $0, SCREEN_COLS
+        addu t1, t1, t2
 
-    #     .L_scroll_1:
-    #         lw t2, (t1)
-    #         sw t2, (t0)
-    #         addiu t5, 1
-    #         addiu t0, 4
-    #         addiu t1, 4
-    #         bne t5, t6, .L_scroll_1
-    #         nop
-    #     ori t5, $0, 0
-    #     ori t6, $0, SCREEN_COLS
-    #     ori t7, $0, 0x20
-    #     .L_scroll_2:
-    #         sw t7, (t0)
-    #         addiu t5, 1
-    #         addiu t0, 4
-    #         bne t5, t6, .L_scroll_2
-    #         nop
+        .L_scroll_1:
+            lb t2, (t1)
+            sb t2, (t0)
+            addiu t5, 1
+            addiu t0, 1
+            addiu t1, 1
+            bne t5, t6, .L_scroll_1
+            nop
+        addiu t6, SCREEN_COLS
+        ori t7, $0, 0x20
+        .L_scroll_2:
+            sb t7, (t0)
+            addiu t0, 1
+            addiu t5, 1
+            bne t5, t6, .L_scroll_2
+            nop
 
-    #     lui t0, %hi(screen)
-    #     addiu t0, %lo(screen)
-    #     lui t1, 0x9000
-    #     ori t5, $0, 0
-    #     ori t6, $0, SCREEN_SIZE        
-    #     .L_scroll_3:
-    #         lw t2, (t0)
-    #         sw t2, (t1)
-    #         addiu t5, 1
-    #         addiu t0, 4
-    #         addiu t1, 4
-    #         bne t5, t6, .L_scroll_3
-    #         nop        
+        lui t0, %hi(screen)
+        addiu t0, %lo(screen)
+        lui t1, 0x9000
+        ori t5, $0, 0
+        ori t6, $0, SCREEN_SIZE        
+        .L_scroll_3:
+            lb t2, (t0)
+            sb t2, (t1)
+            addiu t5, 1
+            addiu t0, 1
+            addiu t1, 1
+            bne t5, t6, .L_scroll_3
+            nop   
 
     .newline_done:
     

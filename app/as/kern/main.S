@@ -74,13 +74,24 @@
         addiu sp, %lo(KERNEL_STACK_INIT)
         or fp, sp, zero
 
-        // initialize screen
+        // reset screen
         lui t1, %hi(screen_row)
         addiu t1, %lo(screen_row)
         sw $0, (t1)
         lui t1, %hi(screen_col)
         addiu t1, %lo(screen_col)
-        sw $0, (t1)      
+        sw $0, (t1)  
+        lui t0, %hi(screen)
+        addiu t0, %lo(screen)
+        ori t1, $0, 0
+        ori t2, $0, SCREEN_SIZE
+        ori t3, $0, 0x20
+        .L_clear_screen:
+            sb t3, (t0)
+            addiu t0, 1
+            addiu t1, 1
+            bne t1, t2, .L_clear_screen
+            nop
 
         // print welcome message
         lui a0, %hi(welcome_message)
