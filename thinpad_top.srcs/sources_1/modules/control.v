@@ -36,6 +36,7 @@ module control(
 
     // mem
     output reg con_mem_byte, // byte load or store
+    output reg con_mem_unsigned,
     output reg con_mem_read, 
     output reg con_mem_write,
     output reg[1:0] con_wb_src
@@ -44,8 +45,6 @@ module control(
 reg valid;
 
 always @(*) begin
-    // read_address_1 <= inst[25:21];
-    // read_address_2 <= inst[20:16];    
     if (inst == 32'b0) begin // NOP
         { con_reg_write, con_mem_read, con_mem_write } <= 3'b000;
         exception_out <= 32'b0;
@@ -76,14 +75,13 @@ always @(*) begin
         exception_address_out <= pc;
 
         if (inst[31:21] == 11'b01000110000 && (inst[5:0] == 6'b000010 || inst[5:0] == 6'b000011)) begin
-            read_address_1 <= inst[20:16];
-            read_address_2 <= inst[15:11];        
+            read_address_1 <= inst[15:11];
+            read_address_2 <= inst[20:16];
         end
         else begin
             read_address_1 <= inst[25:21];
             read_address_2 <= inst[20:16];        
         end
-
     
         case (inst[31:26])
             6'b000100: begin // BEQ
@@ -253,6 +251,7 @@ always @(*) begin
                 case (inst[28:26])
                     3'b000: begin // LB
                         con_mem_byte <= 1'b1;
+                        con_mem_unsigned <= 1'b0;
                         exception_out[9] <= 1'b0;
                     end
                     3'b011: begin // LW
@@ -261,6 +260,7 @@ always @(*) begin
                     end
                     3'b100: begin // LBU
                         con_mem_byte <= 1'b1;
+                        con_mem_unsigned <= 1'b1;
                         exception_out[9] <= 1'b0;
                     end
                 endcase

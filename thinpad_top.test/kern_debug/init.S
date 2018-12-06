@@ -6,18 +6,18 @@
 .section .text.init
 .global START
 START:
-    mul.s $f24, $f14, $f24
-    ori $30, $0, 0xff00
-    nop
-    nop
-    nop
-    nop
-    addu $24, $24, t3
-    nop
-    nop
-    nop
-    nop
-    ori $30, $0, 0xfff0
-    dead:
-    j dead
-    nop
+    lui $14, 0x2
+    ori $14, $14, 0x8000
+
+    lui $16, 0x5
+    ori $16, $16, 0x8000
+
+    mul.s $f14, $f14, $f16
+    ori $30, $14, 0
+
+
+
+
+dead:
+j dead
+nop

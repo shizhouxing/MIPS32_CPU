@@ -87,7 +87,7 @@
         addiu a0, %lo(welcome_message)
         jal puts
         nop
-        
+
     turn:
         ori a0, $0, '>'
         jal putchar

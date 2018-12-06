@@ -4,9 +4,9 @@ module ram_controller(
     input wire rst,
     input wire clk,
 
+    input wire byte,
     input wire[31:0] inst_addr,
     input wire[31:0] data_addr,
-    input wire byte,
     input wire[31:0] data,
     input wire data_en,
     input wire data_read,

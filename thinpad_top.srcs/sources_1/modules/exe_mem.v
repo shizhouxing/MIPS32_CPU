@@ -31,9 +31,11 @@ module exe_mem(
 
     // for mem
     input wire con_mem_byte_in,
+    input wire con_mem_unsigned_in,
     input wire con_mem_read_in,
     input wire con_mem_write_in,
     output reg con_mem_byte_out, 
+    output reg con_mem_unsigned_out,
     output reg con_mem_read_out,
     output reg con_mem_write_out,
     input wire[1:0] con_wb_src_in,
@@ -128,9 +130,9 @@ always @(posedge clk or posedge rst) begin
                 mem_this_delayslot <= 1'b0;
             end
             else begin
-                if (con_muls == 1'b1 || con_divs == 1'b1) begin
-                    read_address_1 <= inst_in[20:16];
-                    read_address_2 <= inst_in[15:11];
+                if (con_muls || con_divs) begin
+                    read_address_1 <= inst_in[15:11];
+                    read_address_2 <= inst_in[20:16];
                 end
                 else begin
                     read_address_1 <= inst_in[25:21];
@@ -146,6 +148,7 @@ always @(posedge clk or posedge rst) begin
                 mem_this_delayslot <= exe_this_delayslot;
                 
                 con_mem_byte_out <= con_mem_byte_in;
+                con_mem_unsigned_out <= con_mem_unsigned_in;                
                 con_mem_read_out <= con_mem_read_in;
                 con_mem_write_out <= con_mem_write_in;
 

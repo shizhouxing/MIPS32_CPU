@@ -16,6 +16,7 @@ module mem_wb(
 
     input wire[1:0] con_wb_src,
     input wire con_mem_byte,
+    input wire con_mem_unsigned,
 
     // cp0
     input wire mem_cp0_we,
@@ -68,8 +69,12 @@ always @(posedge clk or posedge rst) begin
                     `WB_SRC_MOV:
                         reg_write_data <= mov_data;
                     `WB_SRC_MEM: begin
-                        if (con_mem_byte)
-                            reg_write_data <= $signed(mem_read_data[7:0]);
+                        if (con_mem_byte) begin
+                            if (con_mem_unsigned)
+                                reg_write_data <= mem_read_data[7:0];    
+                            else
+                                reg_write_data <= $signed(mem_read_data[7:0]);
+                        end
                         else
                             reg_write_data <= mem_read_data;
                     end

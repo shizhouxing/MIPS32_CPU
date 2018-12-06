@@ -20,6 +20,9 @@ module id_exe(
     input wire[4:0] forw_reg_write_address_wb,
     input wire forw_reg_write_wb,
     input wire[31:0] forw_reg_write_data_wb,
+    input wire[4:0] forw_reg_write_address_end,
+    input wire forw_reg_write_end,
+    input wire[31:0] forw_reg_write_data_end,    
 
     // control signals
     input wire con_alu_immediate,
@@ -42,9 +45,11 @@ module id_exe(
 
     // for mem
     input wire con_mem_byte_in,
+    input wire con_mem_unsigned_in,
     input wire con_mem_read_in,
     input wire con_mem_write_in,
     output reg con_mem_byte_out, 
+    output reg con_mem_unsigned_out,
     output reg con_mem_read_out,
     output reg con_mem_write_out,
     input wire[1:0] con_wb_src_in,
@@ -90,6 +95,9 @@ forward _forward_A(
     .reg_write_address_wb(forw_reg_write_address_wb),
     .reg_write_wb(forw_reg_write_wb),
     .reg_write_data_wb(forw_reg_write_data_wb),
+    .reg_write_address_end(forw_reg_write_address_end),
+    .reg_write_end(forw_reg_write_end),
+    .reg_write_data_end(forw_reg_write_data_end),        
     .read_data_new(data_A_forw)
 );   
 
@@ -105,6 +113,9 @@ forward _forward_B(
     .reg_write_address_wb(forw_reg_write_address_wb),
     .reg_write_wb(forw_reg_write_wb),
     .reg_write_data_wb(forw_reg_write_data_wb),
+    .reg_write_address_end(forw_reg_write_address_end),
+    .reg_write_end(forw_reg_write_end),
+    .reg_write_data_end(forw_reg_write_data_end),        
     .read_data_new(data_B_forw)
 );   
 
@@ -118,6 +129,7 @@ always @(posedge clk or posedge rst) begin
         con_mem_write_out <= 1'b0;
         
         con_mem_byte_out <= 1'b0;
+        con_mem_unsigned_out <= 1'b0;
         
         con_wb_src_out <= 2'b0;
         reg_write_address <= 5'b0;
@@ -140,6 +152,7 @@ always @(posedge clk or posedge rst) begin
         con_mem_write_out <= 1'b0;
         
         con_mem_byte_out <= 1'b0;
+        con_mem_unsigned_out <= 1'b0;
         
         con_wb_src_out <= 2'b0;
         reg_write_address <= 5'b0;
@@ -169,14 +182,15 @@ always @(posedge clk or posedge rst) begin
                 con_mov_cond_out <= con_mov_cond_in;
 
                 con_mem_byte_out <= con_mem_byte_in;
+                con_mem_unsigned_out <= con_mem_unsigned_in;
                 con_mem_read_out <= con_mem_read_in;
                 con_mem_write_out <= con_mem_write_in;
 
                 con_wb_src_out <= con_wb_src_in;
                 
                 if (con_muls || con_divs) begin
-                    read_address_1 <= inst_in[20:16];
-                    read_address_2 <= inst_in[15:11];
+                    read_address_1 <= inst_in[15:11];
+                    read_address_2 <= inst_in[20:16];
                 end
                 else begin
                     read_address_1 <= inst_in[25:21];

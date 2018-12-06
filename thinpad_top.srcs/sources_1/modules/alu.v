@@ -100,8 +100,8 @@ always @(*) begin
          end
          `ALU_OP_DIVS: begin
             if (div_ready_in == 1'b0) begin
-                div_opdata1_out <= B;
-                div_opdata2_out <= A;
+                div_opdata1_out <= A;
+                div_opdata2_out <= B;
                 div_start_out <= 1'b1;
                 div_signed_out <= 1'b1;
                 div_stall_out <= 1'b1;

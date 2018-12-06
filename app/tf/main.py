@@ -140,8 +140,24 @@ with sess.as_default():
             inputs = params[0][idx]
             gate_kernel = params[1]
             gate_inputs = np.matmul(np.concatenate([inputs, state], axis=-1), gate_kernel) + params[2]
-            
+
+
+
+
+            print "tt"
+            tt = gate_inputs
+            for i in range(len(tt)):
+                print float2hex(tt[i]),
+            print   
+
+
             gate_inputs = 1. / (np.exp(-gate_inputs) + 1)
+
+
+
+
+
+
             r, u = np.split(gate_inputs, 2, axis=-1)
             r_state = r * state
             candidate = np.matmul(np.concatenate([inputs, r_state], axis=-1), params[3]) + params[4]
@@ -149,6 +165,10 @@ with sess.as_default():
             new_h = u * state + (1 - u) * c
 
             state = new_h
+
+
+            
+
 
 
             print "state"

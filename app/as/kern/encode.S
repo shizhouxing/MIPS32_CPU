@@ -124,6 +124,7 @@ encode_input: // input the word (a0)...(a1-1)
             nop
 
     .symbol2index_done:
+
     ori a0, s0, 0
     jal gru_input_word2vec
     nop

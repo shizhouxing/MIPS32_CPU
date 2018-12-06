@@ -29,7 +29,7 @@ read_sentence:
     addiu s0, %lo(post_raw) 
     ori s1, $0, 0 // length
     ori s2, $0, '\n' // ending char '\n'
-    //ori s3, $0, '\r'
+    ori s3, $0, '\r'
 
     .read_char:
         jal READSERIAL 
@@ -39,8 +39,8 @@ read_sentence:
         nop
         beq v0, s2, .read_done // finish reading on '\n'
         nop
-        //beq v0, s3, .read_done // finish reading on '\r'
-        //nop
+        beq v0, s3, .read_done // finish reading on '\r'
+        nop
         sb v0, (s0)
         addiu s0, s0, 1
         addiu s1, s1, 1
@@ -48,10 +48,13 @@ read_sentence:
         nop
 
     .read_done:
-    //bne v0, s3, .read_done_1
-    //nop
-    //jal READSERIAL 
-    //nop
+    bne v0, s3, .read_done_1
+    nop
+    ori a0, s2, 0
+    jal putchar
+    nop
+    jal READSERIAL 
+    nop
     .read_done_1:
     ori a0, $0, ' '
     sb a0, (s0)
@@ -88,9 +91,6 @@ write_sentence:
     nop 
 
 putchar:
-    // use serial
-    # j WRITESERIAL
-    # nop
     addiu sp, -8
     sw ra, (sp)
     sw s0, 4(sp)
@@ -132,18 +132,65 @@ putchar:
     ori t4, $0, '\n'
     beq s0, t4, .newline
     nop
+    sw t2, (t1)    
     j .newline_done
     nop
     .newline:
         lui t2, 0
+        sw t2, (t1)
         lui t5, %hi(screen_row)
         addiu t5, %lo(screen_row)
         lw t6, (t5)
         addiu t6, 1
-        sw t6, (t5)
-    .newline_done:
+        ori t7, $0, SCREEN_ROWS
+        bne t6, t7, .scroll
+        nop
+        sw t6, (t5)        
+        j .newline_done
+        nop
+    .scroll:
+    #     ori t5, $0, 0
+    #     ori t6, $0, SCREEN_SIZE
+    #     sub t6, t6, SCREEN_COLS
+        
+    #     lui t0, %hi(screen)
+    #     addiu t0, %lo(screen)
+    #     ori t1, t0, 0
+    #     addiu t1, SCREEN_COLS
 
-    sw t2, (t1)
+    #     .L_scroll_1:
+    #         lw t2, (t1)
+    #         sw t2, (t0)
+    #         addiu t5, 1
+    #         addiu t0, 4
+    #         addiu t1, 4
+    #         bne t5, t6, .L_scroll_1
+    #         nop
+    #     ori t5, $0, 0
+    #     ori t6, $0, SCREEN_COLS
+    #     ori t7, $0, 0x20
+    #     .L_scroll_2:
+    #         sw t7, (t0)
+    #         addiu t5, 1
+    #         addiu t0, 4
+    #         bne t5, t6, .L_scroll_2
+    #         nop
+
+    #     lui t0, %hi(screen)
+    #     addiu t0, %lo(screen)
+    #     lui t1, 0x9000
+    #     ori t5, $0, 0
+    #     ori t6, $0, SCREEN_SIZE        
+    #     .L_scroll_3:
+    #         lw t2, (t0)
+    #         sw t2, (t1)
+    #         addiu t5, 1
+    #         addiu t0, 4
+    #         addiu t1, 4
+    #         bne t5, t6, .L_scroll_3
+    #         nop        
+
+    .newline_done:
     
     lw ra, (sp)
     lw s0, 4(sp)

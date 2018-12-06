@@ -34,6 +34,9 @@ gru_update:
     ori t0, $0, NUM_UNITS_2
     sw t0, (sp)
 
+    lw t5, (sp)
+    ori $30, t5, 0
+
     jal vector_mul_matrix
     nop
     addiu sp, 4
@@ -51,6 +54,38 @@ gru_update:
     jal vector_sigmoid
     nop
 
+        # // debug
+        # lui t0, %hi(gate_inputs)
+        # addiu t0, %lo(gate_inputs)
+
+        # ori t1, $0, 0
+        # ori t2, $0, NUM_UNITS
+        # .L_print_state:
+        #     beq t1, t2, .L_print_state_done
+        #     nop
+        #     lw a0, (t0)
+        #     addiu sp, -12
+        #     sw t0, (sp)
+        #     sw t1, 4(sp)
+        #     sw t2, 8(sp)
+        #     jal write_int
+        #     nop
+        #     jal putspace
+        #     nop
+        #     lw t0, (sp)
+        #     lw t1, 4(sp)
+        #     lw t2, 8(sp)
+        #     addiu sp, 12
+        #     addiu t1, 1
+        #     addiu s1, 4
+        #     addiu t0, 4
+        #     j .L_print_state
+        #     nop
+        # .L_print_state_done:
+        # jal putnewline
+        # nop
+
+
     lui t0, %hi(gate_inputs)
     addiu t0, %lo(gate_inputs)
     lui t1, %hi(state)
@@ -64,6 +99,7 @@ gru_update:
         nop
         lw $14, (t0)
         lw $24, (t1)
+        nop
         mul.s $f14, $f14, $f24
         sw $14, (t2)
         addiu t0, 4
@@ -147,6 +183,7 @@ gru_update:
         nop
         lw $14, (t0)
         lw $24, (t1)
+        nop
         mul.s $f14, $f14, $f24
         sw $14, (t1)
         addiu t0, 4
@@ -186,6 +223,12 @@ gru_update:
         nop
     .L_update_state_2_done:
 
+
+
+
+
+
+
     lw ra, (sp)
     lw s0, 4(sp)
     lw s1, 8(sp)
@@ -206,6 +249,7 @@ gru_output:
     lui a2, %hi(output)
     addiu a2, %lo(output)
     ori a3, $0, NUM_UNITS
+
     addiu sp, -4
     ori t0, $0, VOCAB_SIZE
     sw t0, (sp)
@@ -228,6 +272,7 @@ gru_output:
     addiu t2, 4
     ori v0, $0, 1
     lw v1, (t2)
+
     .L_find_max_output:
         beq t0, t1, .L_find_max_output_done
         nop
@@ -295,39 +340,6 @@ gru_input_word2vec:
 
     .input_word2vec_done:
 
-        # ori s1, t5, 0
-
-
-        # // debug
-        # lui t0, %hi(input)
-        # addiu t0, %lo(input)
-        # ori t1, $0, 0
-        # ori t2, $0, DIM_EMBED
-        # .L_print_state:
-        #     beq t1, t2, .L_print_state_done
-        #     nop
-        #     lw a0, (t0)
-        #     addiu sp, -12
-        #     sw t0, (sp)
-        #     sw t1, 4(sp)
-        #     sw t2, 8(sp)
-        #     jal write_int
-        #     nop
-        #     jal putspace
-        #     nop
-        #     lw t0, (sp)
-        #     lw t1, 4(sp)
-        #     lw t2, 8(sp)
-        #     addiu sp, 12
-        #     addiu t1, 1
-        #     addiu s1, 4
-        #     addiu t0, 4
-        #     j .L_print_state
-        #     nop
-        # .L_print_state_done:
-        # jal putnewline
-        # nop
-
     lw ra, (sp)
     lw s0, 4(sp)
     lw s1, 8(sp)
@@ -355,7 +367,6 @@ vector_mul_matrix:
     ori s3, a3, 0
     lw s4, 24(sp)
     sll s4, s4, 2
-
     addu t0, s2, s4
     .L_vector_matrix_clear:
         sw $0, (s2)
@@ -373,7 +384,7 @@ vector_mul_matrix:
             lw t3, (s2)
             mul.s $f12, $f14, $f24
             addu t3, t3, $12
-            sw t3, (s2)      
+            sw t3, (s2)  
             addiu s1, 4
             addiu s2, 4
             bne s2, t0, .L_vector_mul_matrix_j
