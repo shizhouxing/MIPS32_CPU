@@ -66,7 +66,7 @@ assign hazard_id_mem =
         (wb_src_mem == `WB_SRC_MOV || wb_src_mem == `WB_SRC_MEM)) 
     ;
 assign busy_mem = (~uart_en & (uart_state < 4'hf)) 
-    | (mem_write & ~ram_en & (ram_state < 2'b10)) 
+    //| (mem_write & ~ram_en & (ram_state < 2'b10)) 
     | flash_stall;
 
 wire hazard_wb, hazard_mem, hazard_exe, hazard_id, hazard_if;
