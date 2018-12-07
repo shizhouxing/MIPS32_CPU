@@ -47,6 +47,8 @@ monitor_version:
     .word   _ebss
     .global START
 START:                              // kernel init
+    nop
+    ori $30, $0, 0x100
     lui k0, %hi(_sbss)
     addiu k0, %lo(_sbss)
     lui k1, %hi(_ebss)

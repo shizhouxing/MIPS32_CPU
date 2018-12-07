@@ -12,12 +12,12 @@ module ram_controller(
     input wire data_read,
     input wire data_write,
     
-    input wire[19:0] flash_data_addr,
+    input wire[20:0] flash_data_addr,
     input wire[31:0] flash_data,
     input wire flash_data_en,
 
     inout wire[31:0] base_ram_data, 
-    output wire[19:0] base_ram_addr, 
+    output reg[19:0] base_ram_addr, 
     output wire[3:0] base_ram_be_n, 
     output wire base_ram_ce_n, 
     output wire base_ram_oe_n, 
@@ -50,7 +50,6 @@ assign base_ram_be_n = base_write ? mask : 4'b0;
 assign ext_ram_be_n = ext_write ? mask : 4'b0;
 assign base_ram_data = base_write ? data_extended : 32'bz;
 assign ext_ram_data = ext_write ? data_extended : 32'bz;
-assign base_ram_addr = data_addr[21:2];
 
 // use 2 clock circles for ram writing
 always @(posedge rst or negedge clk) begin
@@ -58,7 +57,7 @@ always @(posedge rst or negedge clk) begin
         ram_state <= 2'b0;
     end
     else begin
-        if (~data_en & data_write) begin
+        if ((~data_en & data_write) | ~flash_data_en) begin
             if (ram_state < 2'b10)
                 ram_state <= ram_state + 2'b1;
             else
@@ -85,12 +84,21 @@ end
 
 
 always @(*) begin
+    base_ram_addr <= data_addr[21:2];
     if (flash_data_en == 1'b0) begin
         data_extended <= flash_data;
-        base_write <= 1'b0;
-        ext_write <= 1'b1;
-        ext_ram_addr <= flash_data_addr;
-        conflict <= 1'b1;
+        if (flash_data_addr[20] == 1'b0) begin
+            base_write <= 1'b0;
+            ext_write <= 1'b1;
+            ext_ram_addr <= flash_data_addr[19:0];
+            conflict <= 1'b1;
+        end
+        else if (flash_data_addr[20] == 1'b1) begin
+            base_write <= 1'b1;
+            ext_write <= 1'b0;
+            base_ram_addr <= flash_data_addr[19:0];
+            conflict <= 1'b0;
+        end
     end else begin
         if (byte) begin // load or store a single byte
             data_extended <= { 4{data[7:0]} };

@@ -7,12 +7,12 @@ module init_ram(
     
     // ram controller
     output reg[31:0] flash_data_out,
-    output reg[19:0] flash_data_address_out,
+    output reg[20:0] flash_data_address_out,
     output reg flash_data_en,
     
     // flash controller
     input wire[15:0] flash_data_in,
-    output reg[22:0] flash_address,
+    output reg[23:0] flash_address,
     output reg flash_flag,
     output reg[31:0] ram_data_addr,
     output reg ram_byte,
@@ -29,8 +29,8 @@ reg[2:0] counter;
 reg updown;
 
 initial begin
-    flash_stall <= 1'b0;
-    flash_address <= 23'b0;
+    flash_stall <= 1'b1;
+    flash_address <= 24'b0;
     flash_flag <= 1'b0;
     counter <= 3'b0;
     updown <= 1'b0;
@@ -39,9 +39,9 @@ initial begin
     flash_data_en <= 1'b1;
 end
 
-always @(posedge rst or posedge clk) begin
+always @(posedge clk or posedge rst) begin
     if (rst) begin
-        flash_stall <= 1'b0;
+        flash_stall <= 1'b1;
         counter <= 3'b0;
         flash_data_out <= 32'b0;
         flash_data_en <= 1'b1;
@@ -49,11 +49,11 @@ always @(posedge rst or posedge clk) begin
     else begin
         if (flash_stall == 1'b1) begin
             
-            if (counter == 3'b111) begin // get flash output
+            if (counter == 3'b110) begin // get flash output
             
                 if (updown == 1'b0) begin
                     flash_data_en <= 1'b1;
-                    flash_data_address_out <= flash_address[21:2];
+                    flash_data_address_out <= flash_address[22:2];
                     flash_data_out[15:0] <= flash_data_in;
                     updown <= 1'b1;
                 end
@@ -63,13 +63,16 @@ always @(posedge rst or posedge clk) begin
                     updown <= 1'b0;
                 end
                 flash_flag <= ~flash_flag;
+                counter <= 3'b111;
+            end
+            else if (counter == 3'b111) begin
+                flash_data_en <= 1'b1;
                 flash_address <= flash_address + 2;
                 counter <= 3'b0;
-            end
-            else begin
+            end else begin
                 flash_data_en <= 1'b1;
                 counter = counter + 1;
-                if (counter == 3'b010 && flash_address == 23'h40) begin
+                if (counter == 3'b010 && flash_address == 24'h400000) begin
                     flash_stall <= 1'b0;
                 end
             end
