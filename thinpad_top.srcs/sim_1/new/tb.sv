@@ -47,8 +47,8 @@ wire flash_byte_n;       //Flash 8bit模式选择，低有效。在使用flash�
 
 //Windows�???要注意路径分隔符的转义，例如"D:\\foo\\bar.bin"
 parameter BASE_RAM_INIT_FILE = "E:\\thinpad_top\\thinpad_top.test\\mem.bin"; //BaseRAM初始化文件，请修改为实际的绝对路�???
-//parameter EXT_RAM_INIT_FILE = "E:\\thinpad_top\\thinpad_top.test\\kernel.bin"; //BaseRAM初始化文件，请修改为实际的绝对路�???
-parameter EXT_RAM_INIT_FILE = "C:\\Users\\Tinaht\\Desktop\\MIPS32_CPU\\thinpad_top.test\\kernel.bin";    //ExtRAM初始化文件，请修改为实际的绝对路�???
+parameter EXT_RAM_INIT_FILE = "E:\\thinpad_top\\thinpad_top.test\\kernel.bin"; //BaseRAM初始化文件，请修改为实际的绝对路�???
+//parameter EXT_RAM_INIT_FILE = "C:\\Users\\Tinaht\\Desktop\\MIPS32_CPU\\thinpad_top.test\\kernel.bin";    //ExtRAM初始化文件，请修改为实际的绝对路�???
 //parameter FLASH_INIT_FILE = "E:\\thinpad_top\\thinpad_top.test\\flash.bin";    //Flash初始化文件，请修改为实际的绝对路�???
 parameter FLASH_INIT_FILE = "C:\\Users\\Tinaht\\Desktop\\MIPS32_CPU\\thinpad_top.test\\kernel.bin";
 

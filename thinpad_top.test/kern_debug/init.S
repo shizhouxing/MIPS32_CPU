@@ -6,6 +6,10 @@
 .section .text.init
 .global START
 START:
+    nop
+    nop
+    nop
+    nop
     ori $16, $0, 0xffff
     clz $15, $16
 

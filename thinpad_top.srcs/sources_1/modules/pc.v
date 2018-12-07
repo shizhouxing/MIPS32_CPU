@@ -19,7 +19,8 @@ assign pc_plus_4 = pc_current + 4'h4;
 
 always @(posedge clk or posedge rst) begin
     if (rst)
-        pc_current <= 32'h80000000; // default entry
+        pc_current <= 32'h7ffffffc;
+        //pc_current <= 32'h80000000; // default entry
     else begin
         if (flush == 1'b1) begin
             pc_current <= pc_flush - 4'h4;
