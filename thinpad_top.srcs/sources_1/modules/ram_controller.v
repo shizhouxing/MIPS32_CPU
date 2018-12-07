@@ -72,11 +72,13 @@ end
 // ram writing
 always @(*) begin
     if (base_write) 
-        base_ram_we_n <= ram_state != 2'b1;
+        //base_ram_we_n <= ram_state != 2'b1;
+        base_ram_we_n <= clk;
     else 
         base_ram_we_n <= 1'b1;
     if (ext_write)
-        ext_ram_we_n <= ram_state != 2'b1;
+        //ext_ram_we_n <= ram_state != 2'b1;
+        ext_ram_we_n <= clk;
     else
         ext_ram_we_n <= 1'b1;
 end
