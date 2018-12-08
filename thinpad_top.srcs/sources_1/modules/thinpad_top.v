@@ -84,13 +84,13 @@ module thinpad_top(
 wire reset;
 assign reset = reset_btn;
 
-wire clock;
+wire clock = clk_50M;
 wire clock_8;
-pll_example clock_gen(
-    .clk_out1(clock),
-    .reset(reset),
-    .clk_in1(clk_50M)
-);
+// pll_example clock_gen(
+//     .clk_out1(clock),
+//     .reset(reset),
+//     .clk_in1(clk_50M)
+// );
 
 wire flush;
 
@@ -241,8 +241,8 @@ wire[7:0] keyboard_data;
 // div
 wire div_ready;
 wire[31:0] div_result;
-wire[31:0] div_opdata1;
-wire[31:0] div_opdata2;
+wire[31:0] div_A;
+wire[31:0] div_B;
 wire div_start;
 wire div_signed;
 wire div_stall;
@@ -251,24 +251,6 @@ clock_8 _clock_8(
     .clk(clock),
     .clk_8(clk_8)
 );
-
-/*
-keyboard _keyboard(
-    .clk(clock),
-    .rst_n(reset),
-    
-    .sl811_a0(sl811_a0),
-    .sl811_wr_n(sl811_wr_n),
-    .sl811_rd_n(sl811_rd_n),
-    .sl811_cs_n(sl811_cs_n),
-    .sl811_rst_n(sl811_rst_n),
-    .sl811_dack_n(sl811_dack_n),
-    
-    .data(dm9k_sd[7:0]),
-    .char_data(keyboard_data)
-);
-*/
-
 
 flash_controller _flash_controller(
     .clk(clk_8),
@@ -411,9 +393,6 @@ registers _registers(
 );
 
 assign leds = result;
-//assign leds = { 8'b0, keyboard_data[7:0] };
-//assign leds = { uart_dataready, result[14:0]};
-//assign leds = { stall[0], mem_conflict, con_mem_read, con_mem_write, pc_current[11:0] };
 
 wire[31:0] reg_read_data_1_forw, reg_read_data_2_forw;
 
@@ -618,8 +597,8 @@ alu _alu(
     // div
     .div_ready_in(div_ready),
     .div_result_in(div_result),
-    .div_opdata1_out(div_opdata1),
-    .div_opdata2_out(div_opdata2),
+    .div_A_out(div_A),
+    .div_B_out(div_B),
     .div_start_out(div_start),
     .div_signed_out(div_signed),
     .div_stall_out(div_stall),
@@ -847,13 +826,13 @@ letter_rgb _letter_rgb(
 div _div(
     .clk(clock),
     .rst(reset),
-    .signed_div_in(div_signed),
-    .opdata1_in(div_opdata1),
-    .opdata2_in(div_opdata2),
-    .start_in(div_start),
-    .annul_in(flush),
-    .result_out(div_result),
-    .ready_out(div_ready)
+    .is_signed(div_signed),
+    .A(div_A),
+    .B(div_B),
+    .start(div_start),
+    .annul(flush),
+    .result(div_result),
+    .ready(div_ready)
 );
 
 endmodule

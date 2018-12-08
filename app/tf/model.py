@@ -168,12 +168,6 @@ class Seq2Seq():
             self.response_len: data['response_len']
         }
         if is_infer:
-            out = sess.run(self.enc_out, input_feed)[0]
-            print "encode"
-            for i in range(len(out)):
-                for j in range(len(out[i])):
-                    print float2hex(out[i][j]),
-                print  
             output_feed = self.inference
         else:
             if is_train:

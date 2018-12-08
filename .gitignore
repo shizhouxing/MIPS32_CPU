@@ -13,4 +13,3 @@
 *.ip_user_files
 train.json
 valid.json
-params.S

@@ -54,38 +54,6 @@ gru_update:
     jal vector_sigmoid
     nop
 
-        # // debug
-        # lui t0, %hi(gate_inputs)
-        # addiu t0, %lo(gate_inputs)
-
-        # ori t1, $0, 0
-        # ori t2, $0, NUM_UNITS
-        # .L_print_state:
-        #     beq t1, t2, .L_print_state_done
-        #     nop
-        #     lw a0, (t0)
-        #     addiu sp, -12
-        #     sw t0, (sp)
-        #     sw t1, 4(sp)
-        #     sw t2, 8(sp)
-        #     jal write_int
-        #     nop
-        #     jal putspace
-        #     nop
-        #     lw t0, (sp)
-        #     lw t1, 4(sp)
-        #     lw t2, 8(sp)
-        #     addiu sp, 12
-        #     addiu t1, 1
-        #     addiu s1, 4
-        #     addiu t0, 4
-        #     j .L_print_state
-        #     nop
-        # .L_print_state_done:
-        # jal putnewline
-        # nop
-
-
     lui t0, %hi(gate_inputs)
     addiu t0, %lo(gate_inputs)
     lui t1, %hi(state)
@@ -222,12 +190,6 @@ gru_update:
         j .L_update_state_2
         nop
     .L_update_state_2_done:
-
-
-
-
-
-
 
     lw ra, (sp)
     lw s0, 4(sp)

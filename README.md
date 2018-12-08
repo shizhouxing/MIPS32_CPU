@@ -1,6 +1,6 @@
-## MIPS32 CPU
+# MIPS32 CPU
 
-### Requirements
+## Requirements
 
 * THUCST Thinpad rev.3 (early 2018)
 * Vivado 2018
@@ -8,22 +8,57 @@
 * Python 2.7
 * Tensorflow 1.3.0
 
-### Build & Run - Supervisor
+## Monitor
 
-1. Set the output clock frequency of the pll IP properly (Please refer to Wiki)
-2. Use vivado to compile the project, yielding a .bit file
-3. Run `make ON_FPGA=y`  at `thinpad_top.test` directory, yielding the kernel program in binary format `kernel.bin`
-4. Write `kernel.bin` into ExtRAM
-5. Write the .bit file into FPGA
-6. Connect the terminal to the thinpad
+To build and run the monitor:
+
+1. Use Vivado to compile the project, yielding a .bit file
+2. Run `make ON_FPGA=y`  at `thinpad_top.test` directory, yielding the kernel program in binary format `kernel.bin`
+3. Write `kernel.bin` into the Flash
+4. Write the .bit file into the FPGA
+5. Connect the terminal to the thinpad
+6. Click the reset button
+
+The screen should display "MONITOR for MIPS32 - initialized" after these steps.
+
+For more information, please refer to https://github.com/z4yx/supervisor-mips32.
+
+## Chatbot
+
+We've developed a sequence-to-sequence chatbot for our MIPS32 CPU.
+We implemented the model in Python 2.7 and Tensorflow first, and we then implemented a MIPS32 Assembly version of the inference code for the CPU we developed. The code of the chatbot is located at `/app`.
+
+Based on the previously prepared FPGA, you may follow the steps below to get the chatbot work:
+
+1. Prepare the datasets at the `app/data` directory. We use:
+   * [Cornell Movie-Dialogs Corpus](https://www.cs.cornell.edu/~cristian/Cornell_Movie-Dialogs_Corpus.html)
+   * [PersonaChat ConvAI2 Dataset](http://convai.io/)
+2. Train the sequence-to-sequence model:
+
+```
+cd app/tf
+python data_pre.py
+python main.py --is_train
+```
+
+(You need prepare a Glove word vector file in advance.)
+
+3. Dump the model parameters:
+
+```
+cd app/tf
+python main.py --run_dump
+cp params.S ../as
+```
+
+4. Build the chatbot for our MIPS32 CPU:
+
+```
+cd app/as
+make
+```
+
+5. Write `params.bin` into the BaseRAM
+6. Write `kernel.bin` into the Flash
 7. Click the reset button
-
-The terminal should display "MONITOR for MIPS32 - initialized" after these steps.
-
-### Debug
-
-You may put a short MIPS32 program at `thinpad_top.test/kern_debug/init.S` for debugging.
-
-Please run `make debug=y` to compile the kernel in this case.
-
-And note that currently the lowest 16 bits of register $30 are binded to the LEDs for debugging.
+8. Now you can chat with the chatbot!

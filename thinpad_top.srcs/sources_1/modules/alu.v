@@ -40,8 +40,8 @@ module alu(
     // div
     input wire div_ready_in,
     input wire[31:0] div_result_in,
-    output reg[31:0] div_opdata1_out,
-    output reg[31:0] div_opdata2_out,
+    output reg[31:0] div_A_out,
+    output reg[31:0] div_B_out,
     output reg div_start_out,
     output reg div_signed_out,
     output reg div_stall_out,
@@ -69,8 +69,8 @@ always @(*) begin
     exception_out <= exception_in;
     exception_address_out <= exception_address_in;
     this_delayslot_out <= this_delayslot_in;
-    div_opdata1_out <= 32'b0;
-    div_opdata2_out <= 32'b0;
+    div_A_out <= 32'b0;
+    div_B_out <= 32'b0;
     div_start_out <= 1'b0;
     div_signed_out <= 1'b0;
     div_stall_out <= 1'b0;
@@ -100,23 +100,23 @@ always @(*) begin
          end
          `ALU_OP_DIVS: begin
             if (div_ready_in == 1'b0) begin
-                div_opdata1_out <= A;
-                div_opdata2_out <= B;
+                div_A_out <= A;
+                div_B_out <= B;
                 div_start_out <= 1'b1;
                 div_signed_out <= 1'b1;
                 div_stall_out <= 1'b1;
             end
             else if (div_ready_in == 1'b1) begin
-                div_opdata1_out <= B;
-                div_opdata2_out <= A;
+                div_A_out <= B;
+                div_B_out <= A;
                 div_start_out <= 1'b0;
                 div_signed_out <= 1'b1;
                 res = div_result_in;
                 div_stall_out <= 1'b0;
             end
             else begin
-                div_opdata1_out <= 32'b0;
-                div_opdata2_out <= 32'b0;
+                div_A_out <= 32'b0;
+                div_B_out <= 32'b0;
                 div_start_out <= 1'b0;
                 div_signed_out <= 1'b0;
                 div_stall_out <= 1'b0;
@@ -124,11 +124,9 @@ always @(*) begin
          end
          `ALU_OP_ADD: begin
              {C, res} = {1'b0, A} + {1'b0, B};
-             //exception_out[11] <= (!A[31] && !B_complement[31] && res[31]) || (A[31] && B_complement[31] && !res[31]);
          end
          `ALU_OP_SUB: begin
              {C, res} = {1'b0, A} - {1'b1, B};
-             //exception_out[11] <= (!A[31] && !B_complement[31] && res[31]) || (A[31] && B_complement[31] && !res[31]);
          end
          `ALU_OP_AND: res = A & B;
          `ALU_OP_OR:  res = A | B;
