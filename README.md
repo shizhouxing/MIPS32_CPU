@@ -33,6 +33,9 @@ Based on the previously prepared FPGA, you may follow the steps below to get the
 1. Prepare the datasets at the `app/data` directory. We use:
    * [Cornell Movie-Dialogs Corpus](https://www.cs.cornell.edu/~cristian/Cornell_Movie-Dialogs_Corpus.html)
    * [PersonaChat ConvAI2 Dataset](http://convai.io/)
+
+   And we also use the 50-dimensional [GloVe](https://nlp.stanford.edu/projects/glove/) word vectors.
+
 2. Train the sequence-to-sequence model:
 
 ```
@@ -40,8 +43,6 @@ cd app/tf
 python data_pre.py
 python main.py --is_train
 ```
-
-(You need prepare a Glove word vector file in advance.)
 
 3. Dump the model parameters:
 
@@ -62,3 +63,4 @@ make
 6. Write `kernel.bin` into the Flash
 7. Click the reset button
 8. Now you can chat with the chatbot!
+
